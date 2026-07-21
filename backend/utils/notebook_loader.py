@@ -1,0 +1,65 @@
+import json
+import logging
+import sys
+from pathlib import Path
+from types import ModuleType
+
+logger = logging.getLogger(__name__)
+
+# Cache loaded notebook modules to prevent multiple executions
+_loaded_notebooks = {}
+
+def get_notebook_module(notebook_name: str) -> ModuleType:
+    """
+    Dynamically loads and evaluates Jupyter notebook code cells in order,
+    returning a Python module namespace. Saves state variables and functions.
+    """
+    if notebook_name in _loaded_notebooks:
+        return _loaded_notebooks[notebook_name]
+
+    base_dir = Path(__file__).resolve().parent.parent.parent
+    nb_path = base_dir / "notebooks" / "capabilities" / notebook_name
+
+    if not nb_path.exists():
+        raise FileNotFoundError(f"Notebook {notebook_name} not found at {nb_path}")
+
+    logger.info(f"Loading notebook capability: {notebook_name}")
+
+    with open(nb_path, "r", encoding="utf-8") as f:
+        nb_data = json.load(f)
+
+    # Instantiate custom module
+    mod = ModuleType(notebook_name.split(".")[0])
+    mod.__file__ = str(nb_path)
+
+    # Pre-populate custom mock environments for GUI/plotting libraries
+    from unittest.mock import MagicMock
+    mock_plt = MagicMock()
+    mock_fig = MagicMock()
+    mock_ax = MagicMock()
+    mock_plt.subplots.return_value = (mock_fig, mock_ax)
+    sys.modules['matplotlib.pyplot'] = mock_plt
+    sys.modules['matplotlib'] = MagicMock()
+
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ImportError:
+        pass
+
+    # Extract and run code cells sequentially
+    for idx, cell in enumerate(nb_data.get("cells", [])):
+        if cell.get("cell_type") == "code":
+            source_code = "".join(cell.get("source", []))
+            if not source_code.strip():
+                continue
+            try:
+                # Execute in module namespace definition dict
+                exec(source_code, mod.__dict__, mod.__dict__)
+            except Exception as e:
+                logger.error(f"Error executing cell #{idx} in {notebook_name}: {e}")
+                continue
+
+    _loaded_notebooks[notebook_name] = mod
+    return mod
