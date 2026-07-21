@@ -30,8 +30,8 @@ clean_error.txt
 feat_log.txt
 
 # Jupyter
-.ipynb_checkpoints/
-*.ipynb
+#.ipynb_checkpoints/
+#*.ipynb
 
 # IDE
 .vscode/
