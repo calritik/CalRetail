@@ -37,3 +37,6 @@ feat_log.txt
 # OS
 .DS_Store
 Thumbs.db
+
+
+*.pdf
