@@ -1,0 +1,818 @@
+"""
+Domain 03 — Operational Efficiency (Calsoft Retail AI deck, slide 6).
+
+All six capability cards are served by FastAPI over the real datasets.
+Follows the Domain 01 reference implementation.
+"""
+from __future__ import annotations
+
+import math
+
+import dash
+import plotly.graph_objects as go
+from dash import Input, Output, State, callback, dcc, html
+
+from frontend_dash.components import cards as C
+from frontend_dash.components.layout import module_page
+from frontend_dash.services.api import api_get, api_post
+from frontend_dash.services.capabilities import OPERATIONS as D
+from frontend_dash.services.capabilities import cap
+from frontend_dash.theme import chart_theme as T
+from frontend_dash.theme import colors
+
+dash.register_page(__name__, path=D.path, name=D.title)
+
+CAP = {c.key: c for c in D.capabilities}
+
+# Risk pill class -> the status colour that encodes the same meaning in charts,
+# so a "Critical" bar and a "Critical" pill are never two different oranges.
+RISK_TONE = {"high": colors.ACCENT, "medium": colors.WARN,
+             "low": colors.OK, "neutral": colors.BRAND3}
+
+# Order lifecycle status -> status colour. Delivered is the healthy end state,
+# Cancelled the failed one; everything in between is still in flight and reads
+# as brand blue rather than as good or bad news.
+STATUS_TONE = {"Delivered": colors.OK, "Shipped": colors.BRAND2,
+               "Confirmed": colors.BRAND3, "Placed": colors.BRAND3,
+               "Returned": colors.WARN, "Cancelled": colors.ACCENT}
+
+
+def _inr(v: float) -> str:
+    """Indian currency, stepped into Lakh/Crore so KPI tiles never overflow."""
+    v = float(v or 0)
+    if abs(v) >= 1_00_00_000:
+        return f"₹{v / 10000000:.2f}Cr"
+    if abs(v) >= 1_00_000:
+        return f"₹{v / 100000:.1f}L"
+    return f"₹{v:,.0f}"
+
+
+def _product_options(limit: int = 60):
+    rows = api_get("/api/v1/merchandising/products", {"limit": limit}) or []
+    return [{"label": f"{r['product_name']} ({r['category']})",
+             "value": r["product_id"]} for r in rows]
+
+
+def _warehouse_options():
+    rows = api_get("/api/v1/operations/warehouses") or []
+    return [{"label": f"{r['warehouse_name']} ({r['type']})",
+             "value": r["warehouse_id"]} for r in rows]
+
+
+def _store_options(limit: int = 200):
+    # The route caps at 200 and the network is 150 stores, so this is the whole
+    # estate — the dropdown is never a truncated view of it.
+    rows = api_get("/api/v1/operations/stores", {"limit": limit}) or []
+    return [{"label": f"{r['store_name']} ({r['city']})",
+             "value": r["store_id"]} for r in rows]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 1 — Smart Inventory Management
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _card_inventory(prods):
+    rows = (api_get("/api/v1/operations/inventory-health") or {}).get("results") or []
+    if not rows:
+        body = C.empty("Inventory health scores unavailable.")
+        return C.card(cap("ops", "inventory").title, body,
+                      caption="Per-SKU health scoring across stores and distribution centres.",
+                      info="<b>Score:</b> days of cover, stockout probability and supplier "
+                           "reliability collapsed into one 0-1 health index.",
+                      span=2)
+
+    at_risk = [r for r in rows if colors.risk_class(r.get("risk_label")) == "high"]
+    overstocked = [r for r in rows if r.get("overstock_flag")]
+    avg_health = sum(float(r.get("health_score") or 0) for r in rows) / len(rows)
+
+    # Split the risk mix by location type — a store stockout and a DC stockout
+    # carry very different remedies, so the two are never pooled into one bar.
+    labels, locs = [], []
+    for r in rows:
+        if r.get("risk_label") not in labels:
+            labels.append(r.get("risk_label"))
+        loc = (r.get("location_type") or "—").title()
+        if loc not in locs:
+            locs.append(loc)
+    labels.sort(key=lambda l: {"high": 0, "medium": 1, "low": 2}.get(colors.risk_class(l), 3))
+
+    fig = T.figure(height=190, showlegend=True, margin=dict(l=8, r=8, t=4, b=4))
+    for lab in labels:
+        fig.add_bar(
+            x=locs,
+            y=[sum(1 for r in rows
+                   if r.get("risk_label") == lab
+                   and (r.get("location_type") or "—").title() == loc) for loc in locs],
+            name=lab, width=.42,
+            marker_color=RISK_TONE.get(colors.risk_class(lab), colors.BRAND3),
+            hovertemplate="%{x} · " + str(lab) + "<br>%{y} SKUs<extra></extra>",
+        )
+    fig.update_layout(barmode="stack",
+                      yaxis=dict(title="SKUs", showgrid=True, gridcolor=colors.LIGHT["grid"]))
+
+    worst = sorted(rows, key=lambda r: (float(r.get("health_score") or 0),
+                                        -float(r.get("stockout_risk") or 0)))[:8]
+    tbl = []
+    for r in worst:
+        where = r.get("location_name") or r.get("store_id") or r.get("warehouse_id") or "—"
+        tbl.append([
+            html.Div([html.Div(r.get("product_name", "—"), style={"fontWeight": 600}),
+                      html.Div(r.get("category", ""), className="small muted")]),
+            html.Div([html.Div(where), html.Div(r.get("location_type", ""),
+                                                className="small muted")]),
+            f"{r.get('stock_qty', 0):,}",
+            f"{float(r.get('days_cover') or 0):,.0f}",
+            f"{float(r.get('stockout_risk') or 0) * 100:.0f}%",
+            f"{float(r.get('health_score') or 0):.2f}",
+            C.pill(r.get("risk_label", "—"), r.get("risk_label", "")),
+        ])
+
+    # Markdown buy-list: the opposite failure to stockout — SKUs with negligible
+    # stockout risk and cover far past the replenishment cycle, where a markdown
+    # frees capital. Server-computed and ranked by the value tied up.
+    md = api_get("/api/v1/operations/markdown-candidates", {"top_n": 8}) or {}
+    md_rows = []
+    for c in md.get("candidates") or []:
+        md_rows.append([
+            html.Div([html.Div(c["product_name"], style={"fontWeight": 600}),
+                      html.Div(c["category"], className="small muted")]),
+            f"{c['stock']:,}",
+            f"{c['days_cover']:,.0f}",
+            f"{c['stockout_risk_pct']:.0f}%",
+            _inr(c["stock_value"]),
+            C.pill(f"−{c['suggested_markdown_pct']}%", "medium"),
+        ])
+
+    return C.card(
+        cap("ops", "inventory").title,
+        [
+            C.kpi_grid([
+                C.kpi("SKUs monitored", f"{len(rows):,}", "stores + DCs"),
+                C.kpi("At risk", f"{len(at_risk):,}", "stockout exposure", "down"),
+                C.kpi("Overstocked", f"{md.get('overstocked_skus', len(overstocked)):,}",
+                      "capital tied up", "down"),
+                C.kpi("Avg health score", f"{avg_health:.2f}", "0 = critical · 1 = healthy"),
+            ]),
+            html.Div(C.graph(fig, 190), className="mt-14"),
+            html.Div("Weakest positions — the replenishment buy-list", className="card-sub mt-14"),
+            C.table(["Product", "Location", "Stock", "Days cover", "Stockout risk", "Health", "Risk"],
+                    tbl, numeric={2, 3, 4, 5}),
+            html.Div("Markdown candidates — overstocked / idle capital to discount",
+                     className="card-sub mt-14"),
+            C.table(["Product", "Stock", "Days cover", "Stockout risk", "Capital tied up",
+                     "Suggested markdown"], md_rows, numeric={1, 2, 3, 4})
+            if md_rows else C.empty("No markdown candidates."),
+            html.Div(
+                f"Discounting these frees ~{_inr(md.get('freed_at_markdown', 0))} of "
+                f"working capital at the suggested markdowns.",
+                className="small muted mt-8") if md_rows else None,
+            html.Div("Datewise demand for one SKU", className="card-sub mt-14"),
+            html.Div(
+                dcc.Dropdown(id="op-inv-prod", options=prods,
+                             value=prods[0]["value"] if prods else None,
+                             clearable=False, className="dash-dropdown grow",
+                             placeholder="Select a product"),
+                className="cp-row",
+            ),
+            html.Div(id="op-inv-datewise"),
+        ],
+        caption="Where stock is thin (buy-list) and where it is idle (markdown list) — plus the "
+                "real daily-demand history behind any single SKU.",
+        info="<b>Score:</b> days of cover, stockout probability and supplier reliability "
+             "collapsed into one 0-1 health index. <b>Markdown candidates</b> are the opposite "
+             "failure — cover far beyond the replenishment cycle with no stockout risk; the "
+             "suggested markdown deepens with the excess cover. The <b>datewise</b> view is that "
+             "SKU's real units sold per day, so a markdown call is checked against the trend.",
+        span=2,
+    )
+
+
+@callback(Output("op-inv-datewise", "children"), Input("op-inv-prod", "value"))
+def _inventory_datewise(product_id):
+    if not product_id:
+        return C.empty("Pick a product to see its daily demand.")
+    d = api_get("/api/v1/operations/inventory-timeseries", {"product_id": product_id, "days": 120})
+    series = (d or {}).get("series") or []
+    if not series:
+        return C.empty("No daily sales history for this product.")
+
+    fig = T.figure(height=200, margin=dict(l=8, r=8, t=6, b=6))
+    fig.add_bar(x=[p["date"] for p in series], y=[p["qty"] for p in series],
+                marker_color=colors.BRAND2, width=1.0 * 86400000,
+                hovertemplate="%{x|%d %b %Y}<br>%{y} units<extra></extra>")
+    # A rolling mean line rides the bars so the trend reads through the daily noise.
+    win = 7
+    qtys = [p["qty"] for p in series]
+    roll = [round(sum(qtys[max(0, i - win + 1):i + 1]) / min(i + 1, win), 2) for i in range(len(qtys))]
+    fig.add_scatter(x=[p["date"] for p in series], y=roll, mode="lines",
+                    line=dict(color=colors.BRAND, width=2), name="7-day avg",
+                    hovertemplate="7-day avg %{y:.1f}<extra></extra>")
+    fig.update_layout(hovermode="x unified", showlegend=False,
+                      xaxis=dict(type="date", showgrid=False),
+                      yaxis=dict(title="Units/day", showgrid=True, gridcolor=colors.LIGHT["grid"]))
+
+    dc = float(d.get("days_cover") or 0)
+    return [
+        C.kpi_grid([
+            C.kpi("Current stock", f"{d.get('current_stock', 0):,}", "units on hand"),
+            C.kpi("Avg daily demand", f"{d.get('avg_daily_qty', 0):.2f}",
+                  f"over {d.get('window_days', 0)} days"),
+            C.kpi("Days of cover", f"{dc:,.0f}", "at current pace",
+                  "down" if dc > 180 else ""),
+        ]),
+        html.Div(C.graph(fig, 200), className="mt-14"),
+    ]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 2 — Automated Replenishment
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _card_replenishment(opts):
+    return C.card(
+        cap("ops", "replenishment").title,
+        [
+            html.Div(
+                [
+                    dcc.Dropdown(id="op-repl-prod", options=opts,
+                                 value=opts[0]["value"] if opts else None,
+                                 clearable=False, className="dash-dropdown grow",
+                                 placeholder="Select a product"),
+                    html.Button("Plan order", id="op-repl-go", className="cp-go", n_clicks=0),
+                ],
+                className="cp-row",
+            ),
+            html.Div(id="op-repl-out"),
+        ],
+        caption="Reorder quantity, timing and cost derived from live stock position and supplier lead time.",
+        info="<b>Policy:</b> a min/max rule — when stock falls to the <b>reorder point</b> "
+             "(demand over lead time plus safety stock), order back up to max. Supplier "
+             "reliability widens the safety buffer.",
+    )
+
+
+@callback(Output("op-repl-out", "children"),
+          Input("op-repl-go", "n_clicks"), State("op-repl-prod", "value"))
+def _replenishment(_n, product_id):
+    if not product_id:
+        return C.empty("Pick a product to plan a replenishment order.")
+    d = api_post("/api/v1/operations/replenishment", {"product_id": product_id})
+    if not d:
+        return C.empty("No replenishment plan returned for this product.")
+
+    rel = float(d.get("supplier_reliability") or 0)
+    urgent = bool(d.get("urgency_flag"))
+    stock = float(d.get("current_stock") or 0)
+
+    # Four thresholds on one axis: where stock sits now against the policy bands
+    # is the whole decision, and it only reads at a glance side by side.
+    bands = [("Safety stock", float(d.get("safety_stock") or 0), colors.ACCENT),
+             ("Reorder point", float(d.get("reorder_point") or 0), colors.WARN),
+             ("Current stock", stock, colors.BRAND),
+             ("Max stock", float(d.get("max_stock") or 0), colors.BRAND3)]
+    fig = T.figure(height=170, margin=dict(l=8, r=8, t=4, b=4))
+    fig.add_bar(y=[b[0] for b in bands], x=[b[1] for b in bands], orientation="h",
+                marker_color=[b[2] for b in bands], width=.6,
+                hovertemplate="%{y}<br>%{x:,.0f} units<extra></extra>")
+    fig.update_layout(hovermode="closest",
+                      xaxis=dict(showgrid=True, gridcolor=colors.LIGHT["grid"], title="Units"))
+
+    return [
+        C.kpi_grid([
+            C.kpi("Reorder qty", f"{d.get('reorder_qty', 0):,} units"),
+            C.kpi("Lead time", f"{float(d.get('lead_time_days') or 0):.0f} days",
+                  d.get("supplier_name", "")),
+            C.kpi("Estimated cost", _inr(d.get("estimated_cost")), "at last landed price"),
+        ]),
+        html.Div(C.graph(fig, 170), className="mt-14"),
+        html.Div(C.stat_list([
+            ("Supplier", d.get("supplier_name", "—")),
+            ("Safety stock", f"{d.get('safety_stock', 0):,} units"),
+            ("Reorder point", f"{d.get('reorder_point', 0):,} units"),
+            ("Max stock", f"{d.get('max_stock', 0):,} units"),
+        ]), className="mt-14"),
+        html.Div(C.bar_row("Supplier reliability", f"{rel * 100:.0f}%", rel * 100,
+                           "ok" if rel >= .8 else "warn" if rel >= .6 else "danger"),
+                 className="mt-14"),
+        html.Div(C.pill("Urgent — order today" if urgent else "Within tolerance",
+                        "high" if urgent else "low"), className="mt-8"),
+    ]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 3 — Warehouse Optimization
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _card_warehouse(opts):
+    return C.card(
+        cap("ops", "warehouse").title,
+        [
+            html.Div(
+                [
+                    dcc.Dropdown(id="op-wh-sel", options=opts,
+                                 value=opts[0]["value"] if opts else None,
+                                 clearable=False, className="dash-dropdown grow",
+                                 placeholder="Select a warehouse"),
+                    html.Button("Re-slot", id="op-wh-go", className="cp-go", n_clicks=0),
+                ],
+                className="cp-row",
+            ),
+            html.Div(id="op-wh-out"),
+        ],
+        caption="ABC velocity classing turned into a slotting plan — fastest movers pulled into the golden zone.",
+        info="<b>Method:</b> SKUs ranked by movement, cut at the 80/95% cumulative "
+             "thresholds into <b>A/B/C</b> classes, then mapped onto pick zones by "
+             "walking distance. Savings are modelled travel time, not headcount.",
+    )
+
+
+@callback(Output("op-wh-out", "children"),
+          Input("op-wh-go", "n_clicks"), Input("op-wh-sel", "value"))
+def _warehouse(_n, warehouse_id):
+    if not warehouse_id:
+        return C.empty("Select a warehouse to build a slotting plan.")
+    d = api_get("/api/v1/operations/warehouse-optimization", {"warehouse_id": warehouse_id})
+    if not d:
+        return C.empty("No slotting plan returned for this warehouse.")
+
+    summary = d.get("class_summary") or {}
+    # The plan is ~330 SKU rows — far too many to list, and the operator only acts
+    # on the class mix plus the handful of movers that dominate pick travel.
+    plan = d.get("slotting_plan") or []
+    if not summary and not plan:
+        return C.empty("This warehouse has no movement history to slot against.")
+
+    order = [k for k in ("A", "B", "C") if k in summary] or list(summary)
+    counts = [int(summary.get(k) or 0) for k in order]
+    total = sum(counts) or 1
+
+    fig = T.figure(height=200, showlegend=True, margin=dict(l=8, r=8, t=4, b=4))
+    fig.add_pie(labels=[f"Class {k}" for k in order], values=counts, hole=.58, sort=False,
+                marker=dict(colors=[colors.BRAND, colors.BRAND2, colors.BRAND3][:len(order)],
+                            line=dict(width=0)),
+                textinfo="percent", textfont=dict(size=11),
+                hovertemplate="%{label}<br>%{value} SKUs (%{percent})<extra></extra>")
+    fig.update_layout(hovermode="closest")
+
+    top = sorted(plan, key=lambda r: -float(r.get("total_movements") or 0))[:6]
+    tbl = []
+    for r in top:
+        moved = (r.get("assigned_zone") or "") != (r.get("recommended_zone") or "")
+        tbl.append([
+            html.Div([html.Div(r.get("product_name", "—"), style={"fontWeight": 600}),
+                      html.Div(r.get("category", ""), className="small muted")]),
+            C.pill(f"Class {r.get('abc_class', '—')}", "info"),
+            f"{float(r.get('total_movements') or 0):,.0f}",
+            f"{float(r.get('avg_daily_demand') or 0):,.1f}",
+            html.Div([html.Div(r.get("recommended_zone", "—")),
+                      html.Div("re-slot" if moved else "already slotted",
+                               className="small muted")]),
+            f"{float(r.get('pick_time_savings_pct') or 0):.0f}%",
+        ])
+
+    # Plain-language legend so a non-technical reader knows what A/B/C mean and
+    # why a class earns its zone — the classing is only useful if it's understood.
+    def _legend_row(cls, tone, headline, detail):
+        return html.Div(
+            [C.pill(f"Class {cls}", tone),
+             html.Span([html.B(headline + " "), html.Span(detail, className="muted")],
+                       className="grow", style={"fontSize": "12.5px"})],
+            className="row center", style={"gap": "10px", "padding": "5px 0"},
+        )
+
+    legend = html.Div([
+        _legend_row("A", "info", "Fast movers.",
+                    "The first ~80% of all pick movement — a small set of SKUs picked "
+                    "constantly. Slotted into Zone 1, the golden fast-pick shelves nearest dispatch."),
+        _legend_row("B", "info", "Steady movers.",
+                    "The next ~15% of movement — mid-frequency SKUs slotted into the middle zones."),
+        _legend_row("C", "info", "Slow / long tail.",
+                    "The final ~5% of movement across the bulk of the catalogue — rarely picked, "
+                    "so slotted into the far zones where walking distance matters least."),
+    ], className="mt-14")
+
+    class_opts = [{"label": f"Class {k} · {summary.get(k, 0)} SKUs", "value": k} for k in order]
+
+    return [
+        C.kpi_grid([
+            C.kpi("Pick time reduction",
+                  f"{float(d.get('estimated_pick_time_reduction_pct') or 0):.1f}%",
+                  "vs. current slotting", "up"),
+            C.kpi("SKUs slotted", f"{len(plan):,}"),
+            C.kpi("Class A share", f"{counts[0] / total * 100:.0f}%" if counts else "—",
+                  "of the golden zone"),
+        ]),
+        html.Div(C.graph(fig, 200), className="mt-14"),
+        legend,
+        html.Div("Top movers — biggest pick-travel wins", className="card-sub mt-14"),
+        C.table(["Product", "ABC", "Movements", "Daily demand", "Recommended zone", "Pick saving"],
+                tbl, numeric={2, 3, 5}),
+        html.Div("Which products sit in each class", className="card-sub mt-14"),
+        html.Div(
+            dcc.Dropdown(id="op-wh-class", options=class_opts,
+                         value=order[0] if order else None,
+                         clearable=False, className="dash-dropdown grow"),
+            className="cp-row",
+        ),
+        html.Div(id="op-wh-class-out"),
+    ]
+
+
+@callback(Output("op-wh-class-out", "children"),
+          Input("op-wh-class", "value"), State("op-wh-sel", "value"))
+def _warehouse_class(abc_class, warehouse_id):
+    if not abc_class or not warehouse_id:
+        return C.empty("Pick a class to list its products.")
+    d = api_get("/api/v1/operations/warehouse-optimization", {"warehouse_id": warehouse_id})
+    plan = (d or {}).get("slotting_plan") or []
+    members = sorted([r for r in plan if r.get("abc_class") == abc_class],
+                     key=lambda r: -float(r.get("total_movements") or 0))
+    if not members:
+        return C.empty("No products in this class.")
+
+    rows = [
+        [html.Div([html.Div(r.get("product_name", "—"), style={"fontWeight": 600}),
+                   html.Div(r.get("category", ""), className="small muted")]),
+         f"{float(r.get('total_movements') or 0):,.0f}",
+         f"{float(r.get('avg_daily_demand') or 0):,.1f}",
+         r.get("recommended_zone", "—")]
+        for r in members
+    ]
+    return [
+        html.Div(f"{len(members):,} SKUs in Class {abc_class}", className="small muted mb-10"),
+        C.table(["Product", "Movements", "Daily demand", "Recommended zone"], rows, numeric={1, 2}),
+    ]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 4 — Logistics, Route & Fleet Optimization
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Free MapLibre raster styles (no access token). chart_theme.js swaps LIGHT->DARK
+# when the theme toggle fires, so the tiles match the rest of the surface.
+MAP_STYLE_LIGHT = "carto-positron"
+MAP_STYLE_DARK = "carto-darkmatter"
+
+# The route map wants live pan/zoom, unlike the static analytical charts, so it
+# opts out of the shared no-interaction GRAPH_CONFIG.
+MAP_CONFIG = {"displayModeBar": False, "responsive": True,
+              "scrollZoom": True, "doubleClick": "reset"}
+
+
+def _fit_view(lats, lngs):
+    """Centre + zoom that frames every stop with a comfortable margin.
+
+    Longitude is padded a touch harder than latitude because the card is wider
+    than it is tall, and the zoom is derived from whichever span dominates so a
+    single-metro tour comes in close and a coast-to-coast one pulls right back.
+    """
+    lat_c = (min(lats) + max(lats)) / 2
+    lng_c = (min(lngs) + max(lngs)) / 2
+    lat_span = (max(lats) - min(lats)) or 0.35
+    lng_span = (max(lngs) - min(lngs)) or 0.35
+    span = max(lat_span * 1.55, lng_span * 1.15)
+    zoom = 4.0 + math.log2(22.0 / max(span, 0.35))
+    return lat_c, lng_c, max(3.3, min(zoom, 9.8))
+
+
+def _route_map(olat, olng, lats, lngs, path_lat, path_lng, pts, sizes):
+    """A real, interactive India map of the solved delivery tour.
+
+    Layered for depth: a soft glow under the route line, a white halo under each
+    pin, the numbered stop on top, and the depot rendered as its own accent
+    marker. Everything is a Scattermap trace, so pan/zoom stay live.
+    """
+    lat_c, lng_c, zoom = _fit_view(path_lat, path_lng)
+
+    fig = go.Figure()
+
+    # Route line — a translucent glow beneath a crisp stroke reads as a drawn
+    # path rather than a hairline, and survives against busy tiles.
+    fig.add_trace(go.Scattermap(
+        lat=path_lat, lon=path_lng, mode="lines",
+        line=dict(color=colors.BRAND2, width=8),
+        opacity=0.22, hoverinfo="skip", showlegend=False))
+    fig.add_trace(go.Scattermap(
+        lat=path_lat, lon=path_lng, mode="lines",
+        line=dict(color=colors.BRAND, width=2.6),
+        hoverinfo="skip", showlegend=False))
+
+    # White halo lifts every pin off the map, whichever theme is showing.
+    fig.add_trace(go.Scattermap(
+        lat=lats, lon=lngs, mode="markers",
+        marker=dict(size=[s + 6 for s in sizes], color="#ffffff"),
+        opacity=0.95, hoverinfo="skip", showlegend=False))
+
+    # Numbered stops, sized by order load. The sequence number sits inside.
+    fig.add_trace(go.Scattermap(
+        lat=lats, lon=lngs, mode="markers+text",
+        marker=dict(size=sizes, color=colors.BRAND),
+        text=[str(p["n"]) for p in pts], textposition="middle center",
+        textfont=dict(size=12, color="#ffffff"),
+        customdata=[[p["n"], p["city"], p["sid"] or "—", p["items"]] for p in pts],
+        hovertemplate="<b>Stop %{customdata[0]} · %{customdata[1]}</b><br>"
+                      "%{customdata[2]} · %{customdata[3]} items<extra></extra>",
+        showlegend=False))
+
+    # City names as a light label layer, offset above the pins.
+    fig.add_trace(go.Scattermap(
+        lat=lats, lon=lngs, mode="text",
+        text=[p["city"] for p in pts], textposition="top center",
+        textfont=dict(size=10.5, color=colors.INK_SOFT),
+        hoverinfo="skip", showlegend=False))
+
+    # Dispatch depot — accent glow + solid pin, on its own so it never reads as
+    # just another stop.
+    fig.add_trace(go.Scattermap(
+        lat=[olat], lon=[olng], mode="markers",
+        marker=dict(size=38, color=colors.ACCENT),
+        opacity=0.20, hoverinfo="skip", showlegend=False))
+    fig.add_trace(go.Scattermap(
+        lat=[olat], lon=[olng], mode="markers+text",
+        marker=dict(size=22, color=colors.ACCENT),
+        text=["◆"], textposition="middle center",
+        textfont=dict(size=13, color="#ffffff"),
+        hovertemplate="<b>Dispatch depot</b><br>route origin & return<extra></extra>",
+        showlegend=False))
+    fig.add_trace(go.Scattermap(
+        lat=[olat], lon=[olng], mode="text",
+        text=["Dispatch DC"], textposition="bottom center",
+        textfont=dict(size=10.5, color=colors.ACCENT_INK),
+        hoverinfo="skip", showlegend=False))
+
+    fig.update_layout(
+        height=440,
+        margin=dict(l=0, r=0, t=0, b=0),
+        paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(family=T.FONT),
+        hovermode="closest",
+        hoverlabel=dict(bgcolor=colors.LIGHT["tooltip_bg"],
+                        bordercolor=colors.LIGHT["tooltip_line"],
+                        font=dict(family=T.FONT, size=11.5,
+                                  color=colors.LIGHT["tooltip_ink"])),
+        map=dict(style=MAP_STYLE_LIGHT,
+                 center=dict(lat=lat_c, lon=lng_c), zoom=zoom,
+                 bearing=0, pitch=0),
+        transition=dict(duration=0),
+    )
+    return fig
+
+
+def _card_route(opts):
+    return C.card(
+        cap("ops", "route").title,
+        [
+            html.Div(
+                [
+                    dcc.Dropdown(id="op-route-wh", options=opts,
+                                 value=opts[0]["value"] if opts else None,
+                                 clearable=False, className="dash-dropdown grow",
+                                 placeholder="Select a dispatch origin"),
+                    html.Button("Optimise route", id="op-route-go", className="cp-go", n_clicks=0),
+                ],
+                className="cp-row",
+            ),
+            html.Div(id="op-route-out"),
+        ],
+        caption="The day's drop sequence out of one distribution centre, plotted on a live map "
+                "against the distance a naive round trip would cover.",
+        info="<b>Solver:</b> a nearest-neighbour tour with 2-opt improvement over the "
+             "haversine distance matrix, closing back at the origin. <b>Baseline</b> is the "
+             "unordered depot-and-back-again pattern the route replaces. <b>Map:</b> each "
+             "pin sits at the outlet's real coordinates on OpenStreetMap/Carto tiles — pan "
+             "and scroll to zoom; the numbered pins follow the solved visiting order and are "
+             "sized by the orders on board.",
+        span=2,
+    )
+
+
+@callback(Output("op-route-out", "children"),
+          Input("op-route-go", "n_clicks"), State("op-route-wh", "value"))
+def _route(_n, warehouse_id):
+    if not warehouse_id:
+        return C.empty("Select a warehouse to optimise its delivery route.")
+    d = api_post("/api/v1/operations/route-optimization", {"warehouse_id": warehouse_id})
+    if not d:
+        return C.empty("No route could be solved for this warehouse.")
+
+    stops = d.get("route") or []
+    origin = d.get("origin") or {}
+    if not stops or origin.get("lat") is None:
+        return C.empty("This warehouse has no open deliveries to route.")
+
+    seq = d.get("route_order") or []
+    stop_ids = seq[1:-1] if len(seq) >= len(stops) + 2 else [""] * len(stops)
+
+    # Several stops can share a city centroid; on a real map a big nudge would
+    # fling a marker into the next district, so we fan co-located stops out in a
+    # tight spiral (~4-6 km) — enough to unstack the pins without lying about
+    # where the outlet actually is.
+    seen: dict[tuple, int] = {}
+    pts = []
+    for i, s in enumerate(stops):
+        key = (round(float(s.get("lat") or 0), 3), round(float(s.get("lng") or 0), 3))
+        k = seen.get(key, 0)
+        seen[key] = k + 1
+        ang = k * 2.399963  # golden angle — successive pins never line up
+        pts.append({
+            "lat": float(s.get("lat") or 0) + .05 * k * math.cos(ang),
+            "lng": float(s.get("lng") or 0) + .05 * k * math.sin(ang),
+            "city": s.get("city", "—"),
+            "items": int(s.get("items") or 0),
+            "sid": stop_ids[i] if i < len(stop_ids) else "",
+            "n": i + 1,
+        })
+
+    olat, olng = float(origin["lat"]), float(origin["lng"])
+    lats = [p["lat"] for p in pts]
+    lngs = [p["lng"] for p in pts]
+    # The tour is drawn on real tiles now, so the line follows true coordinates:
+    # depot -> each drop in solved order -> back to the depot.
+    path_lat = [olat] + lats + [olat]
+    path_lng = [olng] + lngs + [olng]
+
+    items = [p["items"] for p in pts]
+    lo, span = min(items), (max(items) - min(items)) or 1
+    # Marker area scales with load; floor of 17 keeps the sequence number legible
+    # inside the smallest pin.
+    sizes = [17 + (v - lo) / span * 21 for v in items]
+
+    fig = _route_map(olat, olng, lats, lngs, path_lat, path_lng, pts, sizes)
+
+    saving = float(d.get("saving_pct") or 0)
+    crumbs = []
+    for i, label in enumerate(seq):
+        if i:
+            crumbs.append(html.Span("›", className="small muted"))
+        crumbs.append(html.Span(label, className="chip"))
+
+    return [
+        C.kpi_grid([
+            C.kpi("Optimised distance", f"{float(d.get('optimised_distance_km') or 0):,.0f} km"),
+            C.kpi("Baseline distance", f"{float(d.get('baseline_distance_km') or 0):,.0f} km",
+                  "unoptimised round trips"),
+            C.kpi("Distance saved", f"{float(d.get('distance_saved_km') or 0):,.0f} km",
+                  f"{saving:.1f}% shorter", "up"),
+            C.kpi("Drive time", f"{float(d.get('estimated_time_hrs') or 0):,.1f} hrs",
+                  "single vehicle"),
+            C.kpi("Orders on board", f"{d.get('total_orders', 0):,}",
+                  f"{len(pts)} drops"),
+        ]),
+        html.Div(dcc.Graph(figure=fig, config=MAP_CONFIG,
+                           className="route-map", style={"height": "440px"}),
+                 className="mt-14"),
+        html.Div(crumbs, className="row-wrap mt-14"),
+        html.Div(C.bar_row("Distance saved vs. baseline", f"{saving:.1f}%", saving,
+                           "ok" if saving >= 20 else "warn" if saving >= 8 else "danger"),
+                 className="mt-14"),
+    ]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 5 — Store Vision AI
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _card_store_vision(opts):
+    return C.card(
+        cap("ops", "store_vision").title,
+        [
+            html.Div(
+                [
+                    dcc.Dropdown(id="op-sv-store", options=opts, value=None,
+                                 clearable=True, className="dash-dropdown grow",
+                                 placeholder="All stores — network-wide"),
+                    html.Button("Analyse", id="op-sv-go", className="cp-go", n_clicks=0),
+                ],
+                className="cp-row",
+            ),
+            html.Div(id="op-sv-out"),
+        ],
+        caption="When visits arrive, how long they last, how deep they go — and how much of "
+                "that turns into a purchase the same day.",
+        info="<b>Source:</b> the session log (customer_sessions.csv, 150,000 logged visits) — "
+             "<b>not camera telemetry</b>. There is no vision feed anywhere in this dataset "
+             "and none is simulated here. <b>Traffic</b> buckets the real <b>login_time</b> by "
+             "hour, <b>dwell</b> is the logged <b>duration_mins</b>, <b>engagement</b> is "
+             "<b>pages_visited</b>, and <b>conversion</b> is the share of sessions whose "
+             "customer ordered the same day — shown against the base rate any customer-day "
+             "would hit anyway, so the reader can see whether a visit signals intent. Sessions "
+             "carry no store_id, so picking a store narrows the set to that store's own "
+             "shoppers and scores conversion on orders placed there. A camera would add "
+             "anonymous walk-in footfall and in-aisle position; neither is claimed here.",
+        span=2,
+    )
+
+
+@callback(Output("op-sv-out", "children"),
+          Input("op-sv-go", "n_clicks"), Input("op-sv-store", "value"))
+def _store_vision(_n, store_id):
+    d = api_get("/api/v1/operations/store-vision",
+                {"store_id": store_id} if store_id else None)
+    if not d or d.get("error") or not d.get("sessions"):
+        return C.empty("No session activity recorded for this scope.")
+
+    hours = d.get("hours") or []
+    traffic = d.get("traffic_by_hour") or []
+    dwell = d.get("dwell_by_hour") or []
+
+    # Volume and dwell answer different questions — when to staff, and how long a
+    # visit holds — so they share an x axis and nothing else. Bars for the count,
+    # a line on its own right-hand scale for the minutes.
+    fig = T.figure(height=210, showlegend=True, margin=dict(l=8, r=8, t=4, b=4))
+    fig.add_bar(x=hours, y=traffic, name="Sessions", marker_color=colors.BRAND3, width=.62,
+                hovertemplate="%{x}<br>%{y:,} sessions<extra></extra>")
+    fig.add_scatter(x=hours, y=dwell, name="Avg dwell", yaxis="y2", mode="lines+markers",
+                    line=dict(color=colors.BRAND, width=2, shape="spline"),
+                    marker=dict(color=colors.BRAND, size=4),
+                    hovertemplate="%{x}<br>%{y:.1f} min dwell<extra></extra>")
+    # yaxis2 is not part of the shared base layout, so its chrome is spelled out
+    # against the same tokens rather than inheriting Plotly's defaults.
+    _muted = dict(size=10.5, color=colors.LIGHT["ink_muted"])
+    fig.update_layout(
+        yaxis=dict(title="Sessions", showgrid=True, gridcolor=colors.LIGHT["grid"]),
+        yaxis2=dict(title=dict(text="Dwell (min)", font=_muted), tickfont=_muted,
+                    overlaying="y", side="right", showgrid=False, zeroline=False,
+                    showline=False, ticks="", rangemode="tozero", automargin=True),
+    )
+
+    conv = float(d.get("conversion_pct") or 0)
+    base = float(d.get("baseline_purchase_rate_pct") or 0)
+    lift = float(d.get("conversion_lift_pct") or 0)
+    scope = d.get("store_name") or "Network-wide"
+
+    devices = d.get("by_device") or []
+    dev_total = sum(x["sessions"] for x in devices) or 1
+    dev_rows = [
+        C.bar_row(f"{x['device']} · {x['avg_dwell_mins']} min · {x['conversion_pct']}% converted",
+                  f"{x['sessions']:,}", x["sessions"] / dev_total * 100)
+        for x in devices
+    ]
+
+    rows = []
+    for s in (d.get("by_store") or [])[:8]:
+        attach = float(s["digital_attach_pct"])
+        rows.append([
+            html.Div([html.Div(s["store_name"], style={"fontWeight": 600}),
+                      html.Div(f"{s['city']} · {s['store_type']}", className="small muted")]),
+            f"{s['sessions']:,}",
+            f"{s['orders']:,}",
+            C.money(s["revenue"]),
+            C.money(s["aov"]),
+            f"{s['avg_dwell_mins']:.0f} min",
+            C.pill(f"{attach:.2f}%", "low" if attach >= 2 else
+                                     "medium" if attach >= 1.5 else "high"),
+        ])
+
+    return [
+        C.kpi_grid([
+            C.kpi("Sessions", f"{d['sessions']:,}", scope),
+            C.kpi("Peak hour", d.get("peak_hour", "—"),
+                  f"{d.get('peak_hour_sessions', 0):,} logins · "
+                  f"{float(d.get('peak_to_quiet_spread_pct') or 0):.1f}% over quietest"),
+            C.kpi("Avg dwell", f"{float(d.get('avg_dwell_mins') or 0):.1f} min",
+                  f"median {float(d.get('median_dwell_mins') or 0):.0f} min"),
+            C.kpi("Pages per visit", f"{float(d.get('avg_pages') or 0):.1f}"),
+            C.kpi("Same-day conversion", f"{conv:.2f}%", f"base rate {base:.2f}%",
+                  "up" if lift > 0 else "down"),
+        ]),
+        html.Div(C.graph(fig, 210), className="mt-14"),
+        html.Div(dev_rows, className="mt-14"),
+        html.Div(C.stat_list([
+            ("Converting sessions",
+             f"{d.get('converting_sessions', 0):,} of {d['sessions']:,}"),
+            ("Same-day order value per converting session",
+             C.money(d.get("revenue_per_converting_session"))),
+            ("Conversion against base rate", f"{lift:+.2f} pts"),
+        ]), className="mt-14"),
+        html.Div(C.table(["Store", "Linked sessions", "Orders", "Revenue", "AOV",
+                          "Avg dwell", "Digital attach"], rows, numeric={1, 2, 3, 4, 5}),
+                 className="mt-14"),
+        html.Div("Linked sessions are visits credited to a store because that customer "
+                 "ordered there the same day — the only link the session log supports. "
+                 "Digital attach is those sessions as a share of the store's own orders.",
+                 className="small muted mt-8"),
+    ]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+
+def layout():
+    prods = _product_options()
+    whs = _warehouse_options()
+    stores = _store_options()
+    banner = [] if (prods or whs or stores) else [C.offline_banner()]
+    return module_page(
+        D.index, D.title, D.summary,
+        banner + [
+            html.Div(
+                [
+                    _card_inventory(prods),
+                    _card_replenishment(prods),
+                    _card_warehouse(whs),
+                    _card_route(whs),
+                    _card_store_vision(stores),
+                ],
+                className="grid-2",
+            )
+        ],
+    )
