@@ -1,0 +1,151 @@
+store_id,store_name,city,region,tier,store_type,size_sqft,open_date,is_active
+S0001,Hyderabad Store 1,Hyderabad,South,Tier1,Outlet,5012,2017-07-03,True
+S0002,Hyderabad Store 2,Hyderabad,South,Tier3,Mall,10674,2019-09-25,True
+S0003,Bengaluru Store 3,Bengaluru,South,Tier1,High Street,9279,2021-10-01,True
+S0004,Pune Store 4,Pune,West,Tier3,Standalone,4611,2020-01-14,True
+S0005,Mumbai Store 5,Mumbai,West,Tier1,Standalone,6574,2018-02-12,True
+S0006,Surat Store 6,Surat,West,Tier1,Mall,7224,2016-02-01,True
+S0007,Kochi Store 7,Kochi,South,Tier3,Outlet,14223,2015-06-27,True
+S0008,Vadodara Store 8,Vadodara,West,Tier1,Standalone,2291,2021-03-11,True
+S0009,Agra Store 9,Agra,North,Tier2,High Street,12543,2015-10-12,True
+S0010,Ahmedabad Store 10,Ahmedabad,West,Tier2,Mall,4814,2016-02-18,True
+S0011,Indore Store 11,Indore,Central,Tier3,Outlet,3664,2019-02-25,True
+S0012,Jaipur Store 12,Jaipur,North,Tier3,Mall,10980,2016-12-01,True
+S0013,Ahmedabad Store 13,Ahmedabad,West,Tier1,Standalone,7216,2018-01-10,False
+S0014,Vadodara Store 14,Vadodara,West,Tier1,Outlet,14809,2015-08-18,True
+S0015,Delhi Store 15,Delhi,North,Tier2,Standalone,5386,2015-09-29,True
+S0016,Ludhiana Store 16,Ludhiana,North,Tier3,Outlet,4483,2020-08-06,True
+S0017,Indore Store 17,Indore,Central,Tier1,Outlet,3287,2017-10-07,True
+S0018,Vadodara Store 18,Vadodara,West,Tier2,Standalone,10560,2019-06-24,True
+S0019,Chennai Store 19,Chennai,South,Tier3,Standalone,2489,2015-07-12,True
+S0020,Chennai Store 20,Chennai,South,Tier3,High Street,13977,2019-09-26,True
+S0021,Chandigarh Store 21,Chandigarh,North,Tier2,Standalone,9669,2017-10-26,False
+S0022,Mumbai Store 22,Mumbai,West,Tier3,Mall,12169,2021-01-08,True
+S0023,Surat Store 23,Surat,West,Tier1,Outlet,8123,2016-10-09,True
+S0024,Jaipur Store 24,Jaipur,North,Tier3,High Street,9317,2016-03-11,True
+S0025,Lucknow Store 25,Lucknow,North,Tier3,High Street,3504,2019-03-12,True
+S0026,Vadodara Store 26,Vadodara,West,Tier3,Mall,10813,2018-08-20,True
+S0027,Hyderabad Store 27,Hyderabad,South,Tier2,Outlet,4923,2015-08-26,True
+S0028,Ludhiana Store 28,Ludhiana,North,Tier1,Mall,12991,2020-06-13,True
+S0029,Vadodara Store 29,Vadodara,West,Tier1,High Street,11809,2020-04-30,False
+S0030,Kolkata Store 30,Kolkata,East,Tier2,Standalone,4470,2021-01-17,True
+S0031,Pune Store 31,Pune,West,Tier3,Outlet,7537,2019-03-10,True
+S0032,Patna Store 32,Patna,East,Tier2,Mall,5061,2017-07-09,True
+S0033,Mumbai Store 33,Mumbai,West,Tier3,High Street,10641,2017-06-21,True
+S0034,Delhi Store 34,Delhi,North,Tier1,Mall,1514,2018-09-15,True
+S0035,Ahmedabad Store 35,Ahmedabad,West,Tier2,Standalone,4510,2021-01-17,True
+S0036,Ludhiana Store 36,Ludhiana,North,Tier3,Standalone,4981,2020-04-21,True
+S0037,Pune Store 37,Pune,West,Tier1,Mall,11796,2019-11-01,True
+S0038,Bhopal Store 38,Bhopal,Central,Tier2,Mall,12032,2016-02-08,True
+S0039,Surat Store 39,Surat,West,Tier1,High Street,4139,2017-02-18,True
+S0040,Chennai Store 40,Chennai,South,Tier2,High Street,5563,2020-03-09,True
+S0041,Bengaluru Store 41,Bengaluru,South,Tier2,Mall,1828,2021-01-23,True
+S0042,Bengaluru Store 42,Bengaluru,South,Tier1,High Street,7658,2020-06-12,True
+S0043,Chandigarh Store 43,Chandigarh,North,Tier1,High Street,7209,2015-01-09,False
+S0044,Jaipur Store 44,Jaipur,North,Tier2,Outlet,7930,2021-03-26,True
+S0045,Nagpur Store 45,Nagpur,Central,Tier1,High Street,5861,2017-06-10,False
+S0046,Ludhiana Store 46,Ludhiana,North,Tier3,Mall,13254,2018-07-08,True
+S0047,Ludhiana Store 47,Ludhiana,North,Tier2,High Street,1931,2020-09-11,True
+S0048,Kolkata Store 48,Kolkata,East,Tier1,Mall,12062,2017-08-21,True
+S0049,Ludhiana Store 49,Ludhiana,North,Tier1,Mall,11147,2015-12-02,True
+S0050,Ludhiana Store 50,Ludhiana,North,Tier3,Outlet,5272,2017-04-16,True
+S0051,Surat Store 51,Surat,West,Tier1,Outlet,7484,2016-06-20,True
+S0052,Lucknow Store 52,Lucknow,North,Tier2,Outlet,13318,2015-10-25,True
+S0053,Agra Store 53,Agra,North,Tier3,Mall,2200,2021-01-11,True
+S0054,Jaipur Store 54,Jaipur,North,Tier1,Outlet,2127,2017-09-27,True
+S0055,Kolkata Store 55,Kolkata,East,Tier2,Outlet,11021,2020-12-06,True
+S0056,Vadodara Store 56,Vadodara,West,Tier2,Mall,3200,2017-12-19,True
+S0057,Hyderabad Store 57,Hyderabad,South,Tier3,High Street,5462,2018-02-28,True
+S0058,Surat Store 58,Surat,West,Tier1,Outlet,9280,2020-06-24,True
+S0059,Delhi Store 59,Delhi,North,Tier1,Standalone,14588,2018-02-07,True
+S0060,Surat Store 60,Surat,West,Tier1,Outlet,3647,2019-12-15,True
+S0061,Bhopal Store 61,Bhopal,Central,Tier3,Mall,2832,2015-11-05,False
+S0062,Chennai Store 62,Chennai,South,Tier3,Mall,14674,2019-02-21,True
+S0063,Chennai Store 63,Chennai,South,Tier2,High Street,1685,2018-06-16,True
+S0064,Delhi Store 64,Delhi,North,Tier2,High Street,12174,2017-10-19,True
+S0065,Kochi Store 65,Kochi,South,Tier3,Standalone,11168,2016-09-25,False
+S0066,Ahmedabad Store 66,Ahmedabad,West,Tier1,High Street,7755,2015-04-12,True
+S0067,Surat Store 67,Surat,West,Tier2,High Street,5371,2016-10-14,True
+S0068,Hyderabad Store 68,Hyderabad,South,Tier2,Mall,8711,2017-06-30,True
+S0069,Indore Store 69,Indore,Central,Tier2,Outlet,14443,2017-07-21,True
+S0070,Pune Store 70,Pune,West,Tier2,Outlet,5564,2015-10-12,False
+S0071,Jaipur Store 71,Jaipur,North,Tier2,Standalone,12133,2021-01-05,True
+S0072,Mumbai Store 72,Mumbai,West,Tier1,Outlet,3925,2021-07-06,False
+S0073,Jaipur Store 73,Jaipur,North,Tier1,Mall,10774,2019-11-15,True
+S0074,Surat Store 74,Surat,West,Tier2,Mall,7311,2021-06-19,True
+S0075,Delhi Store 75,Delhi,North,Tier3,Standalone,1027,2020-10-30,False
+S0076,Vadodara Store 76,Vadodara,West,Tier3,High Street,6967,2019-11-02,True
+S0077,Surat Store 77,Surat,West,Tier3,Outlet,11868,2016-05-25,True
+S0078,Lucknow Store 78,Lucknow,North,Tier3,Outlet,11926,2019-07-31,True
+S0079,Lucknow Store 79,Lucknow,North,Tier3,High Street,4143,2019-09-19,True
+S0080,Chandigarh Store 80,Chandigarh,North,Tier3,High Street,11084,2021-05-20,True
+S0081,Vadodara Store 81,Vadodara,West,Tier1,Outlet,5700,2017-05-10,True
+S0082,Ludhiana Store 82,Ludhiana,North,Tier3,Outlet,8618,2019-12-15,True
+S0083,Pune Store 83,Pune,West,Tier3,Standalone,14004,2016-11-26,True
+S0084,Lucknow Store 84,Lucknow,North,Tier3,Outlet,2530,2017-08-20,True
+S0085,Ahmedabad Store 85,Ahmedabad,West,Tier1,High Street,1400,2015-07-09,True
+S0086,Nagpur Store 86,Nagpur,Central,Tier3,Mall,8461,2019-08-25,True
+S0087,Ludhiana Store 87,Ludhiana,North,Tier1,Standalone,9099,2019-06-25,True
+S0088,Mumbai Store 88,Mumbai,West,Tier1,Standalone,4585,2016-12-21,True
+S0089,Patna Store 89,Patna,East,Tier2,Mall,10132,2017-10-17,True
+S0090,Hyderabad Store 90,Hyderabad,South,Tier2,High Street,14130,2020-03-18,True
+S0091,Vadodara Store 91,Vadodara,West,Tier3,Outlet,13374,2019-12-18,True
+S0092,Patna Store 92,Patna,East,Tier2,Standalone,3607,2020-04-28,True
+S0093,Ahmedabad Store 93,Ahmedabad,West,Tier3,Outlet,13547,2020-11-05,True
+S0094,Ahmedabad Store 94,Ahmedabad,West,Tier2,Standalone,2269,2018-03-16,True
+S0095,Surat Store 95,Surat,West,Tier2,Mall,3267,2016-09-09,True
+S0096,Chennai Store 96,Chennai,South,Tier3,High Street,2052,2019-08-27,True
+S0097,Vadodara Store 97,Vadodara,West,Tier2,Standalone,2020,2017-04-27,True
+S0098,Chandigarh Store 98,Chandigarh,North,Tier3,Mall,13543,2021-06-16,True
+S0099,Mumbai Store 99,Mumbai,West,Tier2,Outlet,13344,2019-05-17,True
+S0100,Bhopal Store 100,Bhopal,Central,Tier3,High Street,8999,2017-06-17,True
+S0101,Nagpur Store 101,Nagpur,Central,Tier1,Standalone,6507,2019-07-15,True
+S0102,Indore Store 102,Indore,Central,Tier1,Mall,7455,2021-08-21,True
+S0103,Mumbai Store 103,Mumbai,West,Tier1,Standalone,3223,2020-03-06,True
+S0104,Jaipur Store 104,Jaipur,North,Tier2,Outlet,4467,2020-02-06,True
+S0105,Chandigarh Store 105,Chandigarh,North,Tier2,Standalone,5133,2015-12-02,True
+S0106,Vadodara Store 106,Vadodara,West,Tier1,Outlet,4673,2015-10-09,True
+S0107,Delhi Store 107,Delhi,North,Tier1,High Street,4266,2015-03-25,True
+S0108,Ahmedabad Store 108,Ahmedabad,West,Tier1,Standalone,11968,2016-04-13,True
+S0109,Pune Store 109,Pune,West,Tier2,Outlet,13564,2019-02-19,True
+S0110,Agra Store 110,Agra,North,Tier3,Mall,13743,2016-11-01,False
+S0111,Hyderabad Store 111,Hyderabad,South,Tier3,Mall,6111,2021-06-16,True
+S0112,Chandigarh Store 112,Chandigarh,North,Tier2,High Street,2245,2021-08-22,True
+S0113,Ahmedabad Store 113,Ahmedabad,West,Tier1,Outlet,14931,2021-09-25,True
+S0114,Ludhiana Store 114,Ludhiana,North,Tier1,Outlet,9728,2019-10-21,True
+S0115,Bengaluru Store 115,Bengaluru,South,Tier3,Outlet,1207,2019-09-17,True
+S0116,Hyderabad Store 116,Hyderabad,South,Tier2,Outlet,11413,2020-02-27,True
+S0117,Bhopal Store 117,Bhopal,Central,Tier1,Outlet,11091,2021-01-13,True
+S0118,Indore Store 118,Indore,Central,Tier2,Outlet,6280,2017-10-02,True
+S0119,Bengaluru Store 119,Bengaluru,South,Tier2,Standalone,4995,2020-03-18,True
+S0120,Chandigarh Store 120,Chandigarh,North,Tier2,Mall,9098,2018-08-24,True
+S0121,Pune Store 121,Pune,West,Tier2,Outlet,6576,2018-02-19,True
+S0122,Jaipur Store 122,Jaipur,North,Tier3,Mall,9464,2017-02-21,True
+S0123,Bhopal Store 123,Bhopal,Central,Tier2,High Street,12314,2020-05-04,True
+S0124,Nagpur Store 124,Nagpur,Central,Tier2,Mall,2524,2018-04-20,True
+S0125,Ahmedabad Store 125,Ahmedabad,West,Tier2,Outlet,8753,2021-03-17,True
+S0126,Bhopal Store 126,Bhopal,Central,Tier3,Outlet,6764,2020-02-02,True
+S0127,Jaipur Store 127,Jaipur,North,Tier1,Mall,12817,2017-02-27,True
+S0128,Vadodara Store 128,Vadodara,West,Tier3,High Street,4138,2017-06-05,True
+S0129,Jaipur Store 129,Jaipur,North,Tier3,Outlet,2647,2017-03-06,True
+S0130,Kochi Store 130,Kochi,South,Tier1,Outlet,1231,2020-12-27,True
+S0131,Delhi Store 131,Delhi,North,Tier1,Outlet,12426,2016-06-01,True
+S0132,Nagpur Store 132,Nagpur,Central,Tier1,Mall,10405,2018-03-10,True
+S0133,Indore Store 133,Indore,Central,Tier2,High Street,1841,2017-10-31,False
+S0134,Nagpur Store 134,Nagpur,Central,Tier1,Mall,7565,2020-07-07,True
+S0135,Delhi Store 135,Delhi,North,Tier1,High Street,14289,2021-04-24,False
+S0136,Bengaluru Store 136,Bengaluru,South,Tier1,Mall,10143,2019-09-01,True
+S0137,Agra Store 137,Agra,North,Tier1,Standalone,8381,2019-12-19,True
+S0138,Ludhiana Store 138,Ludhiana,North,Tier2,Outlet,10316,2021-12-18,True
+S0139,Hyderabad Store 139,Hyderabad,South,Tier1,High Street,5335,2015-11-29,True
+S0140,Kolkata Store 140,Kolkata,East,Tier3,Mall,3564,2015-01-11,True
+S0141,Agra Store 141,Agra,North,Tier2,Outlet,1534,2017-08-06,True
+S0142,Lucknow Store 142,Lucknow,North,Tier3,Standalone,2166,2017-08-14,False
+S0143,Ludhiana Store 143,Ludhiana,North,Tier3,High Street,7965,2016-04-15,True
+S0144,Chennai Store 144,Chennai,South,Tier2,High Street,2169,2015-09-02,True
+S0145,Lucknow Store 145,Lucknow,North,Tier3,Outlet,8195,2016-05-24,True
+S0146,Lucknow Store 146,Lucknow,North,Tier3,Standalone,5460,2020-08-11,True
+S0147,Indore Store 147,Indore,Central,Tier1,Mall,8078,2018-08-13,True
+S0148,Mumbai Store 148,Mumbai,West,Tier1,High Street,12047,2021-06-14,True
+S0149,Mumbai Store 149,Mumbai,West,Tier3,Outlet,10441,2015-06-14,True
+S0150,Kolkata Store 150,Kolkata,East,Tier2,Standalone,5557,2017-01-13,False

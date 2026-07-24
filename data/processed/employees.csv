@@ -1,0 +1,2501 @@
+employee_id,store_id,name,role,join_date,salary,performance_score,is_active
+E00001,S0085,Devika Pandey,Warehouse Staff,2022-01-28,108836,3.4,True
+E00002,S0057,Yashica Kala,Store Manager,2021-10-30,61548,4.5,False
+E00003,S0075,Vasatika Kapur,Customer Service Rep,2019-03-12,21000,4.7,True
+E00004,S0105,Inaya Pillai,Sales Associate,2020-11-07,95065,2.6,True
+E00005,S0101,Arya Kara,Visual Merchandiser,2023-02-16,117422,2.6,True
+E00006,S0107,Atharv Loke,Store Manager,2019-05-20,116206,4.7,True
+E00007,S0130,Pranit Mahajan,Cashier,2023-08-06,15568,3.6,True
+E00008,S0111,Harinakshi Panchal,Warehouse Staff,2023-09-14,117377,4.8,True
+E00009,S0149,Pratyush Dhar,Cashier,2019-06-10,28573,3.2,True
+E00010,S0083,Ekaraj Dhar,Security,2022-09-11,94822,4.7,True
+E00011,S0071,Gavin Wali,Security,2021-11-05,53557,3.4,True
+E00012,S0106,Krisha Saini,Stock Associate,2021-07-09,108306,4.2,True
+E00013,S0056,Harita Dugar,Visual Merchandiser,2020-05-08,96810,4.1,True
+E00014,S0034,Devika Nair,Cashier,2023-08-26,86105,4.1,True
+E00015,S0030,Charles Dugal,Customer Service Rep,2023-05-22,91389,3.7,True
+E00016,S0107,Chandran Bumb,Stock Associate,2022-09-27,16673,3.6,True
+E00017,S0038,Saanvi Samra,Store Manager,2018-08-20,41201,2.8,True
+E00018,S0074,Riya Sachdeva,Stock Associate,2019-08-23,23130,4.1,True
+E00019,S0139,Tanveer Vala,Store Manager,2022-01-09,74322,2.3,False
+E00020,S0144,Hemani Sani,Visual Merchandiser,2022-05-12,46142,3.5,True
+E00021,S0074,Bhanumati Sur,Store Manager,2022-04-12,65797,3.2,True
+E00022,S0081,Chakradev Kannan,Store Manager,2018-02-23,112474,2.8,True
+E00023,S0114,Christopher Amble,Visual Merchandiser,2022-02-15,113973,3.8,True
+E00024,S0051,Charvi Kakar,Visual Merchandiser,2021-04-19,73827,2.5,True
+E00025,S0048,Aadhya Mann,Cashier,2023-10-06,30643,3.1,True
+E00026,S0143,Jagdish Amble,Stock Associate,2019-06-17,36093,3.8,True
+E00027,S0085,Qushi Gill,Warehouse Staff,2019-09-27,20235,2.5,True
+E00028,S0014,Lajita Walia,Stock Associate,2023-07-03,118534,3.7,True
+E00029,S0082,Xiti Pandya,Visual Merchandiser,2020-01-24,83236,2.2,True
+E00030,S0107,Mekhala Basak,Security,2019-01-12,60796,2.7,True
+E00031,S0085,Anirudh Sharaf,Customer Service Rep,2022-01-17,53479,2.7,True
+E00032,S0136,Dhriti Sanghvi,Warehouse Staff,2018-02-06,30036,4.0,True
+E00033,S0063,Omisha Mann,Store Manager,2021-08-07,64987,4.7,False
+E00034,S0099,Nidhi Bail,Stock Associate,2021-03-04,18238,4.7,True
+E00035,S0096,Onveer Sharma,Warehouse Staff,2023-06-17,20747,2.9,True
+E00036,S0083,Gaurang Sarkar,Sales Associate,2019-01-29,36940,4.9,True
+E00037,S0137,Yagnesh Sarin,Store Manager,2018-09-26,42627,4.0,True
+E00038,S0109,Farhan Randhawa,Sales Associate,2020-04-22,85484,4.5,False
+E00039,S0112,Harinakshi Kant,Sales Associate,2019-09-22,18113,3.4,True
+E00040,S0023,Om Bose,Sales Associate,2018-08-11,38329,4.4,True
+E00041,S0148,Yashvi Hari,Visual Merchandiser,2020-11-25,68429,3.2,True
+E00042,S0111,Indali Divan,Customer Service Rep,2018-03-11,66052,4.0,True
+E00043,S0017,Harshil Dhingra,Store Manager,2018-10-25,61884,4.8,True
+E00044,S0078,Rudra Ghose,Sales Associate,2021-02-27,115306,4.8,True
+E00045,S0008,Faqid Goel,Warehouse Staff,2019-10-03,84922,2.7,True
+E00046,S0140,Ucchal Sen,Stock Associate,2019-08-14,54066,4.0,False
+E00047,S0096,Diya Dora,Store Manager,2019-08-03,31152,2.1,True
+E00048,S0101,Ekansh Singh,Sales Associate,2021-06-02,42532,4.2,False
+E00049,S0089,Chavvi Maharaj,Visual Merchandiser,2022-08-18,99663,4.6,True
+E00050,S0048,Indira Tripathi,Visual Merchandiser,2020-11-01,40470,2.3,True
+E00051,S0146,Dayita Shenoy,Store Manager,2023-03-05,99498,3.6,True
+E00052,S0018,Baljiwan Bhandari,Stock Associate,2019-02-07,40875,4.2,True
+E00053,S0085,Bhavini Bose,Customer Service Rep,2019-06-10,102988,4.0,True
+E00054,S0018,Yashica Rajagopalan,Visual Merchandiser,2021-07-25,78682,3.4,True
+E00055,S0079,Benjamin Sengupta,Cashier,2022-02-01,56462,4.9,True
+E00056,S0081,Ekanta Soni,Visual Merchandiser,2020-06-26,108349,4.2,True
+E00057,S0093,David Seshadri,Cashier,2021-09-20,77908,3.4,True
+E00058,S0079,Hemal Chad,Warehouse Staff,2019-03-22,38038,3.9,True
+E00059,S0072,Balveer Kota,Cashier,2020-03-15,49502,4.2,True
+E00060,S0020,Reva Viswanathan,Store Manager,2023-09-09,97788,2.1,True
+E00061,S0104,Januja Pradhan,Visual Merchandiser,2018-05-31,87298,2.8,False
+E00062,S0139,Lila Rege,Warehouse Staff,2019-09-01,62948,3.2,False
+E00063,S0075,Charles Natt,Cashier,2023-03-19,80683,3.5,True
+E00064,S0129,Forum Chandra,Store Manager,2020-09-05,95482,4.1,True
+E00065,S0036,Bhanumati Krishnan,Warehouse Staff,2019-10-15,38480,3.7,True
+E00066,S0038,Gauri Bumb,Warehouse Staff,2022-01-09,20297,2.7,True
+E00067,S0017,Inaya Mukherjee,Stock Associate,2022-02-22,45673,2.1,True
+E00068,S0093,Kai Chad,Security,2023-04-08,74591,4.6,True
+E00069,S0083,Krisha Narasimhan,Sales Associate,2023-11-06,98042,4.5,True
+E00070,S0068,Girik Sampath,Cashier,2022-03-23,100678,3.1,True
+E00071,S0020,Andrew Patil,Stock Associate,2022-03-22,44215,3.5,True
+E00072,S0089,Pranit Kala,Warehouse Staff,2023-05-29,94195,2.0,False
+E00073,S0113,Vedika Handa,Cashier,2020-07-31,25104,3.5,True
+E00074,S0039,Laksh Dubey,Cashier,2019-10-07,62477,3.8,True
+E00075,S0059,Chakrika Chaudhuri,Security,2021-09-14,109405,2.3,True
+E00076,S0123,Gayathri Deep,Visual Merchandiser,2019-10-23,99837,4.5,True
+E00077,S0012,Mitesh Gaba,Cashier,2019-10-22,32658,3.9,True
+E00078,S0147,Noah Sarma,Cashier,2018-08-18,36802,2.8,True
+E00079,S0104,Nirja Patla,Store Manager,2021-03-07,26239,2.6,True
+E00080,S0121,Sachi Mane,Warehouse Staff,2019-11-30,43752,4.5,True
+E00081,S0150,Vivaan Walla,Cashier,2023-09-24,49671,2.5,True
+E00082,S0117,Dayamai Singh,Sales Associate,2020-07-30,64572,3.2,True
+E00083,S0052,Jhalak Sastry,Security,2019-09-05,94365,2.3,True
+E00084,S0010,Baghyawati Raja,Sales Associate,2019-01-17,78208,4.0,False
+E00085,S0139,Neel Iyengar,Store Manager,2022-11-03,83425,3.3,False
+E00086,S0136,Zashil Ben,Security,2020-07-28,78192,4.4,True
+E00087,S0148,Kamya Chauhan,Sales Associate,2022-10-09,32548,2.8,True
+E00088,S0022,Bhavani Chacko,Stock Associate,2022-08-01,48791,2.6,True
+E00089,S0002,Anjali Sengupta,Sales Associate,2023-10-30,15942,3.1,True
+E00090,S0081,Rajeshri Chand,Security,2022-01-23,28970,2.5,True
+E00091,S0065,Shravya Palla,Stock Associate,2022-10-01,89012,3.1,True
+E00092,S0102,Oeshi Bera,Visual Merchandiser,2022-08-20,87365,4.4,True
+E00093,S0095,Yadavi Prakash,Warehouse Staff,2020-11-05,55193,3.7,True
+E00094,S0102,Libni Bumb,Cashier,2019-05-03,113017,2.7,True
+E00095,S0042,Udarsh Bala,Sales Associate,2020-05-28,81629,3.2,True
+E00096,S0141,Hardik Nayak,Store Manager,2019-10-21,66000,4.9,True
+E00097,S0024,Laksh Barad,Cashier,2023-04-16,93675,3.3,True
+E00098,S0057,Urmi Dewan,Customer Service Rep,2018-11-24,94826,2.1,True
+E00099,S0103,Saumya Ahluwalia,Stock Associate,2018-08-24,116398,4.5,True
+E00100,S0113,Anirudh Kunda,Store Manager,2020-04-06,101099,4.8,True
+E00101,S0050,Mason Wable,Store Manager,2023-09-23,82608,4.1,True
+E00102,S0010,Indrajit Mani,Customer Service Rep,2020-09-06,100854,2.0,True
+E00103,S0071,Charvi Dara,Security,2021-12-17,102773,3.2,True
+E00104,S0133,William Saini,Store Manager,2018-10-09,26818,3.6,True
+E00105,S0144,Dev Choudhry,Customer Service Rep,2021-11-24,51242,2.7,False
+E00106,S0117,Amol Varma,Security,2018-01-20,49223,2.5,True
+E00107,S0144,Maanas Manne,Sales Associate,2023-08-23,53568,3.0,True
+E00108,S0132,Aarav Pandit,Stock Associate,2020-10-21,105989,3.3,True
+E00109,S0124,Omaja Grover,Visual Merchandiser,2021-10-23,116659,3.4,True
+E00110,S0008,Jalsa Bir,Warehouse Staff,2019-04-22,48792,2.2,True
+E00111,S0057,Madhavi Singhal,Visual Merchandiser,2021-07-17,69057,4.9,True
+E00112,S0003,Lila Prakash,Stock Associate,2020-10-13,52655,2.3,True
+E00113,S0088,Amol Parikh,Sales Associate,2020-01-02,77463,2.9,True
+E00114,S0147,Hemani Khosla,Stock Associate,2020-01-19,112800,4.0,False
+E00115,S0128,Gaurangi Deol,Visual Merchandiser,2020-08-19,111394,2.7,True
+E00116,S0059,Indira Nigam,Visual Merchandiser,2020-10-19,96080,3.1,True
+E00117,S0031,Ucchal Srinivas,Sales Associate,2023-07-11,95455,2.0,False
+E00118,S0011,Krishna Bhatnagar,Warehouse Staff,2022-03-01,96352,2.9,False
+E00119,S0148,Balhaar Memon,Stock Associate,2023-07-04,38969,5.0,False
+E00120,S0072,Caleb Iyengar,Security,2020-06-28,113326,3.7,True
+E00121,S0109,Diya Mukherjee,Warehouse Staff,2018-05-14,80860,3.0,False
+E00122,S0045,Urvashi Kulkarni,Warehouse Staff,2019-05-09,106520,3.6,True
+E00123,S0003,Rayaan Mangal,Store Manager,2020-05-13,64732,3.7,True
+E00124,S0067,Champak Narula,Cashier,2020-12-12,46082,2.8,False
+E00125,S0088,Jeet Pillai,Customer Service Rep,2020-01-24,80374,3.3,True
+E00126,S0096,Mugdha Sarraf,Customer Service Rep,2022-06-29,51651,3.4,True
+E00127,S0148,Harinakshi Grover,Visual Merchandiser,2019-02-14,109478,2.8,True
+E00128,S0111,Widisha Pillai,Security,2020-03-14,34116,4.4,True
+E00129,S0122,Fitan Samra,Store Manager,2019-12-25,70249,3.5,False
+E00130,S0133,Qushi Gole,Customer Service Rep,2023-06-17,54326,2.8,False
+E00131,S0013,Ekani Chauhan,Security,2019-02-10,105510,2.5,True
+E00132,S0066,Falak Merchant,Warehouse Staff,2019-01-30,73963,4.2,True
+E00133,S0093,Sanaya Sandhu,Stock Associate,2021-11-10,17599,3.2,True
+E00134,S0051,Sachi Panchal,Cashier,2021-03-11,61544,3.0,True
+E00135,S0115,Brijesh Pandit,Sales Associate,2022-04-10,95434,2.9,True
+E00136,S0038,Anvi Bhandari,Cashier,2021-10-13,70288,3.9,True
+E00137,S0019,Nidra Patla,Sales Associate,2019-10-26,60039,2.7,True
+E00138,S0075,Azaan Dhar,Stock Associate,2022-06-08,50553,4.7,True
+E00139,S0093,Bakhshi Date,Warehouse Staff,2022-08-23,36930,2.6,True
+E00140,S0061,Warinder Peri,Stock Associate,2018-11-24,42600,2.5,True
+E00141,S0017,Leela Bali,Warehouse Staff,2018-08-09,18455,4.3,True
+E00142,S0022,Shivani Prabhakar,Sales Associate,2020-12-11,96015,2.5,True
+E00143,S0100,Sachi Bose,Stock Associate,2020-07-28,47426,4.2,True
+E00144,S0033,Jeevika Rao,Cashier,2023-11-28,37361,2.1,True
+E00145,S0084,Arya Krish,Warehouse Staff,2023-03-29,85855,4.8,True
+E00146,S0035,Atharv Grewal,Cashier,2023-02-14,97712,4.2,False
+E00147,S0112,Zarna Ram,Stock Associate,2021-11-23,78131,3.6,True
+E00148,S0114,Adweta Lad,Stock Associate,2022-02-07,69028,2.8,True
+E00149,S0001,Tanish Mangal,Cashier,2021-11-09,52586,3.4,True
+E00150,S0126,Ryan Das,Warehouse Staff,2021-05-12,16197,4.3,True
+E00151,S0060,Ethan Seth,Store Manager,2022-03-11,39716,3.2,True
+E00152,S0102,Sai Chahal,Visual Merchandiser,2019-10-31,108708,4.2,True
+E00153,S0097,Idika Bhattacharyya,Visual Merchandiser,2020-12-13,25382,3.3,True
+E00154,S0070,Charita Dugar,Stock Associate,2023-12-19,50235,3.2,False
+E00155,S0047,Janaki Trivedi,Cashier,2021-04-01,29464,3.9,True
+E00156,S0070,Jairaj Iyer,Warehouse Staff,2020-02-09,57027,2.1,True
+E00157,S0137,Warjas Tak,Store Manager,2020-02-01,28405,2.8,True
+E00158,S0113,Jalsa Pillay,Store Manager,2020-08-11,26822,2.5,True
+E00159,S0088,Kai Chadha,Security,2021-06-30,117986,4.4,False
+E00160,S0119,Dayamai Rao,Store Manager,2021-09-14,25515,4.5,False
+E00161,S0015,Nirja Rout,Stock Associate,2022-05-27,24356,3.6,True
+E00162,S0065,Jeremiah Nadig,Security,2018-02-21,30985,4.9,True
+E00163,S0099,Shivani Shukla,Warehouse Staff,2020-10-09,111681,5.0,True
+E00164,S0025,Kabir Gopal,Visual Merchandiser,2023-04-21,66003,4.0,True
+E00165,S0083,Rachita Thakkar,Cashier,2018-06-22,112612,4.8,True
+E00166,S0065,Jeet Vasa,Warehouse Staff,2021-05-08,41047,3.1,True
+E00167,S0056,Daksha Gala,Sales Associate,2020-08-24,97956,3.3,True
+E00168,S0071,Ekantika Kar,Sales Associate,2022-06-10,118434,2.7,False
+E00169,S0149,Zilmil Mander,Warehouse Staff,2019-09-27,63679,4.3,True
+E00170,S0128,Zashil Hegde,Sales Associate,2021-10-18,114557,3.9,True
+E00171,S0040,Jeremiah Mitter,Sales Associate,2019-05-31,78942,2.7,False
+E00172,S0089,Yadavi Ganguly,Warehouse Staff,2020-03-01,17798,4.1,True
+E00173,S0035,Onveer Nazareth,Stock Associate,2018-06-11,78609,4.1,True
+E00174,S0139,Ayush Bumb,Warehouse Staff,2020-02-17,89278,2.6,True
+E00175,S0120,Alka Kade,Stock Associate,2019-10-19,24027,3.6,True
+E00176,S0068,Azaan Tank,Customer Service Rep,2023-02-03,15094,4.3,True
+E00177,S0048,Chasmum Subramanian,Store Manager,2022-01-31,116714,3.9,True
+E00178,S0017,Nidra Mishra,Security,2020-02-17,83690,4.0,True
+E00179,S0040,Elijah Bhasin,Stock Associate,2021-08-14,68713,3.9,True
+E00180,S0134,Ria Sagar,Sales Associate,2018-06-29,32009,2.5,True
+E00181,S0028,Ucchal Jani,Warehouse Staff,2020-02-24,27943,2.1,True
+E00182,S0100,Maanas Munshi,Warehouse Staff,2023-11-24,96785,4.1,True
+E00183,S0094,Hemani Rastogi,Visual Merchandiser,2018-10-18,16715,4.8,True
+E00184,S0126,Kamala Varma,Sales Associate,2023-04-02,119991,3.9,True
+E00185,S0107,Eiravati Khurana,Customer Service Rep,2018-08-27,95862,2.8,True
+E00186,S0019,Jason Loke,Stock Associate,2018-11-16,43298,4.9,True
+E00187,S0060,Yug Dhaliwal,Security,2020-02-16,40312,3.6,True
+E00188,S0046,Chandresh Mannan,Security,2019-03-09,115438,3.9,True
+E00189,S0118,Omya Kothari,Security,2019-03-03,36864,4.4,True
+E00190,S0130,Falak Munshi,Customer Service Rep,2019-10-10,84979,5.0,True
+E00191,S0091,Nathaniel Tara,Customer Service Rep,2021-08-22,63722,3.2,True
+E00192,S0083,Wishi Morar,Visual Merchandiser,2020-05-26,64160,4.3,False
+E00193,S0066,Arin Chana,Customer Service Rep,2023-01-28,73654,4.9,True
+E00194,S0009,Yashasvi Shankar,Stock Associate,2018-03-08,82844,2.4,False
+E00195,S0002,Tanveer Pandit,Stock Associate,2020-06-27,43157,4.6,True
+E00196,S0071,Chandresh Manda,Cashier,2019-01-22,19946,3.4,True
+E00197,S0068,Upma Mangal,Customer Service Rep,2020-10-20,45539,2.8,True
+E00198,S0147,Hritik Sankar,Security,2020-06-09,111241,2.2,True
+E00199,S0124,Aishani Pau,Cashier,2023-06-23,105386,4.1,True
+E00200,S0025,Jasmit Bath,Stock Associate,2018-06-03,110786,4.4,True
+E00201,S0015,Charan Hayer,Customer Service Rep,2021-11-26,71925,3.2,False
+E00202,S0059,Bhavya Borah,Store Manager,2022-04-16,22094,2.9,True
+E00203,S0139,Yamini Seshadri,Cashier,2021-08-31,80850,4.1,True
+E00204,S0101,Jagat Dave,Warehouse Staff,2023-08-30,26807,2.7,True
+E00205,S0101,Meera Prakash,Cashier,2019-06-26,59062,2.2,True
+E00206,S0013,Jasmit Dhawan,Security,2020-12-11,26151,3.2,True
+E00207,S0034,Yashodhara Ratti,Cashier,2023-05-24,88308,2.6,True
+E00208,S0147,Chakradev Barad,Visual Merchandiser,2023-11-18,47275,2.7,True
+E00209,S0111,Gauri Som,Customer Service Rep,2019-01-02,29749,4.0,True
+E00210,S0090,Manthan Varma,Visual Merchandiser,2021-08-06,60157,3.8,True
+E00211,S0079,Falak Nagar,Cashier,2021-12-03,95769,4.5,True
+E00212,S0038,Maya Mistry,Warehouse Staff,2018-07-03,45603,2.6,True
+E00213,S0022,Yashica Upadhyay,Sales Associate,2018-08-12,46856,4.8,False
+E00214,S0074,Chandani Soman,Store Manager,2021-11-07,105937,4.4,True
+E00215,S0121,Jyoti Narula,Store Manager,2021-09-21,42395,4.2,True
+E00216,S0140,Omaja Morar,Stock Associate,2023-06-02,96663,4.2,True
+E00217,S0005,Urvi Lanka,Security,2023-11-28,20699,2.8,True
+E00218,S0052,Charan Srinivasan,Stock Associate,2018-08-06,75943,4.0,True
+E00219,S0100,Lajita Divan,Stock Associate,2022-01-15,29141,2.1,False
+E00220,S0099,Azad Choudhary,Visual Merchandiser,2022-04-09,81655,4.9,True
+E00221,S0081,Anirudh Sastry,Warehouse Staff,2023-12-18,26537,2.6,True
+E00222,S0118,Omya Doshi,Store Manager,2018-06-12,47426,4.8,True
+E00223,S0126,Samar Roy,Security,2019-10-06,17408,3.0,True
+E00224,S0078,David Devi,Visual Merchandiser,2023-08-16,51159,4.4,True
+E00225,S0100,Ekta Sridhar,Store Manager,2021-02-21,44567,2.5,False
+E00226,S0036,Dipta Ghose,Sales Associate,2022-04-15,83251,4.9,True
+E00227,S0059,Hema Pandya,Security,2020-09-11,90090,2.5,False
+E00228,S0085,Veda Handa,Warehouse Staff,2019-06-24,42100,4.0,True
+E00229,S0052,Arya Misra,Cashier,2021-06-19,105247,4.1,True
+E00230,S0035,Chameli Mani,Security,2019-08-18,101013,4.8,False
+E00231,S0082,Vrinda Nadig,Sales Associate,2023-12-24,109298,2.4,True
+E00232,S0038,Ikshita Mahal,Store Manager,2021-07-29,69269,4.9,True
+E00233,S0071,Jairaj Raghavan,Cashier,2020-02-09,28994,2.4,True
+E00234,S0069,Hemani Dhingra,Visual Merchandiser,2020-08-09,45266,4.1,True
+E00235,S0123,Brijesh Mani,Cashier,2023-08-20,94260,3.4,True
+E00236,S0048,Hiral Sathe,Security,2023-07-06,77108,2.4,True
+E00237,S0009,Varenya Kala,Security,2018-03-03,50370,4.9,True
+E00238,S0052,Anika Magar,Visual Merchandiser,2018-09-28,38209,4.8,False
+E00239,S0126,Ikbal Khatri,Customer Service Rep,2023-02-18,47346,3.3,True
+E00240,S0098,Chandresh Wali,Customer Service Rep,2022-06-03,95151,4.8,True
+E00241,S0138,Viraj Ben,Store Manager,2023-11-03,29328,3.4,True
+E00242,S0011,Odika Narayanan,Visual Merchandiser,2023-10-26,85499,3.2,True
+E00243,S0143,Harish Devan,Security,2023-10-16,115291,3.9,True
+E00244,S0075,Nakul Ray,Warehouse Staff,2022-06-19,54918,4.3,True
+E00245,S0043,Vansha Iyengar,Security,2021-04-20,95364,4.8,True
+E00246,S0037,Ekani Mangal,Warehouse Staff,2023-01-25,26854,4.2,True
+E00247,S0150,Gaurav Kata,Cashier,2022-05-30,69206,3.0,True
+E00248,S0117,Parth Sahni,Visual Merchandiser,2023-02-06,26820,2.8,True
+E00249,S0042,Balhaar Ranganathan,Sales Associate,2019-01-09,29963,4.1,True
+E00250,S0022,Quincy Mann,Security,2023-09-27,95225,4.8,True
+E00251,S0098,Aditya Misra,Store Manager,2019-12-01,58934,3.7,True
+E00252,S0039,Gautami Mane,Cashier,2019-08-16,38444,4.3,True
+E00253,S0079,Wakeeta Desai,Stock Associate,2023-01-02,52851,3.9,True
+E00254,S0034,Anjali Hans,Visual Merchandiser,2018-01-15,96600,4.3,True
+E00255,S0128,Ganga Gaba,Warehouse Staff,2018-01-24,94689,4.6,True
+E00256,S0122,Aarini Grewal,Warehouse Staff,2022-08-07,72917,2.2,True
+E00257,S0063,Geetika Merchant,Stock Associate,2020-04-30,21411,2.6,True
+E00258,S0090,Parth Ravi,Store Manager,2019-08-19,19250,4.0,True
+E00259,S0077,Yutika Narang,Customer Service Rep,2018-12-26,21426,2.3,False
+E00260,S0042,Nandini Chandran,Stock Associate,2019-12-28,74682,4.2,True
+E00261,S0010,Logan Sood,Sales Associate,2021-05-10,57312,3.1,True
+E00262,S0018,Yuvraj Ahuja,Security,2018-09-23,53382,3.4,True
+E00263,S0071,Leela Keer,Customer Service Rep,2023-11-29,69232,3.6,True
+E00264,S0015,Amara Narayan,Sales Associate,2023-12-07,26491,3.5,True
+E00265,S0074,Advay Lal,Security,2021-07-20,49034,3.6,False
+E00266,S0091,Warinder Bhatia,Cashier,2023-07-27,83118,4.2,True
+E00267,S0047,Udyati Mohanty,Visual Merchandiser,2021-04-04,40369,2.0,True
+E00268,S0031,Nidra Thakkar,Visual Merchandiser,2022-08-26,69269,2.1,True
+E00269,S0055,Jacob Merchant,Store Manager,2020-04-04,105441,2.8,True
+E00270,S0079,Timothy Kanda,Stock Associate,2023-09-07,87088,3.0,True
+E00271,S0086,Vanya Dua,Customer Service Rep,2022-06-11,109948,3.7,False
+E00272,S0045,Kashvi Sagar,Visual Merchandiser,2021-09-15,59294,4.8,True
+E00273,S0122,Tejas Kota,Store Manager,2019-07-11,78110,2.5,True
+E00274,S0138,Sanya Wable,Customer Service Rep,2023-03-10,117759,4.4,False
+E00275,S0015,Faras Choudhury,Stock Associate,2021-07-16,87768,3.6,True
+E00276,S0085,Yashasvi Jain,Customer Service Rep,2018-09-29,34569,2.8,True
+E00277,S0097,Nitesh Narang,Cashier,2022-05-15,39560,3.8,False
+E00278,S0079,Jackson Jha,Customer Service Rep,2018-05-10,50585,3.2,True
+E00279,S0061,Gavin Uppal,Customer Service Rep,2023-01-26,54666,2.6,True
+E00280,S0029,Christopher Setty,Customer Service Rep,2018-06-03,116946,2.6,True
+E00281,S0130,Yochana Sagar,Store Manager,2023-05-31,80543,2.5,True
+E00282,S0124,Dalbir Shere,Stock Associate,2021-09-02,33781,4.3,True
+E00283,S0133,Anthony Randhawa,Cashier,2020-04-20,109970,2.1,True
+E00284,S0134,Aarush Kamdar,Sales Associate,2018-01-17,55760,4.8,True
+E00285,S0023,Chakradev Sampath,Customer Service Rep,2023-03-28,21047,2.3,True
+E00286,S0080,Devansh Bhasin,Store Manager,2021-07-02,98735,4.7,True
+E00287,S0050,Urmi Balay,Stock Associate,2021-02-07,84766,3.0,True
+E00288,S0031,Nilima Gole,Stock Associate,2019-09-04,35643,2.8,True
+E00289,S0144,Osha Prasad,Sales Associate,2020-04-26,86110,3.1,True
+E00290,S0037,Saumya Purohit,Stock Associate,2020-09-29,37449,2.2,True
+E00291,S0087,Faris Zacharia,Warehouse Staff,2018-07-27,32049,2.1,False
+E00292,S0013,Ijaya Dani,Sales Associate,2022-04-21,22051,2.3,True
+E00293,S0115,Maya Wadhwa,Customer Service Rep,2021-07-03,58559,4.5,True
+E00294,S0137,Udant Aggarwal,Sales Associate,2023-03-23,89421,2.4,True
+E00295,S0120,Chanchal Sheth,Sales Associate,2023-02-10,55683,4.1,True
+E00296,S0120,Ladli Karpe,Warehouse Staff,2020-08-07,44333,2.4,False
+E00297,S0067,Triveni Pal,Customer Service Rep,2022-05-25,39032,4.1,True
+E00298,S0084,Anya Gulati,Warehouse Staff,2023-06-20,18966,2.2,True
+E00299,S0123,Azad Saini,Warehouse Staff,2019-12-01,51996,4.3,True
+E00300,S0033,Wridesh Jhaveri,Sales Associate,2022-07-20,108621,4.4,True
+E00301,S0019,Harrison Bandi,Stock Associate,2023-12-23,75420,3.2,True
+E00302,S0063,Chanakya Konda,Cashier,2023-05-30,65307,2.2,True
+E00303,S0111,Neelima Sarna,Security,2021-11-02,86372,4.1,True
+E00304,S0020,Teerth Bhalla,Warehouse Staff,2019-04-14,92616,3.8,True
+E00305,S0025,Yahvi Mann,Warehouse Staff,2019-12-23,55374,4.9,True
+E00306,S0028,Eiravati Nagi,Security,2021-09-03,79788,3.9,True
+E00307,S0056,Chasmum Dhar,Cashier,2018-01-01,114231,2.4,True
+E00308,S0137,Odika Mital,Stock Associate,2022-05-17,95684,3.7,True
+E00309,S0082,Darsh Gill,Stock Associate,2021-06-01,71980,4.2,False
+E00310,S0023,Warhi Batta,Store Manager,2023-09-22,67978,4.5,False
+E00311,S0016,Lakshmi Vohra,Customer Service Rep,2018-08-06,15110,4.1,True
+E00312,S0092,Omaja Rege,Sales Associate,2021-03-01,19087,2.7,True
+E00313,S0101,Charita Puri,Customer Service Rep,2022-04-17,68219,3.1,True
+E00314,S0045,Urvashi Khosla,Warehouse Staff,2019-07-24,39671,3.7,True
+E00315,S0093,Charita Dhawan,Security,2019-09-24,52810,5.0,True
+E00316,S0035,Dalbir Sachar,Store Manager,2018-10-21,99985,2.0,True
+E00317,S0125,Krish Rama,Security,2019-07-11,26097,2.4,True
+E00318,S0117,Aadhya Jani,Security,2020-01-07,74558,3.5,True
+E00319,S0116,Farhan Sengupta,Security,2021-12-26,44588,2.6,True
+E00320,S0148,George Wason,Warehouse Staff,2020-08-27,108340,3.5,True
+E00321,S0140,Charan Loyal,Customer Service Rep,2018-05-18,19963,3.7,True
+E00322,S0029,Balveer Bora,Warehouse Staff,2018-11-24,33623,4.2,True
+E00323,S0072,Teerth Srinivas,Warehouse Staff,2023-10-19,25254,3.6,True
+E00324,S0063,Gaurangi Mitter,Warehouse Staff,2018-11-16,104662,3.9,True
+E00325,S0080,Siddharth Gupta,Store Manager,2021-11-08,85127,4.3,True
+E00326,S0132,Varenya Kibe,Warehouse Staff,2021-09-19,70183,3.1,False
+E00327,S0076,Mekhala Khatri,Stock Associate,2019-11-18,19630,4.1,True
+E00328,S0078,Barkha Rai,Stock Associate,2018-09-09,97483,3.4,True
+E00329,S0014,Jagrati Morar,Stock Associate,2018-04-22,52593,3.5,True
+E00330,S0020,Jagvi Varghese,Stock Associate,2020-10-29,32372,3.8,True
+E00331,S0066,Unnati Chaudhari,Store Manager,2019-04-02,94144,2.5,True
+E00332,S0039,Ekaja Jani,Warehouse Staff,2022-02-23,37989,2.8,True
+E00333,S0125,Dhriti Sachdev,Cashier,2023-12-01,19337,3.0,True
+E00334,S0038,Timothy Dhingra,Cashier,2023-07-25,113665,5.0,True
+E00335,S0061,Advika Sahni,Warehouse Staff,2019-11-17,42637,3.7,True
+E00336,S0014,Michael Hayre,Stock Associate,2019-04-21,21884,2.5,True
+E00337,S0078,Victor Raghavan,Warehouse Staff,2023-12-22,45626,3.1,True
+E00338,S0122,Xalak Nazareth,Stock Associate,2019-08-18,84526,4.6,True
+E00339,S0115,Vrinda Swaminathan,Security,2021-07-17,84501,4.0,True
+E00340,S0137,Om Pandey,Customer Service Rep,2022-11-04,95017,4.8,False
+E00341,S0086,Logan Suresh,Stock Associate,2020-12-29,27881,2.8,True
+E00342,S0119,Daniel Viswanathan,Visual Merchandiser,2020-03-09,83151,3.0,True
+E00343,S0047,Falan Bava,Customer Service Rep,2018-02-13,103185,2.0,True
+E00344,S0106,Nitara Devan,Sales Associate,2023-11-22,28619,4.1,True
+E00345,S0073,Ekansh Dora,Stock Associate,2020-03-01,19461,2.1,True
+E00346,S0056,Tejas Tiwari,Sales Associate,2019-05-07,26322,4.6,True
+E00347,S0145,Kashvi Bhasin,Cashier,2019-03-31,106180,2.6,True
+E00348,S0020,Vinaya Babu,Warehouse Staff,2021-02-06,115841,3.3,False
+E00349,S0083,Nisha Arora,Stock Associate,2019-10-26,117332,2.2,True
+E00350,S0098,Anvi Wason,Security,2021-09-24,22872,2.8,True
+E00351,S0046,Anay Thakkar,Warehouse Staff,2018-10-12,79450,4.9,True
+E00352,S0101,Praneel Chhabra,Cashier,2023-07-09,29212,2.4,True
+E00353,S0056,Manthan Khosla,Sales Associate,2022-12-14,108768,2.8,True
+E00354,S0019,Zayyan Pandya,Stock Associate,2023-01-01,17459,4.7,True
+E00355,S0001,Mekhala Brar,Store Manager,2022-05-19,49922,2.5,True
+E00356,S0101,Nidra Sharaf,Store Manager,2023-10-13,107747,4.8,True
+E00357,S0112,Upkaar Mital,Security,2018-10-15,85795,2.7,True
+E00358,S0124,Azad Chander,Sales Associate,2022-01-10,58704,4.0,True
+E00359,S0024,Ladli Purohit,Customer Service Rep,2023-12-30,59572,2.2,True
+E00360,S0075,Daksh Andra,Visual Merchandiser,2019-12-25,87676,2.1,True
+E00361,S0049,Fitan Tata,Stock Associate,2022-05-17,28994,3.9,True
+E00362,S0022,Garima Chandran,Warehouse Staff,2020-02-16,33342,2.1,True
+E00363,S0062,Victor Kakar,Warehouse Staff,2022-05-12,23256,4.4,True
+E00364,S0128,Anika Batra,Warehouse Staff,2018-03-09,19855,3.0,True
+E00365,S0011,Avni Bali,Security,2019-04-30,42745,4.4,True
+E00366,S0118,Divya Babu,Cashier,2020-08-12,24441,2.1,True
+E00367,S0005,Maanas Rao,Warehouse Staff,2018-07-07,46808,4.1,True
+E00368,S0045,Chandani Gaba,Store Manager,2021-06-12,119031,2.3,True
+E00369,S0017,Lopa Zachariah,Sales Associate,2019-04-13,80161,3.8,True
+E00370,S0017,Leena Dey,Visual Merchandiser,2022-10-12,59216,4.4,False
+E00371,S0103,Xiti Pal,Customer Service Rep,2019-05-10,104664,3.7,True
+E00372,S0055,Guneet Sarkar,Store Manager,2019-12-12,58975,2.2,True
+E00373,S0107,Faqid Oak,Cashier,2022-02-24,87536,2.5,True
+E00374,S0149,Eta Balan,Store Manager,2019-07-01,28102,4.4,True
+E00375,S0097,Shravya Swaminathan,Cashier,2018-03-06,78827,2.2,True
+E00376,S0023,Ishani Prashad,Stock Associate,2022-09-01,105898,4.4,True
+E00377,S0033,Quincy Rai,Visual Merchandiser,2019-08-10,98863,2.8,True
+E00378,S0062,Chakrika Koshy,Cashier,2018-06-04,93154,2.5,True
+E00379,S0023,Fitan Loyal,Stock Associate,2021-11-25,69891,2.0,True
+E00380,S0031,Lajita Dube,Sales Associate,2022-01-22,114762,5.0,True
+E00381,S0119,Edhitha Patel,Visual Merchandiser,2021-02-06,21955,2.6,True
+E00382,S0122,Gavin Ahluwalia,Warehouse Staff,2019-12-24,35940,4.0,True
+E00383,S0094,Sai Parsa,Stock Associate,2020-05-08,71973,2.8,True
+E00384,S0117,Harsh Deo,Store Manager,2019-03-04,112047,2.2,True
+E00385,S0041,Rachit Sankar,Store Manager,2023-06-10,82489,2.3,False
+E00386,S0114,Yauvani Reddy,Customer Service Rep,2022-09-13,41050,4.2,False
+E00387,S0059,Atharv Chakraborty,Sales Associate,2021-08-28,44855,2.3,True
+E00388,S0052,Girik Nair,Security,2020-06-22,24637,3.4,True
+E00389,S0112,Advik Manne,Cashier,2020-06-04,94879,3.4,True
+E00390,S0035,Lipika Chad,Warehouse Staff,2020-03-06,97840,3.1,True
+E00391,S0086,Omkaar Rai,Cashier,2018-05-12,105729,3.7,True
+E00392,S0029,Liam Luthra,Warehouse Staff,2023-02-22,69817,2.5,True
+E00393,S0076,Amrita Tailor,Cashier,2019-11-28,90775,4.9,False
+E00394,S0023,Dev Ganesh,Security,2023-11-08,79122,4.6,True
+E00395,S0122,Anya Sama,Warehouse Staff,2021-02-17,16901,4.2,True
+E00396,S0064,Veda Bose,Visual Merchandiser,2021-09-02,71917,3.7,False
+E00397,S0039,Zayan Koshy,Store Manager,2022-09-08,20796,2.1,True
+E00398,S0130,Rohan Shankar,Store Manager,2022-10-10,84615,3.2,True
+E00399,S0026,Krishna Modi,Warehouse Staff,2023-07-22,46524,2.2,True
+E00400,S0105,Meghana Natarajan,Visual Merchandiser,2019-06-28,61976,2.9,True
+E00401,S0024,Forum Sarraf,Store Manager,2023-05-20,102691,2.9,True
+E00402,S0147,Qushi Deshpande,Store Manager,2023-02-07,75786,4.3,False
+E00403,S0104,Ekani Iyer,Cashier,2022-02-26,97157,3.4,True
+E00404,S0019,Dipta Goel,Security,2021-09-25,84588,2.1,True
+E00405,S0070,Eiravati Manne,Visual Merchandiser,2018-11-28,96324,4.6,True
+E00406,S0015,Xavier Nanda,Customer Service Rep,2018-07-31,29544,3.1,True
+E00407,S0011,Avni Ramaswamy,Customer Service Rep,2022-02-09,37972,3.9,True
+E00408,S0144,Ishaan Iyengar,Visual Merchandiser,2019-07-21,58899,2.7,True
+E00409,S0123,Avi Shenoy,Visual Merchandiser,2020-07-12,57003,3.1,True
+E00410,S0109,Raksha Manne,Stock Associate,2018-08-12,23305,3.1,True
+E00411,S0129,Nilima Tata,Sales Associate,2023-04-10,108038,3.6,True
+E00412,S0075,Chavvi Khurana,Warehouse Staff,2022-02-16,119844,4.0,True
+E00413,S0017,Mitesh Sampath,Visual Merchandiser,2023-02-19,26443,2.2,False
+E00414,S0074,Ethan Sen,Sales Associate,2019-03-24,36596,2.8,True
+E00415,S0128,Nandini Warrior,Cashier,2020-04-16,83247,4.9,True
+E00416,S0107,Balhaar Parsa,Cashier,2023-04-26,60442,3.3,True
+E00417,S0006,Ikbal Kothari,Stock Associate,2020-02-14,23250,2.1,True
+E00418,S0134,Ojas Basu,Customer Service Rep,2022-08-14,90851,3.0,True
+E00419,S0084,Garima Sani,Warehouse Staff,2023-12-12,86888,3.3,True
+E00420,S0034,Advaith Chaudhari,Stock Associate,2019-12-05,118450,2.8,True
+E00421,S0074,Tristan Uppal,Store Manager,2019-08-31,61284,2.9,False
+E00422,S0042,Sanaya Prasad,Stock Associate,2020-01-17,37984,4.5,True
+E00423,S0040,Ubika Tella,Cashier,2020-09-01,30324,2.1,True
+E00424,S0033,Hemani Bakshi,Warehouse Staff,2020-12-02,63453,2.6,True
+E00425,S0009,Henry Merchant,Customer Service Rep,2021-11-09,34391,3.1,True
+E00426,S0042,Frederick D’Alia,Stock Associate,2019-05-13,18266,3.2,True
+E00427,S0038,Ijaya Muni,Warehouse Staff,2021-08-04,35454,2.0,True
+E00428,S0130,Tamanna Jhaveri,Customer Service Rep,2021-04-25,77116,4.7,False
+E00429,S0147,Ijaya Soni,Cashier,2022-12-16,59392,4.1,True
+E00430,S0011,Raksha Sethi,Cashier,2019-04-24,55380,2.1,True
+E00431,S0057,Ekalinga Mital,Warehouse Staff,2022-01-03,27121,3.0,True
+E00432,S0050,Ishwar Bajaj,Visual Merchandiser,2021-02-12,40652,2.1,True
+E00433,S0115,Ikbal Gala,Sales Associate,2023-09-28,66697,2.6,True
+E00434,S0131,Zaitra Ghosh,Store Manager,2022-01-18,67108,2.4,False
+E00435,S0095,Ganga Sandhu,Security,2022-03-08,16597,2.9,True
+E00436,S0115,Vincent Ravel,Sales Associate,2020-06-02,110401,4.7,True
+E00437,S0107,Quincy Sankaran,Warehouse Staff,2021-03-28,36468,4.4,False
+E00438,S0109,Ayush Hora,Security,2019-07-26,91962,3.8,True
+E00439,S0078,Pushti Ramachandran,Warehouse Staff,2023-11-22,58963,2.2,False
+E00440,S0097,Tanish Jha,Sales Associate,2018-01-28,68668,3.9,True
+E00441,S0045,Dev Chaudry,Warehouse Staff,2019-07-15,41117,2.6,True
+E00442,S0142,Jasmit Nanda,Warehouse Staff,2018-06-22,54582,4.5,True
+E00443,S0144,Tanvi Comar,Warehouse Staff,2020-07-08,18517,4.4,True
+E00444,S0077,Vrishti Wable,Warehouse Staff,2019-05-24,100696,4.0,True
+E00445,S0046,Lipika Ramanathan,Warehouse Staff,2020-09-29,18728,2.4,True
+E00446,S0018,Ijaya Pandey,Customer Service Rep,2023-05-23,89130,3.3,True
+E00447,S0122,Orinder Mishra,Sales Associate,2022-03-09,82177,4.2,True
+E00448,S0067,Krish Munshi,Cashier,2018-08-28,34154,3.0,False
+E00449,S0035,William Mody,Customer Service Rep,2019-10-31,21932,2.8,True
+E00450,S0092,Qadim Prakash,Store Manager,2021-04-02,53228,3.6,False
+E00451,S0132,Yasti Rama,Visual Merchandiser,2020-01-21,115229,2.3,True
+E00452,S0140,Lakshit Rajagopal,Customer Service Rep,2021-07-19,104780,4.4,True
+E00453,S0093,Quincy Sur,Sales Associate,2023-12-29,91027,3.1,True
+E00454,S0036,Ojas Suri,Stock Associate,2022-03-08,117079,3.5,True
+E00455,S0042,Logan Grover,Sales Associate,2020-06-11,35257,3.5,True
+E00456,S0144,Shravya Bera,Sales Associate,2022-09-06,75357,4.7,True
+E00457,S0034,Aditya Sundaram,Store Manager,2023-05-19,60640,2.9,True
+E00458,S0114,Robert Rajagopalan,Customer Service Rep,2019-12-07,108047,2.9,True
+E00459,S0031,Nilima Swamy,Visual Merchandiser,2019-06-12,105995,2.4,True
+E00460,S0033,Sachi Suresh,Visual Merchandiser,2019-06-18,25302,3.3,True
+E00461,S0029,Fitan Balasubramanian,Sales Associate,2018-03-19,116540,3.5,True
+E00462,S0051,Brinda Bali,Sales Associate,2018-05-15,118947,4.0,True
+E00463,S0121,Umang Yogi,Sales Associate,2020-11-02,20672,2.2,True
+E00464,S0025,Om Shankar,Sales Associate,2020-04-21,92018,4.7,True
+E00465,S0090,Yasti Chowdhury,Store Manager,2019-01-07,34078,4.5,False
+E00466,S0149,Amrita Peri,Customer Service Rep,2021-12-13,36044,4.6,True
+E00467,S0062,Ridhi Kamdar,Sales Associate,2019-02-10,90777,4.3,True
+E00468,S0050,Harsh Kota,Stock Associate,2019-12-05,113830,3.6,False
+E00469,S0026,Bachittar Sengupta,Visual Merchandiser,2023-08-28,107767,3.4,True
+E00470,S0048,Ijaya Chahal,Warehouse Staff,2019-03-16,38704,4.5,False
+E00471,S0109,Jacob Khalsa,Visual Merchandiser,2023-10-08,44825,3.2,True
+E00472,S0081,Indali Sangha,Sales Associate,2023-03-24,29459,3.6,True
+E00473,S0093,Liam Jhaveri,Stock Associate,2018-06-16,25780,3.0,True
+E00474,S0073,Daniel Panchal,Warehouse Staff,2021-07-01,105052,4.9,True
+E00475,S0142,Om Naik,Security,2021-04-05,71093,2.6,True
+E00476,S0122,Bimala Loke,Customer Service Rep,2020-01-05,16675,5.0,True
+E00477,S0027,Krishna Sabharwal,Security,2022-11-30,83506,4.0,True
+E00478,S0037,Aradhana Date,Security,2022-06-29,106099,3.8,True
+E00479,S0044,Zaid Dhingra,Sales Associate,2022-01-29,41094,3.0,True
+E00480,S0104,Yug Ramaswamy,Sales Associate,2020-08-11,70666,4.2,True
+E00481,S0149,Lucky Luthra,Stock Associate,2022-06-28,61674,3.4,True
+E00482,S0104,Keya Seth,Warehouse Staff,2023-09-26,51554,2.4,True
+E00483,S0032,Girik Rau,Stock Associate,2023-06-28,80178,2.7,False
+E00484,S0008,Jyoti Sha,Sales Associate,2018-08-05,23942,3.5,True
+E00485,S0046,Falak Agate,Security,2021-09-01,35019,2.9,True
+E00486,S0020,Tara Parmar,Warehouse Staff,2023-03-24,41467,2.9,True
+E00487,S0130,Mitali Kamdar,Stock Associate,2021-11-08,85848,3.6,False
+E00488,S0009,Siddharth Talwar,Security,2019-05-03,65283,3.4,False
+E00489,S0114,Ekantika Mander,Warehouse Staff,2018-05-28,19306,2.5,True
+E00490,S0078,Kalpit Sundaram,Cashier,2023-07-07,71450,2.4,True
+E00491,S0125,Chanakya Batra,Sales Associate,2023-07-03,101517,3.7,True
+E00492,S0121,Tripti Babu,Warehouse Staff,2019-10-03,81412,2.2,True
+E00493,S0097,Nakul Sastry,Customer Service Rep,2021-03-11,57006,2.2,True
+E00494,S0033,Aadi Sangha,Customer Service Rep,2021-11-29,112262,3.8,True
+E00495,S0088,Kevin Mittal,Security,2019-02-03,71118,3.0,True
+E00496,S0090,Anusha Chander,Store Manager,2020-09-27,47455,2.7,True
+E00497,S0022,Zashil Butala,Sales Associate,2021-06-02,30003,3.0,True
+E00498,S0084,Noah Ben,Store Manager,2023-03-03,101214,4.6,True
+E00499,S0108,Dalaja Kaur,Stock Associate,2018-03-25,106220,3.4,True
+E00500,S0082,Gavin Chandran,Security,2022-05-18,57260,3.7,True
+E00501,S0026,Tanay Sood,Visual Merchandiser,2021-10-08,80107,3.5,True
+E00502,S0087,Kevin Kara,Cashier,2021-05-11,62622,4.9,True
+E00503,S0020,Aditya Anand,Visual Merchandiser,2021-03-23,49754,2.1,False
+E00504,S0103,Jai Sami,Visual Merchandiser,2019-01-12,109071,4.5,True
+E00505,S0087,Vanya Bobal,Stock Associate,2018-10-03,89242,4.4,True
+E00506,S0054,Leela Chakraborty,Customer Service Rep,2018-11-11,100398,4.5,True
+E00507,S0077,Harshil Munshi,Security,2021-07-07,41224,3.2,True
+E00508,S0132,Chandani Devan,Warehouse Staff,2020-01-10,17438,3.9,True
+E00509,S0048,Kiaan Dhar,Warehouse Staff,2020-05-22,101613,4.9,True
+E00510,S0120,Abhiram Gala,Stock Associate,2023-12-23,95533,4.6,False
+E00511,S0145,Indali Kala,Store Manager,2023-11-10,41299,3.1,True
+E00512,S0039,Nisha Savant,Stock Associate,2022-11-19,68773,3.0,True
+E00513,S0017,Gabriel Chaudhry,Visual Merchandiser,2022-08-17,49987,4.5,True
+E00514,S0066,Jatin Rajagopalan,Visual Merchandiser,2022-07-21,46258,2.3,True
+E00515,S0063,Pushti Murty,Stock Associate,2023-03-17,78620,3.7,True
+E00516,S0010,Yug Malhotra,Visual Merchandiser,2019-10-15,50744,2.4,True
+E00517,S0072,Yuvraj Mane,Cashier,2018-06-22,109696,3.5,True
+E00518,S0022,Charvi Jha,Customer Service Rep,2021-05-05,23333,4.7,True
+E00519,S0094,Manya Merchant,Sales Associate,2022-06-14,109926,4.5,True
+E00520,S0147,Wriddhish Talwar,Sales Associate,2023-11-08,102060,4.5,False
+E00521,S0135,Isaiah Khosla,Stock Associate,2023-07-27,26829,2.7,True
+E00522,S0081,Ekavir Wable,Customer Service Rep,2022-05-17,113090,4.2,False
+E00523,S0056,Jalsa Nadig,Cashier,2019-03-14,37957,2.6,True
+E00524,S0105,Lila Salvi,Stock Associate,2018-08-18,79272,3.6,True
+E00525,S0029,Orinder Sinha,Customer Service Rep,2022-10-02,77240,4.0,False
+E00526,S0038,Anay Bir,Customer Service Rep,2023-05-01,108804,3.1,True
+E00527,S0009,Adweta Kale,Store Manager,2020-09-08,48158,3.7,True
+E00528,S0093,Darpan Rao,Sales Associate,2023-12-31,45983,4.6,True
+E00529,S0101,Yachana Sagar,Stock Associate,2021-05-17,26829,4.8,True
+E00530,S0077,Neelima Butala,Visual Merchandiser,2019-10-19,72520,3.9,False
+E00531,S0105,Arunima Chacko,Store Manager,2021-01-27,25498,4.5,False
+E00532,S0121,Farhan Vaidya,Security,2021-09-24,109029,3.3,False
+E00533,S0026,Nachiket Yadav,Cashier,2020-12-04,81366,2.2,True
+E00534,S0141,Mahika Bhatti,Customer Service Rep,2023-01-31,106122,2.1,True
+E00535,S0048,Rajeshri Khare,Warehouse Staff,2019-07-12,15403,3.2,True
+E00536,S0081,Yash Chadha,Sales Associate,2019-03-30,35686,2.7,True
+E00537,S0034,Jack Setty,Security,2021-08-01,74177,3.4,True
+E00538,S0067,Dayamai Gill,Cashier,2021-09-03,119795,2.8,True
+E00539,S0095,Advik Devan,Cashier,2022-05-31,64456,4.8,False
+E00540,S0058,Nihal Taneja,Store Manager,2018-04-05,88207,3.9,True
+E00541,S0023,Zansi Lad,Warehouse Staff,2020-03-23,49312,4.1,True
+E00542,S0103,Kamya Date,Security,2020-12-01,34562,2.3,True
+E00543,S0146,Jacob Balan,Sales Associate,2018-02-27,109186,3.6,True
+E00544,S0117,Pushti Magar,Warehouse Staff,2019-05-01,44423,4.1,True
+E00545,S0069,Adya Bose,Stock Associate,2023-07-18,65079,2.4,False
+E00546,S0056,Tamanna Vaidya,Stock Associate,2020-02-15,69831,2.5,True
+E00547,S0008,Christopher Tata,Stock Associate,2020-12-08,45865,3.9,False
+E00548,S0095,Jhalak Dugar,Warehouse Staff,2018-12-18,16352,3.4,False
+E00549,S0102,Harshil D’Alia,Visual Merchandiser,2022-04-20,107858,3.3,True
+E00550,S0019,Yashodhara Agate,Sales Associate,2018-08-29,21830,3.0,True
+E00551,S0091,Advik Konda,Store Manager,2018-01-22,48247,3.5,True
+E00552,S0102,Urmi Patla,Customer Service Rep,2019-06-26,88342,2.1,True
+E00553,S0044,Mason Gola,Warehouse Staff,2021-10-21,76352,2.4,True
+E00554,S0136,Oni Kapur,Security,2019-08-04,49131,2.4,True
+E00555,S0033,Yuvraj Saha,Warehouse Staff,2021-02-24,113018,3.1,True
+E00556,S0068,Anika Brahmbhatt,Stock Associate,2023-10-19,56026,3.3,True
+E00557,S0126,Jagdish Thakkar,Cashier,2022-12-08,21975,2.6,True
+E00558,S0047,Praneel Kapoor,Store Manager,2023-04-11,49108,2.5,True
+E00559,S0030,Nandini Biswas,Warehouse Staff,2018-06-17,72870,3.1,True
+E00560,S0125,Barkha Mukhopadhyay,Warehouse Staff,2023-07-13,29744,4.5,False
+E00561,S0032,Gabriel Shan,Customer Service Rep,2019-01-19,41703,4.6,True
+E00562,S0044,Jyoti Iyer,Stock Associate,2020-05-19,91486,5.0,True
+E00563,S0147,Daksha Kibe,Cashier,2022-09-02,25070,2.7,True
+E00564,S0025,Jyoti Tak,Customer Service Rep,2018-04-17,52261,4.0,True
+E00565,S0101,Yatan Dora,Customer Service Rep,2019-03-11,57406,2.5,True
+E00566,S0123,Nimrat Bajwa,Warehouse Staff,2021-01-08,92883,4.0,True
+E00567,S0012,Hiral Andra,Warehouse Staff,2021-08-23,110885,5.0,False
+E00568,S0146,Aarav Puri,Cashier,2020-05-15,21380,4.4,True
+E00569,S0015,Hemang Jha,Sales Associate,2022-04-12,27130,3.2,True
+E00570,S0103,Oni Swamy,Sales Associate,2018-03-26,42292,2.5,True
+E00571,S0073,Lucky Mammen,Cashier,2019-05-09,54131,3.5,True
+E00572,S0080,Caleb Kata,Cashier,2022-01-10,102231,2.3,True
+E00573,S0052,Kashish Shanker,Warehouse Staff,2022-12-30,65867,3.4,True
+E00574,S0109,Girish Tiwari,Sales Associate,2022-09-27,63265,3.8,True
+E00575,S0110,Meera Borde,Sales Associate,2018-06-15,82284,3.0,True
+E00576,S0058,Radhika De,Cashier,2023-07-22,84111,3.9,True
+E00577,S0075,Bishakha Lal,Warehouse Staff,2022-11-27,25378,4.7,True
+E00578,S0039,Maya Narain,Cashier,2021-05-15,47591,3.6,True
+E00579,S0013,Sneha Magar,Sales Associate,2018-07-04,82294,2.3,True
+E00580,S0025,Falan Jain,Warehouse Staff,2020-11-03,61590,2.8,True
+E00581,S0129,Ikbal Dugal,Store Manager,2019-04-12,112060,4.0,True
+E00582,S0047,Nitesh Sengupta,Security,2018-07-05,25917,3.2,True
+E00583,S0081,Dipta Ray,Warehouse Staff,2023-01-17,96764,4.4,True
+E00584,S0048,Ishita Johal,Visual Merchandiser,2020-01-29,25252,4.2,True
+E00585,S0028,Darika Sheth,Security,2023-12-29,17348,2.0,True
+E00586,S0044,Jagdish Chana,Warehouse Staff,2023-02-28,105676,3.2,True
+E00587,S0125,Daksha Baria,Stock Associate,2022-01-17,105526,4.0,True
+E00588,S0102,Falak Divan,Stock Associate,2018-12-25,31395,2.4,True
+E00589,S0005,Yuvraj Parekh,Visual Merchandiser,2018-04-20,42424,3.4,True
+E00590,S0062,Yochana Bawa,Security,2020-02-21,26284,2.9,True
+E00591,S0122,Abha Ghosh,Security,2018-03-31,30264,2.5,True
+E00592,S0114,Nidhi Sethi,Warehouse Staff,2023-04-16,17572,4.6,True
+E00593,S0052,Girindra Shere,Stock Associate,2022-05-24,21674,3.0,True
+E00594,S0111,Logan Dara,Security,2023-07-24,111610,3.7,True
+E00595,S0075,David Kapadia,Store Manager,2023-06-20,67386,3.5,True
+E00596,S0125,Rudra Rattan,Visual Merchandiser,2018-09-06,84246,2.1,True
+E00597,S0142,Frado Lad,Sales Associate,2021-01-02,99974,3.3,True
+E00598,S0127,Anthony Bhattacharyya,Customer Service Rep,2023-01-11,106424,3.3,True
+E00599,S0050,Sachi Dave,Warehouse Staff,2021-11-09,72424,2.7,True
+E00600,S0087,Garima Das,Warehouse Staff,2019-06-22,53455,4.2,True
+E00601,S0107,Triya Bedi,Customer Service Rep,2023-04-19,119825,4.9,True
+E00602,S0054,Rachita Rana,Stock Associate,2018-12-20,102432,3.4,True
+E00603,S0041,Ayushman Raja,Warehouse Staff,2019-02-18,119003,3.2,False
+E00604,S0078,Orinder Pandya,Visual Merchandiser,2020-05-07,87984,2.1,True
+E00605,S0067,Rachit Maharaj,Customer Service Rep,2019-10-12,37900,4.5,False
+E00606,S0009,Sanaya Dixit,Sales Associate,2021-10-15,71442,2.3,True
+E00607,S0144,Yatan Merchant,Visual Merchandiser,2023-06-16,48793,5.0,True
+E00608,S0012,Nisha Srinivas,Stock Associate,2019-09-12,105457,4.6,True
+E00609,S0027,Gagan Mammen,Store Manager,2022-11-29,119724,3.4,True
+E00610,S0029,Laksh Saini,Sales Associate,2019-02-22,88724,2.1,True
+E00611,S0031,Zaid Bahl,Visual Merchandiser,2022-01-21,35582,4.2,True
+E00612,S0130,Jagrati Srinivasan,Warehouse Staff,2019-02-11,35223,3.9,True
+E00613,S0036,Hemangini Thakkar,Sales Associate,2020-04-06,72554,4.9,True
+E00614,S0002,Lipika Madan,Visual Merchandiser,2023-04-25,59737,2.9,True
+E00615,S0069,Atharv Nagar,Customer Service Rep,2022-08-27,62270,3.9,True
+E00616,S0136,Ayushman Mand,Security,2020-07-23,33087,4.4,True
+E00617,S0105,Urmi Wagle,Warehouse Staff,2023-10-16,119150,4.0,False
+E00618,S0114,Viraj Dutta,Cashier,2018-02-10,109060,4.4,False
+E00619,S0022,Yug Khosla,Customer Service Rep,2021-07-13,67645,4.9,True
+E00620,S0016,Daksh Kanda,Security,2018-06-01,101530,4.8,True
+E00621,S0148,Isha Ghose,Store Manager,2023-10-31,53761,3.3,False
+E00622,S0142,Warjas Nadkarni,Stock Associate,2021-07-08,60109,2.0,True
+E00623,S0136,Ayaan Pandey,Cashier,2022-07-13,73482,3.9,False
+E00624,S0114,Raghav Tailor,Customer Service Rep,2022-07-15,116633,2.6,True
+E00625,S0010,Parth Swaminathan,Customer Service Rep,2022-05-17,110040,4.2,False
+E00626,S0134,Gautam Bhalla,Stock Associate,2020-05-25,27166,3.5,True
+E00627,S0088,Theodore Bahri,Cashier,2018-04-06,18655,4.7,True
+E00628,S0067,Aadi Narula,Visual Merchandiser,2021-05-29,110225,3.3,True
+E00629,S0016,Kalpit Oak,Customer Service Rep,2020-11-29,97180,3.5,True
+E00630,S0032,Ekiya Bhargava,Warehouse Staff,2021-05-05,90030,4.2,True
+E00631,S0061,Manbir Dhar,Visual Merchandiser,2021-12-05,54216,2.9,True
+E00632,S0147,Janya Bora,Cashier,2022-03-27,83113,4.2,True
+E00633,S0133,Meghana Chaudhuri,Visual Merchandiser,2022-01-19,74547,2.3,True
+E00634,S0106,Chasmum Naidu,Sales Associate,2019-01-13,23151,3.3,True
+E00635,S0055,Nakul Sarkar,Warehouse Staff,2018-11-16,63404,4.0,True
+E00636,S0144,Edhitha Ghosh,Security,2020-12-16,91585,3.5,True
+E00637,S0113,Udant Gill,Warehouse Staff,2022-09-04,36344,2.4,True
+E00638,S0118,Damyanti Menon,Cashier,2023-10-04,84355,2.4,True
+E00639,S0122,Peter Agarwal,Store Manager,2019-10-05,88272,3.1,False
+E00640,S0105,Bachittar Gopal,Sales Associate,2019-05-11,63442,3.7,True
+E00641,S0040,Timothy Chawla,Sales Associate,2022-03-02,54967,5.0,True
+E00642,S0125,Lohit Narula,Store Manager,2019-08-09,33630,4.4,True
+E00643,S0079,Wazir Palan,Stock Associate,2020-06-02,38996,4.5,True
+E00644,S0032,Oliver Chakrabarti,Customer Service Rep,2018-10-04,20856,3.3,True
+E00645,S0145,Sanya Apte,Warehouse Staff,2021-10-15,117413,3.1,True
+E00646,S0034,Shaurya Krish,Cashier,2023-08-30,98422,3.4,True
+E00647,S0115,Inaya Kunda,Cashier,2021-08-25,26706,4.4,True
+E00648,S0105,Aarav Bava,Security,2020-08-11,66825,3.0,True
+E00649,S0114,Raksha Saini,Stock Associate,2018-12-29,36707,4.1,True
+E00650,S0080,Odika Tailor,Sales Associate,2018-12-15,40221,4.9,True
+E00651,S0014,Indali Prashad,Visual Merchandiser,2023-05-04,80881,4.7,True
+E00652,S0137,Varenya Kar,Cashier,2018-03-19,51039,4.4,True
+E00653,S0149,Siya Borah,Warehouse Staff,2018-12-13,84932,3.8,True
+E00654,S0012,Chaitaly Bahri,Warehouse Staff,2018-04-06,59558,3.3,True
+E00655,S0136,Advika Cheema,Customer Service Rep,2022-04-14,48708,2.3,False
+E00656,S0139,Hema Garde,Cashier,2021-03-14,33878,2.5,True
+E00657,S0040,Naveen Borde,Stock Associate,2022-07-27,103946,2.5,True
+E00658,S0084,Hamsini Subramanian,Cashier,2018-04-22,108493,2.2,True
+E00659,S0082,Raagini Gala,Cashier,2022-08-18,57495,2.8,False
+E00660,S0031,Naksh Bera,Store Manager,2020-04-09,46407,4.3,True
+E00661,S0127,Garima Jha,Security,2019-04-17,50296,2.2,True
+E00662,S0105,Nimrat Zachariah,Sales Associate,2023-06-07,18788,3.2,True
+E00663,S0005,Baghyawati Mishra,Stock Associate,2019-02-20,47285,4.3,True
+E00664,S0033,Gopal Bawa,Stock Associate,2022-07-25,73455,2.3,True
+E00665,S0053,Vritti Dube,Cashier,2022-03-10,85836,5.0,True
+E00666,S0138,Jalsa Aggarwal,Security,2023-01-25,20477,2.0,True
+E00667,S0075,Gagan Menon,Cashier,2018-01-03,22887,4.8,True
+E00668,S0065,Ryan Chatterjee,Security,2021-12-10,97864,2.6,True
+E00669,S0073,Samuel Garde,Store Manager,2019-10-24,111886,3.6,True
+E00670,S0023,Finn Solanki,Security,2019-05-19,33304,4.2,False
+E00671,S0111,Darika Rao,Visual Merchandiser,2023-08-30,56720,4.7,False
+E00672,S0067,Vrinda Lanka,Warehouse Staff,2021-01-23,47234,4.0,True
+E00673,S0054,Lila Goyal,Warehouse Staff,2021-09-07,17080,4.7,True
+E00674,S0001,Lakshmi Pingle,Warehouse Staff,2018-01-18,16255,4.0,True
+E00675,S0126,Sanaya Basu,Security,2018-11-29,118193,4.6,True
+E00676,S0138,Ria Shroff,Store Manager,2022-12-29,103112,2.4,False
+E00677,S0097,Upkaar Luthra,Customer Service Rep,2022-05-04,38224,4.5,True
+E00678,S0003,Matthew Chatterjee,Sales Associate,2023-03-11,63559,4.8,True
+E00679,S0057,Hemangini Sachdev,Store Manager,2021-02-25,104201,4.8,True
+E00680,S0024,Darsh Ram,Stock Associate,2020-06-24,45704,4.9,False
+E00681,S0010,Vaishnavi Keer,Stock Associate,2023-07-12,107280,4.1,True
+E00682,S0051,Chandani Brar,Security,2019-03-31,51352,3.7,True
+E00683,S0142,Bakhshi Thakkar,Visual Merchandiser,2019-12-20,23566,3.8,True
+E00684,S0033,Jai Sen,Stock Associate,2020-07-22,83561,4.2,True
+E00685,S0006,Oliver Kakar,Stock Associate,2023-02-03,15256,4.8,True
+E00686,S0014,Jonathan Basak,Customer Service Rep,2022-11-07,68330,2.8,True
+E00687,S0120,Farhan Saran,Warehouse Staff,2022-01-20,82797,4.3,False
+E00688,S0058,Manbir Kuruvilla,Store Manager,2021-02-12,70058,3.6,True
+E00689,S0101,Ekalinga Chahal,Visual Merchandiser,2021-10-02,25722,4.6,True
+E00690,S0058,Mekhala Nanda,Security,2018-11-01,47765,2.6,True
+E00691,S0017,Zinal Shanker,Sales Associate,2018-04-25,77910,3.3,True
+E00692,S0086,Oni Chowdhury,Stock Associate,2020-10-09,29134,3.4,False
+E00693,S0014,Mason Divan,Customer Service Rep,2023-10-30,119085,2.7,True
+E00694,S0113,Hitesh Chaudhuri,Sales Associate,2023-01-03,90882,2.4,False
+E00695,S0009,Hemangini Roy,Security,2021-07-07,105880,2.2,True
+E00696,S0114,Leela Sunder,Store Manager,2021-05-19,95050,3.9,True
+E00697,S0015,Baljiwan Gera,Store Manager,2021-04-22,64998,3.2,True
+E00698,S0106,Neha Dhawan,Visual Merchandiser,2018-02-13,74429,3.2,True
+E00699,S0026,Balvan Randhawa,Customer Service Rep,2018-04-17,74516,3.6,True
+E00700,S0028,Wazir Bawa,Sales Associate,2018-02-20,93010,4.1,True
+E00701,S0050,Amruta Pradhan,Cashier,2023-09-16,48591,3.1,True
+E00702,S0114,Geetika Mitter,Cashier,2020-09-22,33045,4.4,True
+E00703,S0080,Avni Swamy,Security,2023-10-03,100420,4.3,True
+E00704,S0139,Vedant Desai,Cashier,2019-08-27,76541,2.9,True
+E00705,S0095,Saanvi Nagi,Store Manager,2023-10-22,91865,4.0,True
+E00706,S0061,Omaja Chakraborty,Store Manager,2022-09-25,60064,2.6,True
+E00707,S0052,Riya Kakar,Sales Associate,2021-10-30,39819,4.0,True
+E00708,S0120,Vedhika Varty,Customer Service Rep,2021-10-06,95753,2.9,True
+E00709,S0027,Daksh Varma,Warehouse Staff,2018-06-22,80002,2.7,True
+E00710,S0058,Dominic Mukhopadhyay,Visual Merchandiser,2023-03-26,96778,2.6,True
+E00711,S0085,Krishna Viswanathan,Security,2020-04-20,67469,2.6,False
+E00712,S0093,Oscar Hans,Store Manager,2018-10-30,61908,2.1,True
+E00713,S0075,Dalbir Krish,Warehouse Staff,2020-03-07,97750,3.8,True
+E00714,S0012,Tanmayi Bedi,Store Manager,2020-03-26,40929,2.9,True
+E00715,S0068,Rushil Mahal,Cashier,2021-10-23,87680,2.7,True
+E00716,S0046,Ucchal Tiwari,Stock Associate,2019-02-19,17751,4.5,True
+E00717,S0029,Jatin Balasubramanian,Customer Service Rep,2020-05-11,54986,3.4,True
+E00718,S0096,Kashish Suresh,Cashier,2023-11-29,119729,5.0,False
+E00719,S0017,Peter Som,Sales Associate,2019-08-15,32143,4.4,True
+E00720,S0097,Hemangini Gade,Customer Service Rep,2021-07-26,93584,3.3,True
+E00721,S0012,Gautam Mane,Visual Merchandiser,2021-04-19,118492,2.4,True
+E00722,S0072,Libni Bawa,Cashier,2023-09-13,91556,4.7,True
+E00723,S0021,Tanish Kant,Warehouse Staff,2018-09-23,36945,3.5,True
+E00724,S0131,Samuel Luthra,Customer Service Rep,2023-08-05,83012,3.4,True
+E00725,S0096,Yochana Bahri,Warehouse Staff,2023-07-20,77096,2.8,True
+E00726,S0150,Urvi Deo,Store Manager,2020-04-28,43773,4.7,True
+E00727,S0061,Abhiram Kapur,Security,2020-06-14,55107,3.3,True
+E00728,S0041,Dalaja Maharaj,Customer Service Rep,2020-11-08,87161,2.3,True
+E00729,S0076,Krisha Palla,Warehouse Staff,2023-10-27,61081,2.7,True
+E00730,S0132,Zayyan Kamdar,Customer Service Rep,2022-10-12,74133,3.4,True
+E00731,S0128,Chasmum Verma,Customer Service Rep,2021-01-23,65118,2.1,True
+E00732,S0068,Harsh Amble,Sales Associate,2022-01-10,25802,2.9,True
+E00733,S0140,Barkha Misra,Sales Associate,2021-02-06,44850,2.3,True
+E00734,S0010,Vasatika Bhatt,Visual Merchandiser,2021-09-29,40774,4.0,True
+E00735,S0071,Aradhana Nair,Visual Merchandiser,2019-07-19,113616,4.1,True
+E00736,S0067,Advika Misra,Store Manager,2021-05-11,51942,4.5,True
+E00737,S0104,Mason Varughese,Security,2018-02-18,76866,4.0,False
+E00738,S0039,Dakshesh Raval,Security,2020-07-21,44743,4.2,True
+E00739,S0060,Logan Bal,Warehouse Staff,2023-03-05,59650,4.4,True
+E00740,S0049,Chakrika Lad,Security,2022-09-07,42470,3.3,False
+E00741,S0008,Nidhi Rama,Customer Service Rep,2019-07-24,90695,4.6,True
+E00742,S0003,Ranveer Oza,Warehouse Staff,2021-12-23,59541,2.7,True
+E00743,S0104,Vamakshi Parmer,Stock Associate,2021-08-28,91933,2.1,True
+E00744,S0036,Onkar Golla,Cashier,2021-09-14,89473,3.9,True
+E00745,S0147,Gunbir Sinha,Security,2022-04-11,41765,4.8,True
+E00746,S0099,Aarna Goswami,Visual Merchandiser,2023-04-29,29239,3.0,False
+E00747,S0078,Gaurav Kapadia,Sales Associate,2019-12-04,28672,4.0,True
+E00748,S0126,Udant Mohanty,Store Manager,2020-02-04,41083,2.2,False
+E00749,S0073,Garima Prabhu,Visual Merchandiser,2020-08-12,53155,4.0,True
+E00750,S0015,Chaitaly Sheth,Customer Service Rep,2023-10-25,16447,2.5,False
+E00751,S0106,Upma Bera,Security,2019-10-06,29515,2.4,True
+E00752,S0018,Urmi Hayer,Security,2020-04-25,32030,4.6,True
+E00753,S0122,Lakshmi Wagle,Cashier,2021-06-25,92003,2.6,True
+E00754,S0118,Odika Bhagat,Stock Associate,2020-04-06,15975,5.0,True
+E00755,S0103,Laksh Iyer,Visual Merchandiser,2023-11-24,58108,4.7,False
+E00756,S0118,Nimrat Shankar,Warehouse Staff,2018-06-10,111638,2.3,True
+E00757,S0117,Diya Gole,Customer Service Rep,2021-05-03,66260,3.8,True
+E00758,S0045,Vinaya Natarajan,Security,2020-10-17,38537,4.7,True
+E00759,S0118,Dhriti Bhardwaj,Security,2020-01-22,106556,3.7,True
+E00760,S0012,Siya Mahal,Visual Merchandiser,2019-10-09,50884,4.6,True
+E00761,S0018,Om Dutt,Visual Merchandiser,2023-07-15,68907,5.0,True
+E00762,S0095,Gaurang Dayal,Sales Associate,2019-03-07,81112,4.3,True
+E00763,S0116,Pushti Raval,Cashier,2020-11-01,42180,3.5,True
+E00764,S0019,Vansha Rajagopal,Warehouse Staff,2022-04-11,60043,4.2,False
+E00765,S0102,Baljiwan Walla,Store Manager,2018-02-13,47847,2.3,False
+E00766,S0084,Kashvi Atwal,Warehouse Staff,2023-06-09,75470,2.2,True
+E00767,S0063,Rayaan Badami,Warehouse Staff,2019-07-29,76707,4.5,True
+E00768,S0044,Yuvraj Kara,Store Manager,2019-02-16,38230,2.9,True
+E00769,S0101,Devika Dayal,Cashier,2018-11-14,103000,4.3,True
+E00770,S0040,Leela Thakur,Warehouse Staff,2022-01-06,38322,2.7,True
+E00771,S0137,Oliver Bhattacharyya,Visual Merchandiser,2022-12-16,106323,2.1,True
+E00772,S0134,Chanchal Mannan,Sales Associate,2022-05-19,105485,2.9,True
+E00773,S0002,Zinal Viswanathan,Store Manager,2022-03-26,115547,2.6,True
+E00774,S0062,Radha Desai,Visual Merchandiser,2019-01-10,17102,3.3,False
+E00775,S0087,Vrishti Parmer,Visual Merchandiser,2018-09-16,43910,4.9,True
+E00776,S0043,Nitesh Raval,Cashier,2018-06-30,69484,3.5,True
+E00777,S0083,Vedant Kapur,Visual Merchandiser,2020-04-28,86002,3.2,True
+E00778,S0060,Siddharth Bains,Visual Merchandiser,2019-03-10,61737,3.0,True
+E00779,S0081,Jatin Peri,Store Manager,2022-05-14,42887,3.4,True
+E00780,S0072,Keya Kumer,Customer Service Rep,2018-06-29,23825,4.7,True
+E00781,S0128,Chanakya Chokshi,Sales Associate,2019-12-04,48022,4.9,True
+E00782,S0100,Chanakya D’Alia,Cashier,2021-09-22,37980,3.9,False
+E00783,S0082,Sachi Rai,Warehouse Staff,2018-10-04,58922,2.1,False
+E00784,S0115,Zayyan Som,Security,2023-09-25,98963,4.2,True
+E00785,S0004,Samesh Andra,Visual Merchandiser,2018-03-28,95786,4.3,True
+E00786,S0061,Osha Chaudhuri,Security,2020-09-24,96233,2.2,True
+E00787,S0128,Laksh Sahota,Stock Associate,2020-04-07,34879,3.1,True
+E00788,S0061,Yasti Dalal,Warehouse Staff,2021-09-08,32598,2.8,True
+E00789,S0011,Ishaan Cherian,Security,2021-03-27,113376,2.1,True
+E00790,S0085,Rushil Iyengar,Customer Service Rep,2020-09-19,41976,3.6,False
+E00791,S0064,Saksham Parmar,Visual Merchandiser,2022-04-12,83350,3.0,True
+E00792,S0002,Chakrika Dyal,Sales Associate,2023-07-07,24173,4.9,True
+E00793,S0037,Watika Johal,Visual Merchandiser,2019-05-30,27027,2.5,True
+E00794,S0053,Ganga Keer,Visual Merchandiser,2023-09-10,25245,3.3,True
+E00795,S0043,Agastya Chakraborty,Visual Merchandiser,2020-09-30,70576,2.5,True
+E00796,S0074,Wakeeta Dixit,Warehouse Staff,2020-04-04,50633,4.6,True
+E00797,S0093,Yasti Borde,Security,2022-03-28,36989,3.4,True
+E00798,S0111,Aahana Kashyap,Cashier,2023-05-29,17596,4.3,True
+E00799,S0022,Chaman Lalla,Stock Associate,2019-09-18,87463,4.2,True
+E00800,S0119,Chandresh Chaudhry,Stock Associate,2023-02-01,52122,3.1,True
+E00801,S0019,Balveer Mannan,Customer Service Rep,2019-07-14,108698,3.4,True
+E00802,S0049,Dhriti Sandhu,Store Manager,2018-02-22,80627,4.2,True
+E00803,S0104,Girish Bath,Security,2022-06-05,112280,3.1,True
+E00804,S0019,Lakshit Garde,Security,2018-06-09,31315,3.2,True
+E00805,S0050,Ishita Sarma,Security,2020-11-11,116091,4.7,True
+E00806,S0131,Girik Pradhan,Warehouse Staff,2022-02-17,106285,2.2,True
+E00807,S0109,Qadim Comar,Visual Merchandiser,2020-09-19,77616,2.1,True
+E00808,S0008,Mugdha Shan,Cashier,2020-12-06,94355,3.4,True
+E00809,S0066,Lekha Sridhar,Visual Merchandiser,2019-10-24,16617,2.4,True
+E00810,S0099,Ojas Chowdhury,Security,2018-11-26,82965,4.7,False
+E00811,S0043,Daniel Dutta,Security,2020-11-01,105680,2.9,False
+E00812,S0098,Omaja Subramanian,Stock Associate,2022-08-13,113626,4.6,True
+E00813,S0023,Pratyush Raghavan,Sales Associate,2021-11-11,33705,2.8,True
+E00814,S0102,Ayush De,Stock Associate,2018-01-27,37072,4.4,True
+E00815,S0018,Vinaya Chowdhury,Security,2023-11-21,69636,4.0,True
+E00816,S0044,Ridhi Batra,Cashier,2022-03-15,39431,4.1,True
+E00817,S0047,Advika Murthy,Sales Associate,2023-01-20,89329,4.4,True
+E00818,S0016,Udarsh Nigam,Cashier,2020-02-25,48993,4.9,False
+E00819,S0113,Rachita Kothari,Sales Associate,2019-11-12,25460,2.9,True
+E00820,S0071,Hiral Rajan,Sales Associate,2021-11-02,18888,3.8,True
+E00821,S0026,Chatura Apte,Store Manager,2018-09-08,49875,4.3,True
+E00822,S0150,Yashasvi Singh,Store Manager,2019-02-01,42665,3.6,True
+E00823,S0134,Noah Borde,Stock Associate,2023-06-14,77027,4.3,True
+E00824,S0087,Ekani Khosla,Customer Service Rep,2021-11-06,56317,4.5,False
+E00825,S0103,Arunima Bedi,Security,2018-08-23,61665,4.6,True
+E00826,S0001,Kritika Rau,Warehouse Staff,2022-07-04,110056,4.5,False
+E00827,S0007,Farhan Sharaf,Sales Associate,2023-12-14,51630,4.9,True
+E00828,S0064,Sara Chakrabarti,Customer Service Rep,2023-01-26,96048,4.1,False
+E00829,S0132,Sanya Mutti,Security,2020-02-09,15410,5.0,False
+E00830,S0083,Widisha Badami,Store Manager,2022-01-15,20997,4.9,True
+E00831,S0114,Netra Sachar,Visual Merchandiser,2023-06-08,67450,4.2,True
+E00832,S0090,Aadi Chand,Security,2023-05-05,101289,4.6,False
+E00833,S0099,Yashoda Jhaveri,Stock Associate,2020-03-10,108315,2.4,True
+E00834,S0147,Harita Patla,Store Manager,2019-06-08,80264,4.4,True
+E00835,S0141,Udant Sha,Warehouse Staff,2019-11-20,73495,4.9,True
+E00836,S0139,Urvashi Patla,Visual Merchandiser,2020-09-23,42740,2.5,False
+E00837,S0023,Ishaan Chatterjee,Sales Associate,2022-11-17,108816,2.1,False
+E00838,S0084,Aarnav Om,Security,2021-02-22,43885,4.2,True
+E00839,S0032,Bishakha Vig,Cashier,2023-12-30,98040,4.2,True
+E00840,S0086,Hitesh Bath,Visual Merchandiser,2018-09-22,99408,3.0,False
+E00841,S0098,Waida Dey,Security,2020-08-13,44301,2.8,True
+E00842,S0029,Hredhaan Kumar,Sales Associate,2021-10-25,112069,3.8,True
+E00843,S0030,Raghav Dara,Customer Service Rep,2019-06-06,56074,4.9,True
+E00844,S0001,Tanveer Shankar,Stock Associate,2018-09-11,92340,3.6,True
+E00845,S0109,Hamsini Chokshi,Customer Service Rep,2022-02-04,119532,4.0,True
+E00846,S0134,Chakradhar Dasgupta,Visual Merchandiser,2019-03-13,66814,2.0,False
+E00847,S0081,Tanvi Thaman,Cashier,2021-04-30,43692,3.5,True
+E00848,S0073,Wishi Agrawal,Cashier,2018-05-21,93496,3.0,True
+E00849,S0032,Rachita Subramanian,Stock Associate,2023-05-14,97716,4.5,True
+E00850,S0097,Oscar Dave,Store Manager,2021-09-26,35014,4.5,True
+E00851,S0058,Lila Nagy,Store Manager,2020-01-04,78898,4.2,True
+E00852,S0041,Omya Kothari,Store Manager,2022-05-26,59225,3.3,True
+E00853,S0090,Mitali Oza,Security,2022-05-21,24414,3.6,True
+E00854,S0050,Sneha Deol,Security,2019-02-03,32157,3.0,True
+E00855,S0014,Nitara Vala,Stock Associate,2023-02-18,100804,2.5,True
+E00856,S0124,Dipta Kalla,Stock Associate,2019-08-17,42494,2.7,True
+E00857,S0003,Shaurya Mannan,Customer Service Rep,2019-02-22,103908,4.4,False
+E00858,S0097,Kevin Gokhale,Security,2019-11-21,22383,2.3,False
+E00859,S0046,Jack Pandey,Store Manager,2019-04-26,82559,4.0,True
+E00860,S0039,Omisha Walla,Security,2020-09-30,19455,2.4,True
+E00861,S0078,Pahal Arya,Cashier,2022-03-18,116692,4.1,True
+E00862,S0023,Aryan Raj,Warehouse Staff,2022-04-15,51073,3.9,True
+E00863,S0003,Chatresh Bhalla,Sales Associate,2019-04-23,25831,2.4,True
+E00864,S0131,Amara Dyal,Visual Merchandiser,2018-04-05,91919,3.7,True
+E00865,S0071,Zashil Dhingra,Sales Associate,2020-01-12,65326,3.5,True
+E00866,S0112,Chakrika Jani,Stock Associate,2019-05-28,28033,3.0,True
+E00867,S0138,Jagrati Sethi,Cashier,2022-07-19,106847,2.1,True
+E00868,S0138,Udarsh Ramachandran,Warehouse Staff,2018-09-19,83013,4.5,True
+E00869,S0032,Yasti Mani,Visual Merchandiser,2019-04-26,38680,4.6,True
+E00870,S0002,Lakshmi Ram,Warehouse Staff,2021-07-11,31127,2.1,True
+E00871,S0042,Dhriti Bhagat,Sales Associate,2020-11-17,113706,2.1,False
+E00872,S0130,Zayan Jain,Stock Associate,2022-01-29,86359,2.5,False
+E00873,S0001,Umang Pillai,Visual Merchandiser,2021-05-16,21051,4.8,True
+E00874,S0076,Rishi Menon,Warehouse Staff,2019-07-27,90637,3.5,True
+E00875,S0091,Peter Borde,Visual Merchandiser,2019-02-10,101850,4.5,True
+E00876,S0049,Oscar Varkey,Cashier,2021-05-12,43208,4.9,True
+E00877,S0056,Krishna Baria,Customer Service Rep,2021-02-10,31841,4.2,True
+E00878,S0141,Arya Lalla,Stock Associate,2020-12-03,65040,3.9,True
+E00879,S0117,Naveen Kumer,Sales Associate,2020-11-07,103673,3.3,True
+E00880,S0138,Ganga Shukla,Visual Merchandiser,2018-10-17,97518,4.2,False
+E00881,S0050,Balveer Dube,Customer Service Rep,2023-09-26,94291,2.5,True
+E00882,S0081,Charan Mitra,Security,2022-04-02,18396,4.9,True
+E00883,S0070,Ishita Bora,Sales Associate,2023-12-17,29416,4.1,True
+E00884,S0085,Thomas Gour,Sales Associate,2022-01-26,58714,4.3,True
+E00885,S0058,Yashasvi Dutta,Stock Associate,2018-02-10,27838,3.1,False
+E00886,S0097,Netra Chanda,Sales Associate,2019-05-21,38033,3.6,False
+E00887,S0126,Timothy Kala,Sales Associate,2023-12-07,60731,4.1,False
+E00888,S0142,Garima Patel,Stock Associate,2019-02-10,21286,2.5,False
+E00889,S0100,Tejas Wali,Cashier,2021-11-14,112163,4.0,True
+E00890,S0142,Aditya Contractor,Security,2023-05-08,92635,2.4,True
+E00891,S0132,Sanaya Khosla,Cashier,2019-06-02,33700,3.1,True
+E00892,S0014,Balveer Nagi,Customer Service Rep,2020-10-17,103895,3.8,True
+E00893,S0047,Ishaan Raju,Warehouse Staff,2021-12-20,119656,3.4,True
+E00894,S0110,Barkha Bakshi,Visual Merchandiser,2021-06-04,98313,4.6,False
+E00895,S0105,Yoshita Trivedi,Customer Service Rep,2019-01-05,98188,2.2,True
+E00896,S0024,Vidhi Bassi,Cashier,2018-08-24,26086,4.2,True
+E00897,S0127,Reyansh Nagi,Store Manager,2022-10-03,103740,3.5,True
+E00898,S0123,Gopal Ganesh,Warehouse Staff,2023-10-11,104800,5.0,False
+E00899,S0032,Dominic Kade,Security,2018-02-26,95777,2.6,True
+E00900,S0002,Panini Chawla,Security,2023-12-29,113260,3.0,False
+E00901,S0136,Radhika Bora,Store Manager,2023-01-12,37089,4.0,False
+E00902,S0135,Arjun Sharaf,Visual Merchandiser,2019-12-18,24846,3.1,True
+E00903,S0091,Baljiwan Chahal,Store Manager,2022-09-28,79947,3.1,True
+E00904,S0029,Chatura Gokhale,Customer Service Rep,2020-10-20,85663,4.6,False
+E00905,S0075,Ekavir Kari,Stock Associate,2023-06-02,53475,2.8,True
+E00906,S0146,Nikita Rama,Security,2020-06-09,54953,4.8,False
+E00907,S0132,Nidhi Sant,Store Manager,2023-03-12,95969,4.5,True
+E00908,S0002,Anay Ramachandran,Warehouse Staff,2021-09-07,54105,3.1,True
+E00909,S0048,Abeer Bhatnagar,Security,2021-12-23,16161,2.3,True
+E00910,S0022,Elijah Parmar,Cashier,2022-08-10,31232,4.7,True
+E00911,S0065,Bimala Mitra,Visual Merchandiser,2023-04-12,66820,3.1,True
+E00912,S0047,Baghyawati Sarma,Stock Associate,2019-03-22,72484,4.0,True
+E00913,S0036,Megha Balasubramanian,Customer Service Rep,2022-11-13,15761,3.1,False
+E00914,S0051,Naksh Walla,Sales Associate,2020-02-16,52342,2.1,True
+E00915,S0085,Laban Raman,Store Manager,2019-10-19,102320,2.6,True
+E00916,S0069,Maanas Misra,Sales Associate,2022-09-21,79103,3.7,True
+E00917,S0033,Advay Dhaliwal,Customer Service Rep,2022-06-26,80779,4.2,True
+E00918,S0100,Benjamin Ahluwalia,Cashier,2019-03-26,29139,4.4,True
+E00919,S0089,Frederick Mody,Store Manager,2020-08-26,21820,4.0,True
+E00920,S0003,Hemangini Kakar,Security,2023-05-21,52940,2.8,True
+E00921,S0110,Yauvani Dhar,Visual Merchandiser,2019-09-17,110584,3.5,True
+E00922,S0030,Qarin Kant,Stock Associate,2020-10-10,102337,4.5,True
+E00923,S0027,Rishi Contractor,Cashier,2020-02-12,92489,3.9,True
+E00924,S0031,Chatura Shenoy,Cashier,2022-07-02,20028,2.8,True
+E00925,S0038,Bina Bhavsar,Security,2018-03-14,95801,2.6,False
+E00926,S0098,Guneet Hora,Security,2023-11-21,55166,4.1,False
+E00927,S0057,Ganga Parikh,Customer Service Rep,2022-10-12,77809,2.2,True
+E00928,S0014,Wahab Chaudhry,Stock Associate,2019-03-27,50290,3.1,False
+E00929,S0108,Ekaraj Hari,Visual Merchandiser,2021-08-03,21233,2.5,True
+E00930,S0083,Vedika Seshadri,Visual Merchandiser,2021-03-14,76873,2.8,True
+E00931,S0111,Damini Dua,Cashier,2020-10-30,79393,3.1,True
+E00932,S0025,Diya Sangha,Store Manager,2019-06-18,58412,3.1,True
+E00933,S0136,Aayush Munshi,Customer Service Rep,2020-09-02,100229,2.8,True
+E00934,S0023,Timothy Sarin,Sales Associate,2019-06-19,97517,4.2,True
+E00935,S0049,Jagvi Desai,Visual Merchandiser,2022-12-31,27928,2.2,True
+E00936,S0088,Varsha Shere,Stock Associate,2023-04-27,114744,2.6,True
+E00937,S0012,Jagrati Mody,Cashier,2020-02-25,69815,3.7,True
+E00938,S0144,Ikbal Gill,Customer Service Rep,2022-02-08,73783,3.9,True
+E00939,S0112,Avni Dey,Sales Associate,2023-06-01,69919,3.6,False
+E00940,S0006,Adya Bose,Cashier,2021-01-27,106318,4.9,True
+E00941,S0145,Anirudh Tripathi,Store Manager,2020-02-19,112087,4.4,True
+E00942,S0137,Nidhi Kala,Sales Associate,2019-11-09,72376,4.3,True
+E00943,S0100,Abha Zacharia,Security,2021-01-17,42122,2.6,True
+E00944,S0056,Manthan Pau,Store Manager,2023-10-02,74695,3.5,True
+E00945,S0067,Udant Mannan,Stock Associate,2020-06-21,53844,4.1,True
+E00946,S0044,Ucchal Thaker,Visual Merchandiser,2018-07-06,84935,2.7,True
+E00947,S0038,Mekhala Patla,Stock Associate,2019-06-29,50446,4.6,True
+E00948,S0064,William Gandhi,Visual Merchandiser,2023-12-30,30228,2.0,True
+E00949,S0095,Sanaya Dutta,Customer Service Rep,2018-12-07,107466,4.7,True
+E00950,S0035,Madhav Sule,Security,2021-04-22,57550,5.0,True
+E00951,S0003,Banjeet Kanda,Customer Service Rep,2020-06-17,110745,4.9,True
+E00952,S0005,Vincent Bhatnagar,Sales Associate,2022-04-14,100698,2.8,True
+E00953,S0142,Kala Kaur,Visual Merchandiser,2022-12-17,43919,3.0,True
+E00954,S0102,Samuel Vasa,Cashier,2023-01-02,45372,4.2,True
+E00955,S0038,Lipika Singh,Warehouse Staff,2019-01-19,80006,2.5,True
+E00956,S0046,Chakradhar Baral,Visual Merchandiser,2023-07-03,110614,2.5,True
+E00957,S0080,Harshil Verma,Cashier,2019-12-29,66668,4.1,True
+E00958,S0037,Adya Ghosh,Sales Associate,2022-10-13,47145,3.4,True
+E00959,S0104,Kritika Pau,Sales Associate,2023-11-28,32995,4.2,True
+E00960,S0026,Zansi Krishnamurthy,Security,2022-04-22,17715,2.3,True
+E00961,S0012,Udant Varty,Cashier,2020-10-14,115940,2.3,True
+E00962,S0004,Ira Pai,Store Manager,2019-03-12,86089,4.2,True
+E00963,S0022,Vasatika Ahuja,Visual Merchandiser,2019-07-25,77970,4.3,False
+E00964,S0042,Ria Gandhi,Stock Associate,2021-09-20,77771,2.5,True
+E00965,S0069,Faraj Varkey,Sales Associate,2018-03-28,20836,2.3,True
+E00966,S0131,Siddharth Doctor,Security,2019-08-04,15158,4.7,True
+E00967,S0110,Nakul Pathak,Security,2019-08-27,61309,4.0,True
+E00968,S0099,Victor Sachdeva,Sales Associate,2023-07-08,37224,5.0,True
+E00969,S0073,Ishaan Subramaniam,Customer Service Rep,2018-11-09,95700,3.0,True
+E00970,S0022,Varenya Kade,Store Manager,2019-09-11,38339,3.3,True
+E00971,S0047,Nirja Bains,Security,2019-09-08,102460,4.1,True
+E00972,S0074,Caleb Datta,Customer Service Rep,2019-03-02,50532,4.7,True
+E00973,S0068,Krish Vala,Sales Associate,2018-01-09,34482,4.3,True
+E00974,S0038,Manan Bhalla,Security,2023-01-04,109547,4.4,False
+E00975,S0018,Aarna Gole,Sales Associate,2022-10-17,110251,2.8,True
+E00976,S0033,Anirudh Mander,Cashier,2022-04-27,61217,3.0,True
+E00977,S0106,Tarak Sen,Customer Service Rep,2019-07-21,100715,4.8,True
+E00978,S0141,Vasatika Garde,Warehouse Staff,2023-12-27,79566,3.6,True
+E00979,S0099,Nirja Dhar,Sales Associate,2022-09-24,84067,3.7,True
+E00980,S0057,Yasti Lalla,Sales Associate,2020-08-21,62409,2.0,False
+E00981,S0005,Hema Setty,Customer Service Rep,2023-04-26,32510,4.8,True
+E00982,S0090,Victor Radhakrishnan,Customer Service Rep,2019-07-25,53626,3.4,True
+E00983,S0142,Kevin Chopra,Security,2020-09-20,42621,4.5,True
+E00984,S0036,Samaksh Virk,Sales Associate,2019-08-10,64474,4.2,True
+E00985,S0109,Mason Char,Customer Service Rep,2018-08-10,106934,2.3,True
+E00986,S0123,Vamakshi Barad,Cashier,2018-05-04,34252,3.1,True
+E00987,S0020,Girik Subramaniam,Store Manager,2022-09-02,34623,4.3,True
+E00988,S0036,Aarav Sankar,Stock Associate,2023-04-10,68939,4.2,True
+E00989,S0004,Kamala Bassi,Stock Associate,2019-04-01,35432,2.2,True
+E00990,S0045,Veer Subramaniam,Cashier,2018-02-14,66955,4.5,True
+E00991,S0117,Inaya Chaudhari,Stock Associate,2023-08-18,55112,4.1,True
+E00992,S0041,Krish Kumar,Stock Associate,2019-01-12,83354,3.1,False
+E00993,S0055,Viraj Chacko,Security,2018-08-18,43692,3.2,True
+E00994,S0144,Nilima Kurian,Sales Associate,2023-04-03,77575,2.9,True
+E00995,S0098,Abdul Amble,Cashier,2018-08-12,63690,3.9,True
+E00996,S0028,Zinal Amble,Sales Associate,2018-11-15,62540,3.8,True
+E00997,S0008,Samesh Mutti,Visual Merchandiser,2021-03-01,36333,3.6,True
+E00998,S0003,Janaki Chhabra,Stock Associate,2020-02-08,87311,2.6,False
+E00999,S0062,Pooja Kulkarni,Stock Associate,2018-12-15,89727,3.7,True
+E01000,S0124,Pallavi Pau,Store Manager,2018-07-16,56232,2.3,True
+E01001,S0092,Mekhala Jani,Stock Associate,2022-06-19,80564,2.6,True
+E01002,S0092,Vasudha Gola,Cashier,2019-02-03,58426,3.2,True
+E01003,S0026,Veda Kulkarni,Cashier,2018-04-08,91962,4.4,True
+E01004,S0010,Hemangini Rao,Stock Associate,2019-10-23,34862,4.0,True
+E01005,S0024,Jagat Karpe,Visual Merchandiser,2020-06-02,104320,4.0,True
+E01006,S0042,Neel Chaudhry,Customer Service Rep,2023-01-07,117937,2.4,True
+E01007,S0111,Yashoda Rattan,Store Manager,2022-05-07,46340,2.6,True
+E01008,S0020,Charles Dyal,Cashier,2023-07-31,27767,4.4,True
+E01009,S0080,Abdul Chand,Sales Associate,2023-08-06,27335,3.4,True
+E01010,S0076,Urishilla Saran,Cashier,2018-10-07,51715,3.7,True
+E01011,S0019,Devansh Lall,Cashier,2023-03-03,48809,5.0,False
+E01012,S0114,Kamala Buch,Cashier,2019-05-23,89545,3.5,True
+E01013,S0074,Leena Rattan,Security,2022-08-03,96223,4.8,True
+E01014,S0094,Dakshesh Gill,Customer Service Rep,2022-03-11,25943,4.0,True
+E01015,S0068,Reva Anne,Store Manager,2018-08-22,112129,4.4,True
+E01016,S0144,Zarna Mangal,Store Manager,2019-09-26,28801,2.9,True
+E01017,S0103,Bahadurjit Uppal,Sales Associate,2020-07-02,65885,4.6,True
+E01018,S0090,Omkaar Banik,Warehouse Staff,2023-04-03,99211,3.6,True
+E01019,S0028,William Acharya,Sales Associate,2020-01-09,110915,2.3,False
+E01020,S0102,Gabriel Majumdar,Security,2020-03-28,67628,3.0,True
+E01021,S0125,Ira Rana,Visual Merchandiser,2023-05-05,29984,2.8,True
+E01022,S0040,Sai Vasa,Warehouse Staff,2019-08-20,98914,2.6,True
+E01023,S0098,Ekapad Chana,Store Manager,2022-01-20,118489,3.3,True
+E01024,S0014,Ijaya Palan,Visual Merchandiser,2018-04-04,114433,4.1,True
+E01025,S0046,Upkaar Hayer,Sales Associate,2019-08-04,24077,2.8,True
+E01026,S0116,Netra Agrawal,Security,2023-11-20,43063,4.0,True
+E01027,S0014,Parth Ray,Sales Associate,2022-10-22,59829,4.9,True
+E01028,S0051,Elijah Thakur,Customer Service Rep,2022-09-13,78127,3.4,True
+E01029,S0042,Harini Dada,Security,2021-12-23,105819,3.7,True
+E01030,S0144,Zashil Savant,Visual Merchandiser,2018-11-15,109728,4.0,True
+E01031,S0083,Veda Kohli,Customer Service Rep,2018-02-28,34727,4.7,False
+E01032,S0128,Tara Sharma,Customer Service Rep,2019-04-11,118811,4.9,True
+E01033,S0134,Vasatika Dada,Store Manager,2023-01-20,31478,3.9,True
+E01034,S0149,Ekansh Raja,Sales Associate,2018-05-30,43655,4.2,True
+E01035,S0140,Victor Mutti,Cashier,2022-03-27,43329,3.0,False
+E01036,S0148,Ira Varty,Store Manager,2022-02-25,62683,2.0,False
+E01037,S0129,Adya Kothari,Sales Associate,2023-08-07,100054,5.0,True
+E01038,S0091,Girik Rastogi,Customer Service Rep,2022-10-11,83572,4.9,True
+E01039,S0046,Faqid Gokhale,Warehouse Staff,2022-10-21,63905,2.5,True
+E01040,S0139,Dipta Pandya,Security,2022-04-12,52359,4.5,True
+E01041,S0112,Amruta Goswami,Stock Associate,2019-02-11,26484,4.4,True
+E01042,S0005,Wishi Iyengar,Security,2019-03-01,80064,4.2,True
+E01043,S0140,Wyatt Lanka,Sales Associate,2022-12-25,80976,3.7,True
+E01044,S0075,Veer Jain,Security,2020-05-17,44213,4.3,True
+E01045,S0030,Ishani Dugal,Visual Merchandiser,2023-04-08,31310,3.1,True
+E01046,S0119,Jagdish Brar,Security,2022-06-10,15996,4.8,True
+E01047,S0130,Abeer Basak,Stock Associate,2021-01-01,101334,2.8,True
+E01048,S0107,Kamya Murty,Visual Merchandiser,2018-01-18,69336,2.1,True
+E01049,S0096,Anvi Swaminathan,Customer Service Rep,2021-10-04,37336,4.9,False
+E01050,S0062,Yasti Mammen,Security,2020-02-29,95775,3.9,True
+E01051,S0148,Tristan Dave,Security,2019-06-12,98397,3.2,True
+E01052,S0104,Pallavi Sridhar,Customer Service Rep,2023-10-20,35767,3.3,True
+E01053,S0033,Yadavi Palan,Sales Associate,2022-05-25,114899,3.9,True
+E01054,S0142,Owen Shankar,Cashier,2021-08-13,41707,2.3,True
+E01055,S0003,Zarna Sharma,Cashier,2018-04-24,96015,4.1,False
+E01056,S0021,Abhiram Arora,Security,2018-04-14,112299,4.2,False
+E01057,S0092,Ladli Chaudhuri,Cashier,2020-09-08,100527,4.7,True
+E01058,S0138,Janaki Lad,Visual Merchandiser,2022-03-29,115976,2.8,True
+E01059,S0022,Adya Khalsa,Cashier,2018-04-05,98674,5.0,False
+E01060,S0029,Urishilla Oza,Warehouse Staff,2019-05-18,29034,2.4,True
+E01061,S0047,Qarin Tara,Sales Associate,2018-11-13,79781,4.5,False
+E01062,S0054,Shivansh Saini,Security,2019-02-17,79361,4.4,True
+E01063,S0125,Janya Rattan,Sales Associate,2020-05-11,105090,3.3,False
+E01064,S0116,Shravya Gole,Cashier,2020-01-07,54158,2.0,True
+E01065,S0146,Veer Chaudhry,Store Manager,2019-04-26,59932,5.0,True
+E01066,S0140,Warinder Sankaran,Store Manager,2019-10-11,83386,4.2,False
+E01067,S0050,Rohan Dhingra,Store Manager,2018-04-05,82894,3.5,True
+E01068,S0094,Urvashi Andra,Sales Associate,2020-06-07,18866,3.0,True
+E01069,S0033,Oviya Tata,Stock Associate,2021-01-25,78120,2.6,True
+E01070,S0142,Zansi Walla,Stock Associate,2023-03-29,112674,4.4,True
+E01071,S0103,Vidhi Mital,Visual Merchandiser,2020-10-21,37670,2.6,True
+E01072,S0072,Champak Rao,Security,2019-02-26,91499,4.4,True
+E01073,S0043,Nihal Bhasin,Visual Merchandiser,2023-06-22,71815,4.6,True
+E01074,S0070,Aachal Soni,Customer Service Rep,2019-03-17,94599,3.1,True
+E01075,S0091,Shivani Natt,Customer Service Rep,2018-09-21,73904,2.5,True
+E01076,S0131,Jalsa Parsa,Stock Associate,2022-08-06,53466,3.8,False
+E01077,S0136,Hemangini Bahri,Customer Service Rep,2022-06-20,18924,2.3,True
+E01078,S0110,Jairaj Panchal,Cashier,2022-01-05,47154,2.2,True
+E01079,S0096,Owen Mane,Cashier,2021-07-11,31030,2.0,True
+E01080,S0085,Ekta Uppal,Visual Merchandiser,2023-03-22,89379,4.4,False
+E01081,S0144,Sanya Brar,Sales Associate,2022-04-29,52173,3.8,True
+E01082,S0027,Bhavini Sheth,Stock Associate,2018-11-03,90228,4.7,True
+E01083,S0112,Oliver Nazareth,Customer Service Rep,2021-08-04,40971,2.6,True
+E01084,S0128,Nidhi Bora,Store Manager,2021-01-29,70212,2.4,True
+E01085,S0084,Neel Oza,Security,2020-08-26,90551,2.1,True
+E01086,S0148,Dipta Nadig,Store Manager,2023-03-07,52272,2.4,False
+E01087,S0010,Amara Rana,Store Manager,2021-10-13,99512,2.0,True
+E01088,S0107,Sai Patil,Stock Associate,2021-01-30,56574,4.3,True
+E01089,S0143,Odika Ganesh,Customer Service Rep,2023-07-16,95258,2.1,True
+E01090,S0117,Arin Dass,Warehouse Staff,2019-05-13,64008,4.8,True
+E01091,S0058,Zayan Buch,Store Manager,2018-02-12,33184,2.3,True
+E01092,S0112,Ojas Ranganathan,Visual Merchandiser,2019-11-29,26536,2.6,False
+E01093,S0095,Girish Bhatt,Store Manager,2018-08-04,49037,4.6,True
+E01094,S0013,Chatura Bal,Stock Associate,2018-11-04,49567,3.0,True
+E01095,S0098,Fiyaz Chawla,Stock Associate,2019-11-29,33056,3.8,True
+E01096,S0082,Nachiket Chad,Cashier,2022-08-20,98480,3.3,True
+E01097,S0136,Dayamai Karnik,Visual Merchandiser,2023-05-12,101673,3.5,True
+E01098,S0124,Bhanumati Savant,Visual Merchandiser,2019-01-12,49578,4.3,True
+E01099,S0091,Karan Vyas,Visual Merchandiser,2020-04-23,106090,2.2,False
+E01100,S0016,Ayush Banerjee,Visual Merchandiser,2018-02-23,102883,2.6,True
+E01101,S0049,Eshana Soni,Warehouse Staff,2019-03-05,59623,2.6,True
+E01102,S0136,Anita Saxena,Customer Service Rep,2021-07-01,107866,3.4,True
+E01103,S0130,Peter Shan,Sales Associate,2019-06-17,43676,4.8,True
+E01104,S0116,Dayita Palan,Visual Merchandiser,2022-06-28,39635,2.2,True
+E01105,S0079,Utkarsh Chakraborty,Sales Associate,2019-08-27,75418,4.6,True
+E01106,S0062,Darika Pau,Store Manager,2023-03-03,39514,2.8,True
+E01107,S0136,Abha Dugal,Warehouse Staff,2021-12-12,49809,2.4,True
+E01108,S0091,Advaith Acharya,Security,2020-05-18,34742,3.2,True
+E01109,S0086,Hemangini Mangat,Store Manager,2022-12-13,50728,3.1,True
+E01110,S0098,Abhiram Swamy,Security,2020-03-05,53535,2.6,True
+E01111,S0071,Chandani Andra,Warehouse Staff,2023-10-26,71828,2.3,True
+E01112,S0064,Brinda Kashyap,Sales Associate,2020-06-18,30097,2.2,True
+E01113,S0069,Kashvi Gulati,Visual Merchandiser,2018-09-27,84747,2.3,True
+E01114,S0104,Rajeshri Rana,Security,2022-05-29,28278,2.7,True
+E01115,S0069,Nihal Ramakrishnan,Warehouse Staff,2020-04-22,37417,4.4,True
+E01116,S0074,Thomas Lall,Stock Associate,2018-01-13,27352,2.6,False
+E01117,S0123,Pahal Khatri,Stock Associate,2020-09-04,37312,2.9,True
+E01118,S0048,Bhavani Wali,Customer Service Rep,2023-02-08,33590,4.9,True
+E01119,S0110,Nitara Guha,Customer Service Rep,2018-03-27,38267,4.9,False
+E01120,S0044,Qabil Deshpande,Store Manager,2021-12-13,77105,3.7,True
+E01121,S0064,Indrajit Shah,Warehouse Staff,2019-03-25,20921,4.5,True
+E01122,S0075,Anita Swamy,Visual Merchandiser,2023-11-22,80948,2.5,True
+E01123,S0025,Ekani Bahl,Sales Associate,2021-06-01,111493,3.0,True
+E01124,S0090,Chandran Warrior,Stock Associate,2023-06-16,48231,3.1,True
+E01125,S0091,Quincy Chaudry,Stock Associate,2021-09-28,82873,4.3,False
+E01126,S0124,Amruta Dass,Sales Associate,2021-01-10,104887,3.6,True
+E01127,S0038,Abhiram Kaul,Security,2020-06-21,101424,5.0,True
+E01128,S0008,Matthew Aurora,Visual Merchandiser,2022-10-31,62109,2.6,True
+E01129,S0097,Teerth Oommen,Sales Associate,2021-01-26,97167,4.0,False
+E01130,S0116,Devika Tara,Cashier,2020-12-22,104006,3.0,True
+E01131,S0107,Ubika Balay,Stock Associate,2021-06-20,39978,2.1,True
+E01132,S0088,Faris Dhingra,Sales Associate,2022-11-11,119245,3.4,False
+E01133,S0089,Amaira Ramanathan,Stock Associate,2019-03-28,16092,3.5,True
+E01134,S0120,Upma Golla,Cashier,2023-11-13,52982,3.9,True
+E01135,S0078,Zashil Raj,Warehouse Staff,2021-03-26,23469,4.4,True
+E01136,S0011,Jairaj Kothari,Visual Merchandiser,2021-03-05,92735,2.4,True
+E01137,S0002,Saanvi Kota,Security,2021-12-13,101540,4.5,True
+E01138,S0036,Rushil Sharma,Customer Service Rep,2021-03-06,117926,4.6,True
+E01139,S0144,Sathvik Solanki,Cashier,2018-12-19,108480,2.8,False
+E01140,S0051,Devika Naidu,Security,2018-11-27,53116,2.7,True
+E01141,S0091,Brijesh Verma,Visual Merchandiser,2022-05-02,70386,3.2,False
+E01142,S0067,Zehaan Srivastava,Stock Associate,2021-06-26,37715,3.7,True
+E01143,S0083,Rushil Patel,Cashier,2020-03-28,47770,2.4,True
+E01144,S0078,Tejas Chowdhury,Stock Associate,2018-12-17,53972,3.7,True
+E01145,S0140,Radha Nair,Cashier,2022-03-20,117551,4.6,True
+E01146,S0036,Oliver Majumdar,Warehouse Staff,2021-07-07,81036,4.8,True
+E01147,S0120,Meghana Kibe,Customer Service Rep,2022-10-18,76151,3.3,True
+E01148,S0008,Brijesh Soman,Store Manager,2022-09-21,26590,4.3,True
+E01149,S0078,Kamya Chakraborty,Visual Merchandiser,2023-09-29,63904,2.4,True
+E01150,S0145,Nakul Tata,Stock Associate,2018-08-08,114003,4.5,True
+E01151,S0002,Hamsini Bhasin,Warehouse Staff,2023-10-23,75322,4.5,True
+E01152,S0070,Ishani Dube,Sales Associate,2021-09-27,92901,2.3,True
+E01153,S0124,Jeremiah Sura,Customer Service Rep,2018-09-07,30917,4.2,True
+E01154,S0014,Edhitha Palan,Visual Merchandiser,2023-10-16,33894,3.7,False
+E01155,S0035,Reyansh Bail,Visual Merchandiser,2019-09-26,54438,3.9,True
+E01156,S0002,Ishita Desai,Warehouse Staff,2020-04-02,30035,2.2,True
+E01157,S0031,Balveer Sundaram,Sales Associate,2020-10-09,41777,2.3,True
+E01158,S0130,Chaitaly Suri,Warehouse Staff,2022-05-20,22294,4.8,True
+E01159,S0124,Rachit Pall,Cashier,2020-08-20,86659,2.8,True
+E01160,S0113,Upadhriti Maharaj,Sales Associate,2022-11-06,34168,3.9,True
+E01161,S0062,Ekapad Wali,Cashier,2023-09-27,112211,4.1,True
+E01162,S0123,Shivani Merchant,Stock Associate,2021-03-31,102495,2.3,True
+E01163,S0095,Jeevika Setty,Stock Associate,2022-05-22,65570,4.1,True
+E01164,S0107,Yashawini Raghavan,Security,2019-08-30,18666,2.9,True
+E01165,S0100,Anirudh Patla,Store Manager,2021-05-25,19467,3.9,False
+E01166,S0114,Ekani Bhatnagar,Store Manager,2021-12-23,33258,3.4,True
+E01167,S0071,Ranveer Viswanathan,Store Manager,2019-10-11,61890,3.5,False
+E01168,S0054,Mitesh Mandal,Customer Service Rep,2023-11-21,66199,3.5,True
+E01169,S0039,Nimrat Nagy,Customer Service Rep,2021-10-21,75225,4.1,True
+E01170,S0072,Gopal Virk,Stock Associate,2022-06-02,23940,4.7,True
+E01171,S0097,Caleb Dayal,Warehouse Staff,2020-01-09,90502,4.1,True
+E01172,S0135,Azad Jaggi,Stock Associate,2019-06-15,106457,3.0,False
+E01173,S0090,Vedika Handa,Security,2018-10-04,20888,2.1,True
+E01174,S0060,Azad Rama,Sales Associate,2019-03-12,80461,4.8,True
+E01175,S0060,Aahana Bawa,Visual Merchandiser,2019-03-08,37806,4.2,True
+E01176,S0108,Timothy Bobal,Sales Associate,2018-09-11,95203,2.8,True
+E01177,S0019,Sathvik Swamy,Warehouse Staff,2022-03-14,94499,3.9,True
+E01178,S0045,Upadhriti Bhat,Customer Service Rep,2019-03-17,106583,3.3,True
+E01179,S0147,Ojasvi Pillay,Visual Merchandiser,2020-03-12,48095,3.5,True
+E01180,S0058,Amaira Wadhwa,Visual Merchandiser,2019-10-26,71893,4.4,True
+E01181,S0050,Ekavir Modi,Sales Associate,2018-04-10,97459,4.9,True
+E01182,S0009,Tarak Venkataraman,Cashier,2018-01-22,62128,4.3,True
+E01183,S0019,Harrison Kashyap,Customer Service Rep,2020-01-30,104438,4.2,False
+E01184,S0136,Ranveer Hans,Warehouse Staff,2020-02-18,42194,3.7,True
+E01185,S0091,Praneel Sagar,Customer Service Rep,2019-07-19,23802,3.3,True
+E01186,S0019,Ishita Shanker,Sales Associate,2019-06-05,117549,3.6,True
+E01187,S0128,Hemang Ganesan,Visual Merchandiser,2018-07-30,93838,3.6,True
+E01188,S0075,Neelima Thaman,Stock Associate,2022-05-19,107179,3.1,False
+E01189,S0041,Nakul Walla,Stock Associate,2018-11-03,85047,3.7,False
+E01190,S0129,Indira Murty,Stock Associate,2022-06-24,96087,2.2,True
+E01191,S0029,Kamya Sachar,Warehouse Staff,2020-12-13,100620,2.1,True
+E01192,S0067,Ekiya Khosla,Visual Merchandiser,2021-10-02,115235,2.2,True
+E01193,S0085,Keya Kumar,Store Manager,2020-08-23,79691,2.2,False
+E01194,S0010,Sneha Sem,Customer Service Rep,2018-10-17,69557,3.8,True
+E01195,S0021,Aadi Banerjee,Warehouse Staff,2019-06-15,50456,4.2,True
+E01196,S0128,Amol Vasa,Visual Merchandiser,2021-12-05,71559,3.4,True
+E01197,S0059,Chasmum Ahuja,Store Manager,2018-08-15,18454,4.3,True
+E01198,S0137,Tristan Kala,Security,2018-03-16,87416,3.4,True
+E01199,S0097,Anthony Majumdar,Cashier,2022-10-27,106925,3.3,True
+E01200,S0113,Girindra Barad,Sales Associate,2022-02-15,61109,2.6,True
+E01201,S0015,Ishani Dugal,Visual Merchandiser,2020-08-08,27057,3.8,True
+E01202,S0138,Alka Peri,Store Manager,2018-03-03,109349,2.7,True
+E01203,S0015,Viraj Kunda,Cashier,2022-12-02,38670,2.8,True
+E01204,S0063,George Ratta,Stock Associate,2019-06-16,94445,3.2,True
+E01205,S0020,Faras Nair,Sales Associate,2020-10-21,86256,2.6,True
+E01206,S0092,Oscar Sura,Visual Merchandiser,2022-12-22,108471,2.9,True
+E01207,S0142,Charita Barad,Stock Associate,2020-09-27,84054,4.7,True
+E01208,S0139,Farhan Bhalla,Sales Associate,2018-08-10,60434,4.7,True
+E01209,S0125,Ijaya Saraf,Stock Associate,2018-11-18,41680,4.7,True
+E01210,S0134,Jai Karan,Visual Merchandiser,2021-06-03,112243,3.7,True
+E01211,S0037,Lavanya Bhagat,Store Manager,2020-08-20,106533,3.3,True
+E01212,S0030,Benjamin Nagar,Store Manager,2023-08-06,19424,2.8,True
+E01213,S0077,Eta Thakkar,Sales Associate,2018-09-02,51581,4.6,True
+E01214,S0005,Michael Bedi,Security,2022-04-25,73198,2.1,True
+E01215,S0048,Sanaya Thaman,Security,2023-12-22,21849,4.0,True
+E01216,S0090,Tristan Sankaran,Store Manager,2021-10-09,49410,4.4,True
+E01217,S0008,Meera Divan,Customer Service Rep,2022-11-13,71039,4.3,False
+E01218,S0015,Gayathri Butala,Sales Associate,2022-05-09,109541,4.8,True
+E01219,S0137,Chandran Rastogi,Warehouse Staff,2022-10-03,90052,4.2,True
+E01220,S0067,Frederick Rastogi,Cashier,2022-04-11,76254,4.2,False
+E01221,S0034,Kalpit Deshmukh,Store Manager,2021-02-23,119803,4.0,True
+E01222,S0064,Rudra Sura,Stock Associate,2021-10-14,89852,3.2,True
+E01223,S0093,Rohan Viswanathan,Stock Associate,2020-10-23,117554,4.0,True
+E01224,S0004,Xavier Bora,Sales Associate,2021-06-11,89506,4.0,True
+E01225,S0046,Qushi Naik,Warehouse Staff,2023-03-11,17263,3.3,True
+E01226,S0092,Isaiah Sachdev,Warehouse Staff,2020-06-11,68557,2.2,False
+E01227,S0071,Jasmit Pall,Customer Service Rep,2018-09-20,72729,2.5,True
+E01228,S0071,Ekani Padmanabhan,Stock Associate,2023-07-21,31675,2.7,True
+E01229,S0013,Dalaja Gara,Visual Merchandiser,2019-04-14,100799,2.1,True
+E01230,S0113,Riya Dhingra,Customer Service Rep,2018-06-21,87536,4.2,True
+E01231,S0067,Chaitanya Kaur,Stock Associate,2018-03-08,103917,4.5,True
+E01232,S0139,Kashvi Dugal,Store Manager,2020-08-19,60839,2.3,True
+E01233,S0029,Isaiah Bhagat,Sales Associate,2020-08-28,41744,3.0,True
+E01234,S0107,Manbir Mani,Sales Associate,2022-10-13,52104,2.4,True
+E01235,S0093,Hemal Choudhry,Customer Service Rep,2022-07-30,100456,3.1,False
+E01236,S0076,Shivani Sinha,Store Manager,2019-10-19,63274,2.1,False
+E01237,S0007,Garima Kadakia,Sales Associate,2020-05-16,56039,3.5,True
+E01238,S0131,Samar Virk,Customer Service Rep,2020-05-30,64655,4.5,True
+E01239,S0039,Vasudha Dhaliwal,Security,2018-11-18,25133,4.9,False
+E01240,S0145,Krisha Vyas,Security,2019-05-12,84174,4.4,True
+E01241,S0135,Aadhya Garde,Warehouse Staff,2021-07-22,50282,2.6,True
+E01242,S0063,Bhanumati Iyer,Customer Service Rep,2020-09-22,119727,4.3,True
+E01243,S0117,Chatresh Shroff,Customer Service Rep,2019-04-18,105842,2.7,True
+E01244,S0105,Ekalinga Rama,Customer Service Rep,2018-11-23,61135,3.7,True
+E01245,S0093,Jagvi Chokshi,Warehouse Staff,2020-08-01,73847,4.4,True
+E01246,S0033,Brinda Raju,Visual Merchandiser,2022-07-28,103356,3.8,True
+E01247,S0067,Lajita Trivedi,Stock Associate,2021-10-31,56136,2.4,True
+E01248,S0130,Diya Sundaram,Cashier,2023-07-18,97920,4.6,True
+E01249,S0047,Quincy Issac,Warehouse Staff,2018-03-05,36859,2.4,True
+E01250,S0142,Anthony Baral,Warehouse Staff,2019-02-18,31567,4.6,True
+E01251,S0007,Dalaja Nath,Cashier,2018-10-27,32351,3.5,True
+E01252,S0100,Maya Dugar,Security,2021-12-22,31705,3.2,True
+E01253,S0076,Idika Pandey,Sales Associate,2021-10-11,59124,3.8,True
+E01254,S0012,Chasmum Keer,Sales Associate,2021-12-24,73837,4.7,True
+E01255,S0112,David Kurian,Stock Associate,2023-05-09,106765,2.4,True
+E01256,S0131,Ayushman Mammen,Sales Associate,2019-09-16,16020,3.8,True
+E01257,S0117,Max Om,Security,2021-08-05,72486,2.5,True
+E01258,S0072,Laksh Chahal,Sales Associate,2020-08-09,53974,3.5,True
+E01259,S0133,Utkarsh Sahni,Security,2021-03-14,57310,3.2,True
+E01260,S0037,Michael Sandhu,Store Manager,2020-05-12,71431,3.6,True
+E01261,S0081,Forum Sen,Sales Associate,2021-11-23,52328,2.5,True
+E01262,S0125,Samuel Devi,Warehouse Staff,2020-07-05,37193,2.9,False
+E01263,S0028,Lakshit More,Visual Merchandiser,2021-02-15,33481,2.3,True
+E01264,S0131,Qushi Dhillon,Cashier,2018-04-23,93432,4.7,False
+E01265,S0139,Eesha Bir,Visual Merchandiser,2018-01-28,79011,4.5,True
+E01266,S0053,Qarin Nadkarni,Stock Associate,2022-10-13,110956,3.3,True
+E01267,S0117,Ayushman Nagar,Stock Associate,2019-03-25,108880,4.1,True
+E01268,S0114,Nisha Mitter,Security,2023-07-14,49479,2.3,True
+E01269,S0072,Anusha Doshi,Sales Associate,2021-12-19,25363,4.2,True
+E01270,S0020,Hredhaan Deep,Customer Service Rep,2019-10-04,81461,3.0,True
+E01271,S0132,Atharv Loke,Sales Associate,2021-07-13,20027,3.3,False
+E01272,S0134,Vincent Kashyap,Customer Service Rep,2020-02-19,88160,4.0,False
+E01273,S0010,Jagrati Buch,Store Manager,2020-10-04,32940,3.8,False
+E01274,S0057,Krish Thakkar,Visual Merchandiser,2020-12-22,76618,2.5,True
+E01275,S0128,Kashvi Gour,Stock Associate,2019-06-24,41027,3.9,True
+E01276,S0133,Vyanjana Som,Visual Merchandiser,2018-01-14,71927,2.2,True
+E01277,S0054,Nihal Hans,Cashier,2018-06-08,69808,4.1,True
+E01278,S0150,Bachittar Rege,Visual Merchandiser,2021-11-29,78469,3.6,False
+E01279,S0077,Anamika Sachar,Visual Merchandiser,2021-04-11,102552,3.5,True
+E01280,S0101,Samaksh Jayaraman,Customer Service Rep,2023-05-25,53720,2.3,True
+E01281,S0074,Peter Sarna,Security,2023-01-06,57650,2.7,True
+E01282,S0046,Ekta Shankar,Warehouse Staff,2021-07-30,101587,2.3,True
+E01283,S0033,Prisha Ravel,Warehouse Staff,2023-06-27,93781,3.2,True
+E01284,S0075,Lajita Munshi,Stock Associate,2023-09-10,43194,4.7,True
+E01285,S0016,Balvan Verma,Customer Service Rep,2020-12-07,103472,3.0,True
+E01286,S0114,Siya Shan,Security,2022-06-21,49170,4.7,True
+E01287,S0057,Yatan Venkataraman,Customer Service Rep,2018-07-06,55437,3.3,True
+E01288,S0043,Balveer Ram,Visual Merchandiser,2019-03-28,95386,3.8,True
+E01289,S0139,Ranveer Manne,Store Manager,2018-03-28,64700,2.3,True
+E01290,S0091,Mitali Modi,Sales Associate,2018-07-21,82980,2.6,True
+E01291,S0041,Triya Ganesan,Security,2020-07-28,53035,4.4,False
+E01292,S0085,Chaitaly Bhagat,Security,2020-06-02,87476,4.2,False
+E01293,S0010,Ubika Seth,Store Manager,2023-11-27,28437,3.5,True
+E01294,S0011,Xiti Chowdhury,Cashier,2021-03-05,54513,2.1,True
+E01295,S0064,Krishna Ramaswamy,Store Manager,2021-01-20,113292,2.4,True
+E01296,S0103,Ekiya Seshadri,Cashier,2021-01-10,26130,2.2,True
+E01297,S0107,Praneel Setty,Store Manager,2018-03-02,112340,4.5,True
+E01298,S0039,Suhani Chana,Sales Associate,2022-05-22,40465,4.5,False
+E01299,S0083,Ekiya Gade,Security,2023-09-30,112449,2.1,True
+E01300,S0052,Gavin Comar,Sales Associate,2020-12-18,100989,3.7,True
+E01301,S0110,Janani Chada,Sales Associate,2020-06-29,68258,3.7,True
+E01302,S0137,Yasti Dutta,Visual Merchandiser,2022-04-16,17256,5.0,True
+E01303,S0096,Lajita Bassi,Sales Associate,2023-01-27,44368,3.7,True
+E01304,S0060,Gautami Doctor,Warehouse Staff,2022-02-23,77495,3.7,True
+E01305,S0086,Maanav Gola,Cashier,2018-12-09,27502,3.7,True
+E01306,S0126,Oni Morar,Visual Merchandiser,2018-12-10,33524,3.2,True
+E01307,S0134,Sanaya Mani,Visual Merchandiser,2018-08-30,115585,3.5,True
+E01308,S0087,Jacob Deep,Cashier,2018-05-30,57132,4.1,True
+E01309,S0002,Aarush Kulkarni,Stock Associate,2020-05-06,113964,3.7,True
+E01310,S0128,Tara Tank,Customer Service Rep,2020-08-23,57183,3.4,True
+E01311,S0143,Abdul Tak,Sales Associate,2019-03-07,70797,4.1,True
+E01312,S0004,Teerth Soni,Cashier,2023-10-31,113061,2.4,True
+E01313,S0030,Nimrat Sathe,Store Manager,2022-10-04,79904,2.5,True
+E01314,S0125,Abeer Konda,Cashier,2022-09-09,67350,2.0,True
+E01315,S0076,Sarthak Bawa,Stock Associate,2023-11-11,57255,3.8,True
+E01316,S0043,Manbir Bhakta,Cashier,2021-04-03,83583,4.1,True
+E01317,S0096,Balhaar Dhillon,Stock Associate,2023-04-18,75670,2.6,True
+E01318,S0035,Chanchal Narula,Cashier,2023-11-18,108727,4.5,True
+E01319,S0107,Chandran Chopra,Cashier,2019-09-08,76668,2.2,False
+E01320,S0080,Pranav Edwin,Visual Merchandiser,2020-03-27,105969,2.3,True
+E01321,S0025,Peter Shah,Store Manager,2023-04-04,92916,2.5,True
+E01322,S0144,Balendra Chander,Visual Merchandiser,2021-11-13,97420,2.0,True
+E01323,S0073,Ekantika Pillay,Security,2021-06-06,63139,3.9,True
+E01324,S0066,Ekansh Sane,Visual Merchandiser,2018-11-14,92678,2.5,True
+E01325,S0072,Brinda Sinha,Cashier,2020-12-12,88880,2.3,True
+E01326,S0099,Jairaj Maharaj,Customer Service Rep,2021-02-09,111634,4.6,True
+E01327,S0122,Odika Vohra,Visual Merchandiser,2019-11-20,15350,4.4,False
+E01328,S0024,Shaurya Bhardwaj,Cashier,2019-08-11,36603,3.4,True
+E01329,S0020,Gagan Sule,Store Manager,2019-07-16,82070,4.4,True
+E01330,S0121,Prisha Nadig,Customer Service Rep,2021-05-24,80585,4.3,True
+E01331,S0101,Irya Dayal,Security,2022-04-29,107568,3.4,True
+E01332,S0134,Zinal Tank,Customer Service Rep,2023-12-14,25249,4.6,True
+E01333,S0043,Pranit Kaul,Stock Associate,2019-08-09,72310,3.7,True
+E01334,S0065,Rishi Agarwal,Sales Associate,2022-11-19,100471,3.0,True
+E01335,S0094,Arjun Shroff,Warehouse Staff,2021-11-18,110484,3.3,True
+E01336,S0049,Sarthak Sachdeva,Security,2022-03-13,38462,4.8,False
+E01337,S0051,Chakradev Nath,Warehouse Staff,2022-01-18,83944,2.6,True
+E01338,S0085,Simon Apte,Sales Associate,2022-02-19,48260,3.5,True
+E01339,S0070,Baghyawati Kumar,Store Manager,2021-01-31,99105,3.4,True
+E01340,S0065,Darika Mital,Stock Associate,2018-08-23,89996,4.5,False
+E01341,S0121,Abeer Comar,Warehouse Staff,2023-07-02,37776,3.4,False
+E01342,S0140,Harita Randhawa,Sales Associate,2018-06-06,63435,2.1,False
+E01343,S0040,Parth Hari,Cashier,2019-06-24,25855,3.3,True
+E01344,S0015,Hamsini Srinivas,Warehouse Staff,2018-09-13,56187,2.3,True
+E01345,S0050,Balendra Deshpande,Store Manager,2021-09-24,103079,4.5,True
+E01346,S0044,Nachiket Sharma,Customer Service Rep,2023-10-16,16857,4.8,True
+E01347,S0016,Turvi Sachdev,Sales Associate,2020-03-01,114784,3.5,True
+E01348,S0022,Chandani Mutti,Cashier,2022-12-22,20833,2.8,True
+E01349,S0130,Sathvik Narula,Security,2019-12-10,98270,4.2,True
+E01350,S0001,Dominic Dixit,Stock Associate,2021-01-26,88473,3.1,True
+E01351,S0146,Azaan Nori,Sales Associate,2023-03-12,26555,2.3,True
+E01352,S0023,Noah Ramachandran,Cashier,2021-07-24,92483,3.9,True
+E01353,S0044,Jackson Morar,Store Manager,2020-06-09,98616,3.1,True
+E01354,S0064,Azad Magar,Stock Associate,2020-02-22,112964,4.3,True
+E01355,S0014,Gabriel Taneja,Security,2021-03-21,38331,2.8,True
+E01356,S0106,Kamya Seth,Visual Merchandiser,2020-02-11,50756,4.7,True
+E01357,S0076,Tarak Vohra,Stock Associate,2022-12-06,49674,2.3,True
+E01358,S0094,Parth Choudhury,Customer Service Rep,2023-11-13,73939,4.5,True
+E01359,S0044,Baljiwan Jaggi,Store Manager,2022-04-29,35408,3.6,True
+E01360,S0112,Sachi Toor,Customer Service Rep,2021-03-28,42190,3.0,False
+E01361,S0142,Vasudha Tella,Stock Associate,2019-01-07,82275,4.3,True
+E01362,S0120,Ranveer Oak,Stock Associate,2018-05-09,30112,3.6,True
+E01363,S0122,Dayita Narang,Cashier,2023-03-29,91915,3.0,True
+E01364,S0009,Guneet Varty,Customer Service Rep,2019-03-05,97506,3.1,False
+E01365,S0041,Samesh Bansal,Security,2023-05-02,58871,3.0,False
+E01366,S0048,Lila Vig,Customer Service Rep,2021-06-08,36331,3.4,True
+E01367,S0006,Aayush Mukhopadhyay,Warehouse Staff,2023-02-13,92801,3.7,True
+E01368,S0103,Gagan Nath,Warehouse Staff,2020-09-24,48105,4.2,True
+E01369,S0124,Chakradhar Chauhan,Security,2021-05-14,20259,4.9,False
+E01370,S0130,Arin Muni,Sales Associate,2022-09-21,70822,4.3,False
+E01371,S0103,Ekani Iyer,Store Manager,2019-11-03,82135,2.5,True
+E01372,S0135,Bhavini Malhotra,Visual Merchandiser,2019-07-26,32025,4.0,True
+E01373,S0014,Ridhi Dalal,Sales Associate,2021-06-20,118922,4.3,True
+E01374,S0118,Manthan Dugar,Security,2019-11-09,75370,2.0,True
+E01375,S0045,Ishwar Aurora,Stock Associate,2021-06-13,25534,2.6,False
+E01376,S0112,Samuel Palla,Sales Associate,2020-09-29,35203,4.1,True
+E01377,S0096,Anika Dhaliwal,Store Manager,2023-05-10,35883,3.0,True
+E01378,S0101,Yash Garg,Visual Merchandiser,2023-04-19,102613,3.1,True
+E01379,S0063,Deepa Nigam,Sales Associate,2022-05-07,31843,3.0,False
+E01380,S0103,Chandresh De,Customer Service Rep,2021-03-05,103440,4.2,True
+E01381,S0101,Urishilla Bedi,Sales Associate,2021-11-21,79003,4.0,False
+E01382,S0007,Leela Bhagat,Visual Merchandiser,2019-12-31,115642,2.7,True
+E01383,S0129,Pooja Ramanathan,Store Manager,2022-06-19,25127,3.9,True
+E01384,S0049,Sanaya Parekh,Store Manager,2020-05-15,54575,3.3,True
+E01385,S0047,Gaurangi Hora,Security,2019-09-10,52350,2.9,True
+E01386,S0124,Udyati Deep,Store Manager,2020-12-05,70277,2.5,True
+E01387,S0133,Upadhriti Chatterjee,Sales Associate,2023-03-20,25831,3.0,True
+E01388,S0104,Dayita Shroff,Store Manager,2019-10-21,56815,2.4,True
+E01389,S0117,Vincent Kapur,Store Manager,2023-06-15,100697,4.9,True
+E01390,S0014,Aarna Patla,Stock Associate,2022-10-07,48901,4.2,True
+E01391,S0116,Qadim Narayanan,Customer Service Rep,2023-04-24,108326,3.0,True
+E01392,S0094,Sudiksha Sura,Sales Associate,2020-01-03,70583,3.6,True
+E01393,S0021,Dhruv Soman,Cashier,2018-01-29,59186,4.8,True
+E01394,S0067,Indali Srinivas,Visual Merchandiser,2023-10-11,95546,4.2,True
+E01395,S0013,Onkar Mandal,Warehouse Staff,2021-02-27,20222,2.4,True
+E01396,S0094,Joshua Trivedi,Store Manager,2022-02-21,48072,3.3,True
+E01397,S0007,Nidra Chhabra,Stock Associate,2020-01-03,53435,3.1,True
+E01398,S0084,Ekavir Mittal,Stock Associate,2018-05-26,93089,2.3,True
+E01399,S0137,Nandini Sachdev,Security,2020-10-15,37968,2.3,True
+E01400,S0038,Yagnesh Dutt,Warehouse Staff,2022-11-01,51004,3.0,True
+E01401,S0063,Leena Bhatti,Warehouse Staff,2018-06-16,25031,3.0,True
+E01402,S0026,Sathvik Sankar,Security,2023-10-01,110079,2.2,False
+E01403,S0078,Hema Keer,Security,2022-06-30,17933,2.6,True
+E01404,S0021,Faras Sur,Security,2019-04-22,119024,2.6,True
+E01405,S0078,Ubika Nanda,Visual Merchandiser,2018-07-20,64051,3.7,True
+E01406,S0112,Sai Goda,Stock Associate,2020-01-31,51287,3.5,True
+E01407,S0103,Nidra Boase,Cashier,2021-03-13,50740,2.0,True
+E01408,S0107,Ladli Narang,Cashier,2021-01-30,50003,3.4,True
+E01409,S0082,Darsh Chana,Sales Associate,2020-06-25,44468,2.1,True
+E01410,S0017,Liam Acharya,Stock Associate,2023-03-02,92059,3.3,True
+E01411,S0139,Manthan Sethi,Security,2023-05-03,88093,2.0,True
+E01412,S0089,Madhavi Sekhon,Warehouse Staff,2019-09-14,75548,4.6,True
+E01413,S0137,Samesh Nadig,Cashier,2022-05-17,48514,3.2,True
+E01414,S0147,Daksha Saran,Sales Associate,2023-06-16,88574,5.0,True
+E01415,S0136,Gaurav Anand,Customer Service Rep,2021-05-30,53249,4.3,True
+E01416,S0120,Joshua Menon,Store Manager,2019-10-01,96902,3.8,True
+E01417,S0145,Kala Bera,Security,2022-08-29,115262,2.1,False
+E01418,S0143,Jagrati Choudhary,Warehouse Staff,2020-08-19,64189,4.8,True
+E01419,S0032,Azaan Keer,Sales Associate,2022-06-09,43613,2.6,True
+E01420,S0075,Meera Nadkarni,Cashier,2019-10-14,115515,4.3,True
+E01421,S0103,Nidra Raj,Security,2021-12-12,113471,2.7,False
+E01422,S0072,Siddharth Ghose,Customer Service Rep,2022-01-27,97611,2.3,False
+E01423,S0082,Liam Guha,Security,2020-07-11,67948,3.5,True
+E01424,S0116,Jagvi Sahni,Cashier,2019-12-29,67435,2.9,True
+E01425,S0086,Bhavya Dass,Warehouse Staff,2019-12-07,104568,4.7,True
+E01426,S0108,Advay Bora,Security,2022-08-08,39756,3.9,True
+E01427,S0036,Maanas Sur,Sales Associate,2022-08-02,17992,3.0,True
+E01428,S0146,Laban Chad,Warehouse Staff,2019-01-08,63535,2.1,True
+E01429,S0100,Ojasvi Shah,Visual Merchandiser,2019-10-24,75000,3.1,False
+E01430,S0045,Pranit Sha,Warehouse Staff,2020-03-29,57300,2.4,True
+E01431,S0008,Shivani Rajagopalan,Visual Merchandiser,2023-03-04,75187,2.7,True
+E01432,S0062,Upkaar Grewal,Cashier,2023-03-05,80564,3.9,True
+E01433,S0085,Abhimanyu Tara,Cashier,2020-09-29,75583,4.2,True
+E01434,S0009,Yachana Luthra,Security,2023-10-30,76631,4.6,True
+E01435,S0107,Jeevika Bandi,Stock Associate,2019-05-11,108820,4.3,True
+E01436,S0137,Vasudha Pillay,Store Manager,2022-12-02,78020,4.5,True
+E01437,S0102,Vasatika Buch,Store Manager,2022-01-28,67354,4.1,True
+E01438,S0113,Ati Shroff,Security,2019-05-24,28582,2.4,True
+E01439,S0149,Gaurang Korpal,Sales Associate,2019-11-24,63033,3.2,True
+E01440,S0063,Faras Zacharia,Warehouse Staff,2020-05-10,49669,2.3,True
+E01441,S0019,Chatresh Oza,Warehouse Staff,2023-07-07,113632,2.7,True
+E01442,S0076,Upasna Setty,Warehouse Staff,2021-09-16,118202,3.4,True
+E01443,S0071,Garima Sama,Store Manager,2019-07-28,34401,3.6,True
+E01444,S0095,Chaitaly Mann,Customer Service Rep,2021-04-07,55194,4.8,True
+E01445,S0079,Balendra Modi,Warehouse Staff,2022-12-07,103247,2.9,True
+E01446,S0033,Darsh Solanki,Cashier,2021-04-12,65361,2.8,True
+E01447,S0055,Charan Manne,Stock Associate,2019-08-31,91576,2.0,True
+E01448,S0131,Bhavini Sundaram,Security,2023-05-08,96062,4.7,False
+E01449,S0040,Jonathan Tiwari,Customer Service Rep,2023-11-14,64068,3.1,False
+E01450,S0044,Arunima Krishnan,Warehouse Staff,2019-12-20,78438,4.7,True
+E01451,S0017,Avni Maharaj,Customer Service Rep,2020-07-09,55541,2.6,True
+E01452,S0031,Akshay Choudhury,Visual Merchandiser,2021-12-31,80377,3.4,False
+E01453,S0004,Matthew Sekhon,Visual Merchandiser,2020-04-09,62652,4.0,True
+E01454,S0026,Parth Lal,Customer Service Rep,2023-09-10,23807,2.8,False
+E01455,S0138,Vedhika Golla,Sales Associate,2018-08-18,73541,3.7,True
+E01456,S0066,Hemal Chad,Cashier,2020-09-30,44928,4.1,True
+E01457,S0011,Mitesh Tandon,Stock Associate,2021-02-10,26974,4.2,True
+E01458,S0017,Leela Khanna,Cashier,2023-11-11,54683,2.2,True
+E01459,S0150,Oliver Kade,Warehouse Staff,2023-03-17,27880,3.6,True
+E01460,S0082,Chatura Lalla,Sales Associate,2020-03-15,77691,2.3,True
+E01461,S0051,Charles Ganesh,Sales Associate,2020-05-30,93419,3.5,True
+E01462,S0149,Mohini Soni,Security,2019-04-02,109369,4.7,True
+E01463,S0050,Vamakshi Walia,Warehouse Staff,2018-01-03,47997,4.3,True
+E01464,S0127,Ladli Ramakrishnan,Cashier,2021-09-08,81491,3.4,True
+E01465,S0077,Adweta Dhillon,Stock Associate,2023-12-20,47639,3.0,True
+E01466,S0129,Advik Mani,Stock Associate,2022-12-08,29610,4.9,False
+E01467,S0125,Lavanya Mutti,Store Manager,2021-07-31,81787,3.4,True
+E01468,S0017,Gunbir Wali,Security,2021-06-01,27395,4.8,True
+E01469,S0138,Rachana Mahajan,Cashier,2020-03-03,117077,2.3,True
+E01470,S0079,Anamika Loke,Stock Associate,2021-08-03,115456,3.6,True
+E01471,S0077,Aadhya Raman,Visual Merchandiser,2019-09-26,57436,2.5,True
+E01472,S0044,Wyatt Hayer,Cashier,2019-10-06,57687,4.9,False
+E01473,S0107,Pranit Munshi,Stock Associate,2020-07-25,49452,3.4,False
+E01474,S0078,Abhiram Bir,Customer Service Rep,2019-08-17,55138,3.0,True
+E01475,S0081,Nisha Chaudhari,Warehouse Staff,2021-06-15,70744,3.7,True
+E01476,S0002,Sanaya Panchal,Security,2018-08-15,68580,3.1,True
+E01477,S0117,Bhanumati Krishnamurthy,Stock Associate,2018-03-21,107319,2.6,True
+E01478,S0066,Bahadurjit Bajwa,Stock Associate,2022-03-10,18103,3.0,True
+E01479,S0084,Dakshesh Kalla,Visual Merchandiser,2020-05-30,95944,3.5,False
+E01480,S0028,Jagdish Chadha,Sales Associate,2020-09-22,36026,3.0,True
+E01481,S0121,Keya Goyal,Store Manager,2022-05-17,105151,4.9,True
+E01482,S0064,Qarin Kulkarni,Stock Associate,2022-03-17,22774,2.3,True
+E01483,S0071,Unni Borra,Customer Service Rep,2022-11-30,52255,2.3,True
+E01484,S0019,Aradhana Sane,Customer Service Rep,2022-08-22,34893,4.6,True
+E01485,S0147,Aarini Edwin,Visual Merchandiser,2018-12-27,72443,2.7,True
+E01486,S0067,Aradhana Bhatia,Stock Associate,2018-03-31,33411,4.3,True
+E01487,S0081,Lipika Natarajan,Customer Service Rep,2023-01-01,112946,4.7,True
+E01488,S0120,Aarna Lanka,Visual Merchandiser,2023-03-03,62474,3.0,True
+E01489,S0067,Ridhi Boase,Stock Associate,2018-04-05,33385,2.4,True
+E01490,S0102,Sai Ramaswamy,Warehouse Staff,2018-07-16,84258,2.2,False
+E01491,S0096,Vyanjana Chopra,Store Manager,2022-11-26,19205,4.9,False
+E01492,S0084,Raagini Kamdar,Warehouse Staff,2021-03-03,90342,3.0,True
+E01493,S0020,Riya Lad,Sales Associate,2019-04-06,84699,2.5,True
+E01494,S0023,Bakhshi Bora,Warehouse Staff,2020-02-21,113554,2.2,True
+E01495,S0071,Zashil Sehgal,Warehouse Staff,2023-01-23,111853,2.5,True
+E01496,S0047,Widisha Dixit,Customer Service Rep,2023-02-03,84168,4.3,True
+E01497,S0111,Baljiwan Ramakrishnan,Store Manager,2022-07-03,90332,2.9,True
+E01498,S0100,Max Narayan,Store Manager,2018-02-04,44521,3.0,True
+E01499,S0058,Aarush Varma,Customer Service Rep,2023-12-21,74998,4.0,True
+E01500,S0148,Vanya Sarin,Customer Service Rep,2019-09-18,39752,4.3,True
+E01501,S0047,Ekaraj Zachariah,Sales Associate,2018-04-18,84916,3.8,True
+E01502,S0033,Aarush Rajagopalan,Customer Service Rep,2018-10-11,57920,4.6,False
+E01503,S0054,Jairaj Wason,Visual Merchandiser,2021-05-25,36402,3.3,True
+E01504,S0056,Gauri Mitter,Customer Service Rep,2018-04-22,32997,4.6,False
+E01505,S0032,Christopher Chana,Security,2018-04-15,73189,4.6,False
+E01506,S0054,Harini Buch,Security,2018-07-21,73564,3.3,True
+E01507,S0098,Bimala Jain,Sales Associate,2019-01-16,37950,3.5,True
+E01508,S0133,Balveer Rajagopalan,Sales Associate,2019-10-30,114169,2.6,False
+E01509,S0092,Chandani Ramakrishnan,Customer Service Rep,2022-08-28,40032,2.6,True
+E01510,S0130,Jagrati Sur,Customer Service Rep,2023-05-12,48460,3.5,False
+E01511,S0005,Raksha Gupta,Store Manager,2022-04-06,70052,3.2,False
+E01512,S0091,Balendra Hans,Customer Service Rep,2021-06-23,23559,3.3,True
+E01513,S0077,William Suresh,Visual Merchandiser,2018-12-12,100253,3.9,True
+E01514,S0121,Dev Zachariah,Store Manager,2021-01-30,110633,3.9,True
+E01515,S0037,Xalak Walla,Visual Merchandiser,2019-12-28,89000,2.0,True
+E01516,S0036,Amol Bansal,Warehouse Staff,2018-06-09,23019,3.8,True
+E01517,S0076,Daksh Nazareth,Customer Service Rep,2022-08-27,35641,3.3,True
+E01518,S0133,Nidra Dani,Cashier,2020-01-14,62850,4.6,True
+E01519,S0042,Tara Yadav,Store Manager,2023-07-31,41748,2.9,True
+E01520,S0068,Viraj Bora,Customer Service Rep,2018-04-27,117664,2.1,True
+E01521,S0121,Lohit Suresh,Store Manager,2019-08-15,68432,2.1,True
+E01522,S0135,Urishilla Bath,Cashier,2019-10-10,28122,2.0,False
+E01523,S0024,Kalpit Atwal,Security,2018-09-29,29733,4.9,True
+E01524,S0107,Chandresh Mohanty,Warehouse Staff,2019-07-05,94071,4.4,True
+E01525,S0122,Tanmayi Garde,Warehouse Staff,2020-11-18,31803,3.0,True
+E01526,S0025,Hitesh Comar,Warehouse Staff,2023-07-12,113136,4.5,True
+E01527,S0033,Thomas Bhatnagar,Visual Merchandiser,2023-10-10,32014,4.4,True
+E01528,S0022,Pooja Nazareth,Sales Associate,2022-07-13,52001,4.7,True
+E01529,S0058,Ekta Dara,Stock Associate,2020-01-27,110686,4.0,True
+E01530,S0119,Ekanta Kala,Stock Associate,2019-06-24,57984,3.3,True
+E01531,S0149,Oscar Nayak,Store Manager,2022-04-27,97821,2.1,True
+E01532,S0047,Jai Mahal,Store Manager,2019-08-09,98182,2.1,True
+E01533,S0042,Ojasvi Ganguly,Security,2021-08-14,16535,3.7,True
+E01534,S0089,Nitesh Sarna,Visual Merchandiser,2022-07-20,74258,5.0,True
+E01535,S0068,Banjeet Deol,Warehouse Staff,2019-04-28,112643,2.8,True
+E01536,S0087,Krisha Dugar,Customer Service Rep,2020-02-03,48460,3.0,False
+E01537,S0141,Vidhi Buch,Warehouse Staff,2019-01-31,102557,4.6,True
+E01538,S0068,Abhimanyu Gola,Sales Associate,2022-02-05,70904,3.9,False
+E01539,S0033,Bhanumati Saha,Sales Associate,2020-07-19,74956,4.5,True
+E01540,S0076,Jonathan Jhaveri,Cashier,2021-11-24,55243,3.4,True
+E01541,S0022,Anika Virk,Cashier,2022-06-17,81965,2.6,True
+E01542,S0057,Nisha Khare,Store Manager,2020-03-24,111129,4.2,True
+E01543,S0039,Baljiwan Gole,Store Manager,2023-12-24,62534,3.6,True
+E01544,S0136,Gaurang Mitra,Cashier,2022-03-14,35807,2.3,True
+E01545,S0058,Omya Agrawal,Cashier,2022-10-03,41502,2.8,False
+E01546,S0103,Rehaan Dalal,Stock Associate,2022-05-16,83386,4.9,False
+E01547,S0120,Janaki Zacharia,Customer Service Rep,2019-07-12,109574,4.8,True
+E01548,S0065,Ucchal Joshi,Stock Associate,2020-05-05,111136,3.8,False
+E01549,S0016,Chatresh Hari,Security,2019-07-29,33847,3.4,True
+E01550,S0063,Manthan Som,Security,2019-10-16,99683,3.3,True
+E01551,S0064,Patrick Dutta,Customer Service Rep,2018-10-16,44662,4.9,True
+E01552,S0103,Chatura Patla,Sales Associate,2019-09-14,41978,3.3,True
+E01553,S0084,Shaurya Saran,Store Manager,2019-04-26,83238,2.9,True
+E01554,S0121,Gaurika Setty,Visual Merchandiser,2022-12-01,54167,4.5,True
+E01555,S0117,Hemang Ben,Cashier,2018-10-16,113861,4.7,True
+E01556,S0070,Nakul Balakrishnan,Store Manager,2022-04-12,48482,2.3,True
+E01557,S0150,Yutika D’Alia,Cashier,2023-06-19,114412,2.9,True
+E01558,S0023,Wahab Saxena,Customer Service Rep,2020-09-15,102151,3.5,True
+E01559,S0111,Oni Issac,Security,2018-08-21,98631,2.3,True
+E01560,S0071,Victor Choudhary,Stock Associate,2023-09-12,58100,3.3,True
+E01561,S0092,Vedant Chaudhari,Sales Associate,2018-02-22,28255,4.1,True
+E01562,S0150,Nitara Iyengar,Warehouse Staff,2020-06-25,92474,3.3,True
+E01563,S0125,Thomas Borah,Security,2023-10-27,102498,3.1,True
+E01564,S0026,Vedhika Bhagat,Sales Associate,2019-04-27,115143,2.7,True
+E01565,S0108,Maanav Kalita,Security,2018-06-13,60521,3.9,True
+E01566,S0118,Pranav Ram,Store Manager,2022-06-22,97328,4.2,True
+E01567,S0007,Laban Shankar,Visual Merchandiser,2020-01-11,18164,3.9,True
+E01568,S0075,Jagrati Madan,Security,2018-04-27,110559,3.4,False
+E01569,S0092,Gautami Datta,Customer Service Rep,2021-12-14,47597,2.8,True
+E01570,S0084,Darpan Mand,Warehouse Staff,2020-12-13,115743,4.4,True
+E01571,S0141,Indrajit Shroff,Customer Service Rep,2022-07-02,113739,3.0,True
+E01572,S0128,Omya Garg,Sales Associate,2021-09-29,61111,3.8,True
+E01573,S0059,Thomas Merchant,Customer Service Rep,2021-06-06,28277,4.7,True
+E01574,S0104,Onkar Karpe,Customer Service Rep,2023-07-30,98817,2.6,True
+E01575,S0068,Nisha Vig,Warehouse Staff,2021-12-07,59171,4.4,False
+E01576,S0041,Tarak Solanki,Cashier,2021-08-15,17087,2.3,True
+E01577,S0130,Arya Atwal,Stock Associate,2019-12-30,67162,3.9,True
+E01578,S0024,Yatin Kota,Sales Associate,2022-07-16,49520,2.4,True
+E01579,S0091,Radha Kapadia,Security,2019-06-29,65494,2.3,False
+E01580,S0076,Abdul Sahni,Sales Associate,2021-08-19,44468,3.3,True
+E01581,S0141,Banjeet Singhal,Cashier,2021-01-26,18454,3.5,True
+E01582,S0057,Pavani Wali,Visual Merchandiser,2020-07-14,72718,3.9,True
+E01583,S0004,Varenya Chaudhari,Stock Associate,2020-09-25,17722,4.6,True
+E01584,S0113,Warhi Khosla,Security,2020-02-27,69044,2.6,True
+E01585,S0103,Advik Ray,Security,2020-12-07,107634,4.4,True
+E01586,S0068,Kevin Parmer,Security,2022-02-25,62777,4.7,False
+E01587,S0082,William Chana,Customer Service Rep,2018-11-12,105858,2.4,False
+E01588,S0064,Varsha Mody,Cashier,2019-01-31,117789,5.0,True
+E01589,S0138,Tripti Bajwa,Customer Service Rep,2019-03-06,94179,2.7,True
+E01590,S0142,Ubika Devi,Visual Merchandiser,2023-03-21,50275,3.7,True
+E01591,S0113,Qasim Prabhakar,Warehouse Staff,2022-11-22,23474,4.9,True
+E01592,S0144,Aarav Bobal,Warehouse Staff,2018-08-24,60561,3.4,True
+E01593,S0017,Gaurangi Wali,Customer Service Rep,2018-09-25,109223,2.8,True
+E01594,S0008,Chaman Sandhu,Warehouse Staff,2022-10-31,107303,4.3,True
+E01595,S0102,Sarthak Buch,Visual Merchandiser,2023-01-26,55609,3.6,True
+E01596,S0085,Christopher Varma,Visual Merchandiser,2023-09-12,68364,2.4,True
+E01597,S0081,Charan Choudhry,Store Manager,2018-08-05,108338,4.3,True
+E01598,S0019,Jasmit Shroff,Sales Associate,2023-12-10,69225,4.2,True
+E01599,S0064,Jasmit Peri,Cashier,2020-01-13,18864,3.9,True
+E01600,S0031,Ekalinga Jayaraman,Customer Service Rep,2018-12-31,27341,4.8,True
+E01601,S0100,Gaurika Khare,Security,2022-04-11,106280,3.4,True
+E01602,S0047,Vanya Kadakia,Sales Associate,2021-06-28,61551,2.5,True
+E01603,S0065,Ekani Pandit,Warehouse Staff,2019-01-07,39191,2.8,True
+E01604,S0090,Yahvi Sampath,Sales Associate,2021-10-23,74208,4.3,True
+E01605,S0006,Chatura Bhatnagar,Store Manager,2018-08-31,104484,3.1,True
+E01606,S0136,Hemani Sethi,Store Manager,2018-01-20,57842,3.2,True
+E01607,S0146,Yachana Vyas,Customer Service Rep,2018-10-12,37595,2.6,True
+E01608,S0047,Upma Wali,Visual Merchandiser,2021-11-15,27709,4.6,False
+E01609,S0096,Siya Pillai,Cashier,2022-12-11,107585,4.5,True
+E01610,S0130,Raghav Shankar,Cashier,2022-12-29,18976,3.9,False
+E01611,S0031,Faris Raman,Stock Associate,2021-04-08,29126,3.0,True
+E01612,S0133,Bhavya Bose,Cashier,2019-02-13,80228,2.6,True
+E01613,S0087,Nitesh Majumdar,Warehouse Staff,2022-05-12,117768,3.3,True
+E01614,S0142,Manbir Taneja,Sales Associate,2021-10-17,47272,3.1,True
+E01615,S0126,Samarth Verma,Visual Merchandiser,2022-07-14,20451,3.1,False
+E01616,S0123,Chaaya Saha,Sales Associate,2023-10-31,26921,4.0,True
+E01617,S0135,Urvi Palan,Security,2020-04-03,52035,3.0,True
+E01618,S0051,Sachi Bail,Stock Associate,2022-10-13,67984,3.3,True
+E01619,S0007,Ranbir Bhatnagar,Warehouse Staff,2019-03-04,57141,3.7,True
+E01620,S0079,Vincent Venkatesh,Warehouse Staff,2021-03-22,116035,4.1,True
+E01621,S0011,Nisha Oza,Visual Merchandiser,2019-01-01,55254,4.7,True
+E01622,S0147,Vedika Wagle,Cashier,2021-07-08,111895,2.1,True
+E01623,S0078,Tanvi Modi,Security,2020-02-11,61106,4.9,True
+E01624,S0112,Damini Garg,Cashier,2023-09-15,63604,4.0,True
+E01625,S0055,Utkarsh Sule,Sales Associate,2023-02-16,39340,4.7,True
+E01626,S0019,Bhavya Batta,Visual Merchandiser,2023-07-22,42097,3.7,True
+E01627,S0012,Ira Mane,Security,2020-04-23,105359,2.3,True
+E01628,S0062,Ojas Dyal,Customer Service Rep,2019-12-27,66107,4.5,True
+E01629,S0103,Qabil Gill,Store Manager,2019-10-01,33568,3.8,True
+E01630,S0067,Neel Khanna,Security,2021-06-22,41853,4.8,True
+E01631,S0070,Benjamin Nadig,Security,2018-02-11,69511,4.5,True
+E01632,S0049,Ridhi Lad,Warehouse Staff,2020-11-04,93660,2.0,True
+E01633,S0011,Qarin Jha,Warehouse Staff,2019-06-12,101895,4.1,True
+E01634,S0030,Edhitha Padmanabhan,Sales Associate,2019-10-13,118702,3.5,True
+E01635,S0084,Kashish Sen,Cashier,2020-11-16,104247,4.1,True
+E01636,S0073,Charvi Dara,Stock Associate,2021-03-12,89725,2.8,True
+E01637,S0102,Nidhi Tata,Visual Merchandiser,2018-12-21,87712,4.5,True
+E01638,S0133,Tara Nagarajan,Store Manager,2023-04-05,77759,2.3,True
+E01639,S0100,Aayush Tripathi,Cashier,2018-12-09,114947,4.1,True
+E01640,S0112,Chakrika Som,Customer Service Rep,2022-11-30,111776,2.4,True
+E01641,S0011,Manan Sathe,Visual Merchandiser,2020-05-11,110015,3.0,True
+E01642,S0040,Isaiah Srinivas,Customer Service Rep,2020-10-24,38006,3.1,True
+E01643,S0015,Liam Dada,Security,2022-04-06,35066,4.8,True
+E01644,S0058,Aryan Ratti,Cashier,2020-03-07,59025,4.0,True
+E01645,S0113,Sanaya Parikh,Sales Associate,2020-10-03,93860,3.6,True
+E01646,S0037,Eta Bhakta,Customer Service Rep,2018-08-21,29596,4.1,True
+E01647,S0137,Tristan Mall,Store Manager,2019-11-27,109906,4.8,True
+E01648,S0037,Arin Chacko,Sales Associate,2020-08-15,15773,3.1,True
+E01649,S0100,Gagan Vala,Sales Associate,2020-07-08,114899,3.9,True
+E01650,S0019,Robert Swaminathan,Store Manager,2023-05-06,89906,3.9,True
+E01651,S0100,Yasti Bhalla,Warehouse Staff,2020-08-31,104506,3.5,True
+E01652,S0117,Mitali Divan,Warehouse Staff,2019-09-20,74535,3.6,True
+E01653,S0037,Kala Raju,Stock Associate,2019-12-16,65915,5.0,False
+E01654,S0095,Advik Mane,Store Manager,2022-11-04,54302,2.4,True
+E01655,S0139,Indali Morar,Visual Merchandiser,2022-07-06,31387,4.5,True
+E01656,S0104,Gagan Kale,Security,2022-09-08,75369,4.2,True
+E01657,S0100,Ojasvi Savant,Warehouse Staff,2022-01-29,59276,3.0,True
+E01658,S0136,Nihal Samra,Visual Merchandiser,2020-10-04,43437,4.1,True
+E01659,S0094,Liam Chadha,Warehouse Staff,2022-07-31,64127,3.9,True
+E01660,S0037,Sarthak Mitter,Warehouse Staff,2019-03-22,86149,4.0,True
+E01661,S0106,Gautami Bhatti,Store Manager,2020-03-27,43465,3.0,False
+E01662,S0099,Gaurang Ahuja,Security,2020-01-09,73062,2.1,True
+E01663,S0146,Anjali Sachdeva,Cashier,2021-01-24,112776,4.0,True
+E01664,S0103,Turvi Devan,Visual Merchandiser,2019-09-10,68908,2.9,True
+E01665,S0034,Quincy Raj,Warehouse Staff,2021-07-19,95000,4.8,True
+E01666,S0010,Vritti Basak,Sales Associate,2018-09-25,26239,2.1,False
+E01667,S0014,Daksha Tak,Customer Service Rep,2019-01-04,56064,4.8,True
+E01668,S0039,Udarsh Bala,Visual Merchandiser,2021-06-13,23653,3.1,False
+E01669,S0150,Mitesh Lala,Warehouse Staff,2023-04-30,59383,4.1,True
+E01670,S0026,Urmi Dash,Cashier,2019-09-15,36398,3.2,True
+E01671,S0105,Omisha Gola,Cashier,2023-04-08,106732,4.9,True
+E01672,S0064,Yash Balakrishnan,Sales Associate,2019-08-24,73314,2.3,True
+E01673,S0098,Aradhana Tailor,Warehouse Staff,2022-04-03,77505,2.5,True
+E01674,S0093,Janaki Srivastava,Warehouse Staff,2020-01-15,73632,4.7,False
+E01675,S0146,Aarna Soni,Customer Service Rep,2021-10-23,26142,4.7,True
+E01676,S0035,Kashvi Vala,Stock Associate,2022-06-01,34593,2.3,False
+E01677,S0051,Aashi Gaba,Customer Service Rep,2021-04-12,108245,4.4,True
+E01678,S0091,Madhav Nagarajan,Warehouse Staff,2018-03-07,96508,4.7,True
+E01679,S0044,Krishna Parikh,Customer Service Rep,2020-11-01,40168,3.5,False
+E01680,S0007,Chatresh Mahajan,Warehouse Staff,2021-07-28,36873,2.2,True
+E01681,S0079,Oni Parekh,Stock Associate,2023-01-13,71747,3.0,True
+E01682,S0118,Bimala Manne,Sales Associate,2021-09-25,87256,2.1,False
+E01683,S0003,Yoshita Hari,Store Manager,2021-05-24,64895,2.6,True
+E01684,S0100,Girindra Ganesh,Store Manager,2021-01-12,106338,3.1,True
+E01685,S0132,Diya Mitra,Security,2022-07-26,107704,3.0,False
+E01686,S0067,Janani Char,Visual Merchandiser,2023-06-26,51915,2.8,False
+E01687,S0022,Maanas Arya,Customer Service Rep,2023-09-16,29879,2.1,True
+E01688,S0028,Zarna Manda,Visual Merchandiser,2018-11-01,38213,3.1,True
+E01689,S0061,Vedhika Sabharwal,Sales Associate,2018-11-05,16264,4.2,True
+E01690,S0088,Nicholas Chaudry,Sales Associate,2019-10-02,91382,3.9,False
+E01691,S0118,Mohammed Thakur,Customer Service Rep,2019-03-10,95290,2.4,True
+E01692,S0052,Raghav Vora,Sales Associate,2020-01-31,27019,4.2,True
+E01693,S0111,Omisha Sharma,Visual Merchandiser,2020-05-11,21553,4.2,True
+E01694,S0136,Jackson Deep,Visual Merchandiser,2023-05-04,40860,4.1,True
+E01695,S0048,Varsha Pall,Warehouse Staff,2021-03-25,110887,4.0,False
+E01696,S0016,Janani Dewan,Warehouse Staff,2020-01-28,81530,2.0,True
+E01697,S0051,Hema Gera,Stock Associate,2019-08-13,86040,3.7,True
+E01698,S0032,Ayush Dani,Sales Associate,2020-02-10,39516,4.5,True
+E01699,S0059,Kabir Dhar,Cashier,2022-06-05,98269,4.5,True
+E01700,S0106,Damyanti Dass,Stock Associate,2020-06-12,70905,2.8,True
+E01701,S0062,Kalpit Brar,Store Manager,2020-10-27,51890,4.3,True
+E01702,S0017,Isaac Brahmbhatt,Warehouse Staff,2021-11-10,111064,2.2,True
+E01703,S0111,Veda Sankar,Sales Associate,2023-01-01,16572,4.9,True
+E01704,S0082,Ronith Chokshi,Customer Service Rep,2018-09-27,89606,2.8,True
+E01705,S0116,Yochana Bhargava,Customer Service Rep,2023-05-22,63554,3.5,True
+E01706,S0081,Jagat Kulkarni,Visual Merchandiser,2020-07-23,91969,2.5,True
+E01707,S0105,Dominic Mitra,Warehouse Staff,2023-03-06,57515,4.8,True
+E01708,S0104,Gopal Dasgupta,Warehouse Staff,2023-03-18,74267,2.5,True
+E01709,S0099,Ryan Goyal,Security,2018-04-11,33275,4.4,True
+E01710,S0039,Ayush Chana,Security,2022-02-06,16828,3.3,True
+E01711,S0045,Arunima Pall,Cashier,2020-01-24,43441,2.3,True
+E01712,S0039,Naveen Tella,Stock Associate,2021-10-13,40920,2.1,True
+E01713,S0078,Yashasvi Bir,Stock Associate,2020-07-21,39896,3.5,True
+E01714,S0111,Akshay Wadhwa,Security,2019-10-17,78876,4.9,True
+E01715,S0028,Rehaan Manda,Sales Associate,2021-08-17,107539,3.4,True
+E01716,S0061,Aayush Chaudhary,Warehouse Staff,2020-06-05,69571,3.5,False
+E01717,S0041,Yamini Soman,Customer Service Rep,2021-06-26,104660,3.9,True
+E01718,S0034,Qasim Sarraf,Stock Associate,2021-10-29,109995,3.1,True
+E01719,S0033,Pratyush Pant,Customer Service Rep,2023-04-24,23273,2.1,True
+E01720,S0064,Panini Kala,Visual Merchandiser,2021-08-29,105214,2.7,False
+E01721,S0081,Nikita Chowdhury,Warehouse Staff,2021-02-23,87744,3.0,True
+E01722,S0050,Jatin Shukla,Cashier,2021-08-11,117445,3.9,False
+E01723,S0059,Zinal Deshpande,Visual Merchandiser,2020-10-17,79040,3.7,False
+E01724,S0081,Jalsa Mani,Sales Associate,2022-04-23,113329,2.4,True
+E01725,S0136,Fitan Narang,Warehouse Staff,2023-03-11,93983,4.7,False
+E01726,S0069,Jack Rajan,Sales Associate,2023-01-16,66062,4.3,True
+E01727,S0071,Tanmayi Muni,Cashier,2022-01-30,116942,2.2,True
+E01728,S0001,Upkaar Reddy,Customer Service Rep,2021-12-29,96350,3.4,True
+E01729,S0070,Priya Gulati,Customer Service Rep,2023-06-09,56178,3.8,True
+E01730,S0049,Vamakshi Pillai,Sales Associate,2021-04-25,111130,2.2,False
+E01731,S0135,Agastya Swamy,Stock Associate,2020-10-13,118639,3.1,True
+E01732,S0003,Meghana Sarma,Stock Associate,2020-12-05,41770,2.4,True
+E01733,S0108,Jagdish Dhar,Sales Associate,2022-02-18,75940,4.3,False
+E01734,S0115,Nandini Chaudry,Security,2019-10-05,92836,3.3,True
+E01735,S0071,Dhruv Patla,Warehouse Staff,2021-02-04,40923,4.1,True
+E01736,S0042,Hamsini Iyer,Cashier,2021-08-15,17222,2.4,False
+E01737,S0142,Jason Kaul,Warehouse Staff,2022-02-19,33579,2.9,True
+E01738,S0141,Xalak Mallick,Store Manager,2022-11-14,99715,3.0,True
+E01739,S0009,Mugdha Parekh,Stock Associate,2021-08-20,89136,4.3,True
+E01740,S0131,Nidhi Sundaram,Store Manager,2019-06-25,80100,2.2,True
+E01741,S0039,Manan Sha,Sales Associate,2023-11-12,36414,4.8,True
+E01742,S0093,Jason Krishna,Customer Service Rep,2021-10-17,25637,3.2,True
+E01743,S0127,Widisha Kashyap,Security,2018-09-12,83770,3.2,True
+E01744,S0040,Ayushman Chaudhary,Sales Associate,2020-04-28,73785,2.5,True
+E01745,S0067,Ekansh Tara,Visual Merchandiser,2020-09-07,22407,3.9,True
+E01746,S0014,Praneel Raja,Visual Merchandiser,2023-05-15,20556,2.1,True
+E01747,S0040,Michael Mitter,Cashier,2023-08-13,56872,3.0,True
+E01748,S0102,Faraj Venkatesh,Store Manager,2023-09-21,115340,2.9,True
+E01749,S0107,Unnati Jaggi,Sales Associate,2018-06-14,41230,3.8,True
+E01750,S0150,Widisha Swaminathan,Warehouse Staff,2018-01-30,60794,4.1,True
+E01751,S0095,Hemal Zachariah,Cashier,2022-06-15,42889,2.5,True
+E01752,S0073,Azad Sani,Stock Associate,2022-03-14,81962,3.2,True
+E01753,S0066,Leela Sengupta,Customer Service Rep,2020-03-12,57868,4.7,True
+E01754,S0074,Krisha Savant,Warehouse Staff,2018-04-29,73398,3.8,True
+E01755,S0132,Balendra Bali,Security,2020-04-18,39226,2.3,True
+E01756,S0028,Chavvi Gala,Visual Merchandiser,2020-03-30,114583,3.7,True
+E01757,S0055,Raagini Desai,Stock Associate,2022-01-18,75788,2.2,True
+E01758,S0146,Lopa Sura,Stock Associate,2020-06-07,81990,2.1,True
+E01759,S0047,Vritti Zacharia,Customer Service Rep,2020-04-25,80482,4.8,True
+E01760,S0084,Vamakshi Dugar,Warehouse Staff,2022-05-20,93880,4.3,False
+E01761,S0123,Mahika Lall,Stock Associate,2020-10-14,25180,3.8,False
+E01762,S0008,Krishna Pandit,Store Manager,2018-02-15,50944,4.8,True
+E01763,S0098,Ekani Bhat,Cashier,2019-02-03,22017,3.1,True
+E01764,S0109,Chakradev Dave,Customer Service Rep,2018-11-08,51697,3.3,True
+E01765,S0009,Ikshita Bala,Sales Associate,2021-05-22,33591,2.8,False
+E01766,S0053,Lajita Chatterjee,Sales Associate,2018-05-05,77456,2.5,True
+E01767,S0061,Hemani Parikh,Warehouse Staff,2021-01-23,50398,2.1,True
+E01768,S0017,Indali Bhalla,Cashier,2020-06-01,23540,3.2,True
+E01769,S0010,Yug Keer,Warehouse Staff,2022-11-07,76040,3.2,False
+E01770,S0148,Frado Bhatti,Store Manager,2018-09-16,115864,4.6,True
+E01771,S0123,Ishwar Nazareth,Visual Merchandiser,2020-12-30,18199,4.0,False
+E01772,S0049,Anmol Yohannan,Visual Merchandiser,2023-01-09,15255,5.0,True
+E01773,S0145,Baljiwan Sharma,Security,2023-06-25,118804,2.7,True
+E01774,S0013,Yutika Sama,Stock Associate,2022-01-31,26588,3.8,True
+E01775,S0121,Anmol Singh,Cashier,2022-03-09,101324,4.7,True
+E01776,S0139,Edhitha Purohit,Cashier,2021-08-06,111363,3.9,True
+E01777,S0149,Ekantika Chaudhari,Security,2022-03-05,76274,5.0,True
+E01778,S0038,Harish Jha,Warehouse Staff,2022-07-29,62229,4.9,True
+E01779,S0065,Watika Thakkar,Cashier,2021-09-25,62011,3.9,True
+E01780,S0139,Ojas Mistry,Cashier,2018-06-25,60017,3.5,False
+E01781,S0038,Rajata Jaggi,Customer Service Rep,2019-10-16,119691,3.7,False
+E01782,S0053,Faqid Wason,Security,2018-12-01,69916,4.6,False
+E01783,S0140,Bhavna Lanka,Store Manager,2023-10-30,28607,3.7,True
+E01784,S0141,Chameli Ratti,Cashier,2020-07-17,104654,4.1,True
+E01785,S0030,George Chandran,Customer Service Rep,2022-03-10,86886,4.8,True
+E01786,S0101,Anjali Bhavsar,Visual Merchandiser,2021-12-09,113281,3.2,True
+E01787,S0028,Prisha Kadakia,Visual Merchandiser,2023-02-02,35408,4.5,False
+E01788,S0049,Faraj Mittal,Store Manager,2023-08-29,119849,2.3,True
+E01789,S0019,Rachita Zacharia,Stock Associate,2020-09-17,114064,3.2,True
+E01790,S0139,Ryan Sachdeva,Sales Associate,2020-02-22,18080,2.0,True
+E01791,S0054,Zayan Varma,Cashier,2018-10-20,23784,2.8,False
+E01792,S0109,Pranit Bahl,Customer Service Rep,2022-07-09,16385,4.1,True
+E01793,S0100,Xalak Kala,Customer Service Rep,2020-05-03,54817,3.3,True
+E01794,S0123,Amrita Walia,Store Manager,2023-07-06,19131,3.5,True
+E01795,S0066,Darpan Vig,Warehouse Staff,2022-04-21,113686,3.6,True
+E01796,S0090,Janya Shere,Warehouse Staff,2018-04-22,64803,2.1,True
+E01797,S0023,Wridesh Dora,Warehouse Staff,2020-10-29,86268,2.3,True
+E01798,S0025,Radhika Roy,Warehouse Staff,2022-04-05,113179,3.0,True
+E01799,S0121,Devansh Jani,Store Manager,2021-08-15,55607,3.7,True
+E01800,S0116,Amara Mangat,Visual Merchandiser,2022-08-09,27445,2.0,True
+E01801,S0008,Aahana Keer,Warehouse Staff,2018-10-11,80807,2.5,True
+E01802,S0145,William Comar,Security,2018-07-19,48187,3.8,True
+E01803,S0126,Rehaan Bala,Cashier,2023-01-25,53455,4.6,True
+E01804,S0085,Dayita Shetty,Security,2019-03-26,105021,2.5,True
+E01805,S0051,Rajata Sami,Warehouse Staff,2023-06-15,47642,2.0,True
+E01806,S0046,Saksham Dutta,Security,2018-06-29,54620,2.5,True
+E01807,S0150,Laban Balakrishnan,Warehouse Staff,2020-07-25,108562,3.3,True
+E01808,S0030,Arunima Goda,Sales Associate,2019-11-05,33245,2.4,False
+E01809,S0145,Vedika Bahri,Store Manager,2022-11-30,80030,3.1,True
+E01810,S0006,Fiyaz Murthy,Customer Service Rep,2019-03-12,69869,3.4,True
+E01811,S0143,Devansh Ray,Security,2018-10-02,23542,2.3,False
+E01812,S0092,Gautam Ranganathan,Warehouse Staff,2022-07-02,81468,4.8,False
+E01813,S0036,Warinder Choudhury,Sales Associate,2018-04-09,36233,2.3,True
+E01814,S0051,Zayan Taneja,Warehouse Staff,2022-03-10,88055,2.8,True
+E01815,S0048,Wazir Das,Security,2019-04-20,88356,2.1,True
+E01816,S0077,Forum Ramakrishnan,Cashier,2022-05-20,16467,3.1,True
+E01817,S0004,Pallavi Kamdar,Sales Associate,2023-11-19,102282,2.8,True
+E01818,S0078,Hredhaan Gill,Cashier,2021-08-01,46939,4.6,True
+E01819,S0049,Anvi Sarraf,Warehouse Staff,2023-05-14,77748,2.6,True
+E01820,S0142,Aachal Bhalla,Sales Associate,2019-08-22,102435,2.4,True
+E01821,S0018,Kavya Chowdhury,Warehouse Staff,2023-10-04,24514,3.7,True
+E01822,S0106,Pallavi Soman,Customer Service Rep,2020-07-12,49402,3.2,True
+E01823,S0011,Arunima Dhillon,Customer Service Rep,2022-06-05,18626,2.6,True
+E01824,S0096,Vaishnavi Pillai,Security,2023-01-17,94486,4.5,True
+E01825,S0033,Ansh Banerjee,Warehouse Staff,2023-09-19,68284,3.9,True
+E01826,S0041,Wriddhish Kulkarni,Visual Merchandiser,2023-11-06,52699,3.5,True
+E01827,S0008,Dayamai Patil,Security,2018-09-29,88621,2.3,False
+E01828,S0038,Warjas Savant,Store Manager,2022-02-22,51357,3.2,True
+E01829,S0088,Abhiram Ramaswamy,Stock Associate,2021-09-01,55388,4.6,True
+E01830,S0125,Charvi Chana,Security,2019-07-17,76515,3.0,True
+E01831,S0088,Chameli Kade,Sales Associate,2020-10-27,97460,2.8,True
+E01832,S0074,Reva Nadig,Visual Merchandiser,2021-07-06,57488,4.7,True
+E01833,S0090,Bahadurjit Mahal,Stock Associate,2020-02-25,58908,3.6,True
+E01834,S0068,Vyanjana Sinha,Security,2020-02-11,115704,3.8,True
+E01835,S0076,Gaurangi Sami,Visual Merchandiser,2022-01-20,108404,3.6,True
+E01836,S0119,Naveen Lal,Cashier,2019-04-26,109973,4.2,True
+E01837,S0064,Indira Salvi,Visual Merchandiser,2021-10-13,38996,4.7,True
+E01838,S0096,Sudiksha Bala,Visual Merchandiser,2022-05-24,78483,4.2,False
+E01839,S0118,Qarin Sawhney,Customer Service Rep,2019-08-23,48387,3.8,True
+E01840,S0097,Aarush Rattan,Security,2018-01-14,23722,2.6,False
+E01841,S0127,Dalaja Murthy,Warehouse Staff,2021-02-08,81993,3.7,True
+E01842,S0014,Indrajit Dugar,Security,2023-06-29,93023,2.3,True
+E01843,S0081,Zaitra De,Sales Associate,2019-07-27,38737,2.4,True
+E01844,S0014,Ekaja Seth,Store Manager,2018-10-15,51353,2.3,True
+E01845,S0033,Kiaan Lad,Sales Associate,2022-09-30,41855,2.1,True
+E01846,S0016,Falak Manda,Store Manager,2019-04-02,59250,4.9,True
+E01847,S0073,Frado Sachdeva,Security,2020-09-12,45210,2.7,True
+E01848,S0069,Qabil Ramaswamy,Customer Service Rep,2020-08-26,34884,2.1,True
+E01849,S0057,Udarsh Bail,Cashier,2022-04-19,41626,3.6,True
+E01850,S0042,Veer Chakraborty,Sales Associate,2021-01-09,78734,2.4,True
+E01851,S0105,Rushil Lala,Visual Merchandiser,2020-09-18,75228,3.8,False
+E01852,S0057,Chandran Rattan,Stock Associate,2019-03-16,15415,2.7,True
+E01853,S0149,Abha Dixit,Security,2023-01-02,42969,2.7,True
+E01854,S0105,Jhalak Garde,Warehouse Staff,2022-12-18,34711,4.2,True
+E01855,S0098,Akshay Vora,Store Manager,2021-01-17,41886,4.6,True
+E01856,S0135,Sudiksha Talwar,Customer Service Rep,2021-08-12,17715,3.5,True
+E01857,S0114,Udarsh Jani,Visual Merchandiser,2022-03-08,33941,4.1,True
+E01858,S0097,Amaira Mani,Cashier,2022-07-13,42149,2.7,True
+E01859,S0071,Lavanya De,Visual Merchandiser,2021-04-05,45263,3.1,False
+E01860,S0007,Samuel Kale,Visual Merchandiser,2018-09-22,74276,4.1,True
+E01861,S0147,Ranbir Sahota,Customer Service Rep,2022-01-12,64934,2.1,True
+E01862,S0115,Nilima Dhingra,Security,2019-01-02,72325,2.8,True
+E01863,S0094,Bina Lala,Stock Associate,2023-05-15,35722,2.5,False
+E01864,S0133,Shravya Kothari,Visual Merchandiser,2018-05-29,64996,3.1,True
+E01865,S0024,Tara Chada,Cashier,2019-01-14,95668,4.1,True
+E01866,S0021,Upasna Deol,Stock Associate,2023-01-30,34533,2.9,False
+E01867,S0072,Mitali Kala,Cashier,2020-07-27,68669,2.9,True
+E01868,S0060,Pallavi Kunda,Sales Associate,2018-08-02,90053,4.0,True
+E01869,S0046,Girish Bhargava,Stock Associate,2023-04-11,70478,4.7,True
+E01870,S0051,Gaurangi Keer,Sales Associate,2018-10-03,116297,2.3,True
+E01871,S0046,Irya Bath,Sales Associate,2023-03-10,87540,4.3,True
+E01872,S0040,Zehaan Thaman,Cashier,2020-10-03,118141,2.0,False
+E01873,S0070,Chasmum Rana,Store Manager,2023-08-14,81127,4.7,True
+E01874,S0043,Kevin Barman,Store Manager,2023-04-06,35435,4.5,True
+E01875,S0095,Abha Gara,Stock Associate,2023-03-10,47216,3.4,True
+E01876,S0064,Harinakshi Sidhu,Cashier,2018-06-23,23791,4.9,True
+E01877,S0074,Gaurav Nadig,Warehouse Staff,2023-12-07,119705,3.5,True
+E01878,S0141,Lucky Lad,Security,2023-11-21,76160,4.9,False
+E01879,S0091,Dhriti Basu,Security,2020-10-26,83612,4.8,True
+E01880,S0128,Xalak Mand,Cashier,2018-05-30,42117,2.2,False
+E01881,S0077,Qushi Mandal,Sales Associate,2022-08-17,65144,3.1,True
+E01882,S0081,Aishani Varughese,Warehouse Staff,2020-03-24,113344,2.0,True
+E01883,S0038,Rajata Gala,Warehouse Staff,2019-07-27,100075,4.4,True
+E01884,S0037,Vyanjana Dora,Store Manager,2020-07-19,72544,2.8,True
+E01885,S0120,Chatresh Gulati,Customer Service Rep,2020-04-18,75725,2.4,False
+E01886,S0063,Chatura Karpe,Cashier,2019-02-19,53721,3.1,True
+E01887,S0099,Balendra Singhal,Security,2018-11-16,93412,2.9,True
+E01888,S0142,Nihal Sibal,Warehouse Staff,2018-06-15,77843,2.2,True
+E01889,S0080,Jack Talwar,Cashier,2018-02-15,28277,2.4,True
+E01890,S0070,Riya Parikh,Store Manager,2018-04-12,81782,2.7,True
+E01891,S0007,Tanvi Tailor,Warehouse Staff,2022-07-11,58783,4.4,True
+E01892,S0084,Manbir Dasgupta,Stock Associate,2022-02-16,21673,4.4,True
+E01893,S0113,Girik Jani,Warehouse Staff,2022-11-11,115091,3.5,True
+E01894,S0141,Pranit Ganguly,Sales Associate,2019-09-21,64535,3.0,True
+E01895,S0069,Simon Agrawal,Cashier,2019-08-06,114891,4.7,True
+E01896,S0099,Omaja Bose,Stock Associate,2022-06-04,43866,2.1,True
+E01897,S0035,Wishi Chandra,Visual Merchandiser,2022-09-10,89618,2.6,True
+E01898,S0039,Atharv Mane,Security,2020-11-11,42605,2.0,True
+E01899,S0010,Meera Prakash,Stock Associate,2023-05-31,118155,2.2,True
+E01900,S0043,Ekiya Dube,Warehouse Staff,2019-04-13,25481,4.0,True
+E01901,S0088,Finn Sharma,Customer Service Rep,2023-04-05,48827,3.7,True
+E01902,S0085,Sudiksha Luthra,Customer Service Rep,2023-11-28,35394,4.0,True
+E01903,S0134,Forum Bassi,Stock Associate,2020-10-01,44648,4.4,True
+E01904,S0070,Ekta Dayal,Customer Service Rep,2023-09-16,54396,3.5,True
+E01905,S0104,Chanakya Mandal,Store Manager,2021-05-15,48769,2.3,True
+E01906,S0058,Christopher Bobal,Visual Merchandiser,2020-10-15,75862,4.7,False
+E01907,S0139,George Rastogi,Customer Service Rep,2022-08-18,112324,3.2,True
+E01908,S0077,Pranav Khatri,Sales Associate,2020-09-20,36292,3.9,False
+E01909,S0017,Gaurav Bail,Customer Service Rep,2018-08-22,72098,3.2,True
+E01910,S0107,Nicholas Rama,Warehouse Staff,2018-05-06,58749,4.8,True
+E01911,S0061,Bhavani Dube,Warehouse Staff,2023-07-08,66949,3.8,True
+E01912,S0061,Chanchal Swaminathan,Stock Associate,2020-09-23,95028,4.4,True
+E01913,S0084,Dayita Deep,Security,2018-12-06,28193,2.2,True
+E01914,S0003,Gopal Pillai,Cashier,2022-10-22,79572,4.7,False
+E01915,S0039,Vrishti Sehgal,Store Manager,2018-01-09,76762,2.5,True
+E01916,S0094,Vamakshi Loyal,Customer Service Rep,2018-12-25,20299,2.5,True
+E01917,S0026,Gautam Sami,Store Manager,2018-12-04,20179,3.8,True
+E01918,S0050,Quincy Saraf,Cashier,2022-05-20,79272,2.3,True
+E01919,S0135,Girik Baria,Sales Associate,2021-03-11,33168,2.2,True
+E01920,S0067,Ubika Kapur,Cashier,2023-10-10,27598,3.5,True
+E01921,S0073,Warhi Vyas,Store Manager,2022-05-31,59388,4.0,True
+E01922,S0116,Bina Sidhu,Customer Service Rep,2023-09-16,55160,2.9,True
+E01923,S0103,Fariq Sridhar,Security,2020-08-21,119104,5.0,True
+E01924,S0084,Manthan Datta,Visual Merchandiser,2020-09-12,75461,2.4,True
+E01925,S0021,Yuvraj Virk,Store Manager,2019-04-28,34356,2.3,True
+E01926,S0039,Chakrika Batta,Sales Associate,2021-03-03,115973,3.0,True
+E01927,S0062,Chakradev Varghese,Warehouse Staff,2022-11-19,68723,2.4,True
+E01928,S0142,Yashvi Sandal,Stock Associate,2020-05-09,77026,4.0,True
+E01929,S0101,Girindra Shetty,Visual Merchandiser,2021-11-14,23658,2.1,True
+E01930,S0065,Isha Kumar,Security,2020-02-04,80223,3.4,False
+E01931,S0083,Yahvi Babu,Warehouse Staff,2019-06-29,57848,4.2,True
+E01932,S0081,Turvi Gola,Cashier,2018-01-31,117656,2.5,True
+E01933,S0024,Maya Bath,Warehouse Staff,2021-10-02,34420,2.1,True
+E01934,S0132,Omaja Mishra,Warehouse Staff,2021-02-12,41510,4.2,True
+E01935,S0003,Suhani Sengupta,Customer Service Rep,2021-11-05,119884,3.8,True
+E01936,S0027,Harita Grover,Warehouse Staff,2023-08-15,41438,2.6,True
+E01937,S0130,Qasim Brar,Stock Associate,2023-12-15,66208,4.7,False
+E01938,S0051,Hitesh Saraf,Security,2018-06-11,74631,4.9,True
+E01939,S0075,Abdul Rana,Warehouse Staff,2018-07-02,52288,3.0,True
+E01940,S0017,Agastya Garg,Warehouse Staff,2022-09-06,75757,4.7,True
+E01941,S0060,Triveni Ravel,Customer Service Rep,2020-07-01,73886,2.8,False
+E01942,S0010,Chavvi Patel,Visual Merchandiser,2020-11-06,66748,2.8,True
+E01943,S0011,Chasmum Chahal,Visual Merchandiser,2023-01-15,46323,3.2,True
+E01944,S0020,Krishna Atwal,Stock Associate,2022-09-04,17142,3.5,False
+E01945,S0079,Isaac Babu,Store Manager,2023-07-28,91044,2.6,True
+E01946,S0074,Avi Kadakia,Sales Associate,2020-08-19,65990,3.7,True
+E01947,S0140,Maanav Khurana,Visual Merchandiser,2018-02-28,104795,3.3,True
+E01948,S0063,Rayaan Chadha,Warehouse Staff,2018-03-26,28036,2.4,True
+E01949,S0067,Ubika Divan,Cashier,2021-04-12,103055,2.8,True
+E01950,S0110,Pahal Bains,Visual Merchandiser,2019-11-03,62373,2.3,False
+E01951,S0080,Ojas Dua,Sales Associate,2018-11-09,35390,4.6,False
+E01952,S0001,Vedhika Sinha,Visual Merchandiser,2018-09-28,117061,4.3,True
+E01953,S0070,Shivani Kibe,Cashier,2019-04-10,115257,3.4,True
+E01954,S0137,Chaitaly Ramanathan,Warehouse Staff,2023-09-24,31003,3.4,True
+E01955,S0022,Gauri Anand,Customer Service Rep,2019-01-12,61299,2.5,True
+E01956,S0140,Rachana Sagar,Stock Associate,2018-03-16,96309,4.4,True
+E01957,S0023,Bina Bansal,Sales Associate,2019-10-27,34111,3.0,True
+E01958,S0137,Mugdha Sunder,Visual Merchandiser,2023-05-15,114262,3.9,True
+E01959,S0100,Vincent Bhat,Security,2019-03-01,82163,4.3,True
+E01960,S0043,Pahal Mutti,Visual Merchandiser,2023-06-04,116379,3.8,True
+E01961,S0059,Amrita Sahni,Warehouse Staff,2023-02-19,65760,3.0,True
+E01962,S0011,Jackson Talwar,Store Manager,2023-01-30,39652,2.0,True
+E01963,S0096,Saumya Sarin,Customer Service Rep,2022-08-30,113268,4.5,False
+E01964,S0119,Neel Mani,Sales Associate,2019-07-04,27579,3.8,True
+E01965,S0030,Upasna Padmanabhan,Cashier,2023-04-24,79794,3.7,True
+E01966,S0088,Vincent Tripathi,Sales Associate,2018-05-14,118041,4.5,True
+E01967,S0080,Harinakshi Sidhu,Security,2021-04-16,20103,4.6,True
+E01968,S0077,Chaaya Ramakrishnan,Cashier,2020-11-23,64752,5.0,True
+E01969,S0106,Jagvi Sodhi,Sales Associate,2023-12-15,62682,2.2,True
+E01970,S0077,Sarthak Mandal,Security,2018-04-04,18427,4.9,True
+E01971,S0024,Vasudha Dayal,Cashier,2023-11-21,94024,3.8,True
+E01972,S0030,Ryan Dugar,Sales Associate,2020-12-18,115663,3.0,False
+E01973,S0047,Harrison Sagar,Visual Merchandiser,2018-11-19,45345,2.1,True
+E01974,S0141,Chavvi Keer,Sales Associate,2021-05-02,87399,4.0,True
+E01975,S0104,Champak Badami,Store Manager,2021-07-01,70072,2.3,True
+E01976,S0014,Advika Parikh,Cashier,2018-10-09,27362,4.8,True
+E01977,S0028,Owen Thakur,Warehouse Staff,2018-06-24,76502,4.4,True
+E01978,S0028,Devansh Nazareth,Stock Associate,2019-10-13,92444,4.8,False
+E01979,S0064,Ishaan Karan,Sales Associate,2021-09-30,37069,2.6,False
+E01980,S0027,Udarsh Sur,Store Manager,2023-04-11,43628,4.2,True
+E01981,S0131,Harini Pant,Visual Merchandiser,2022-07-29,15692,4.0,False
+E01982,S0148,Amara Dora,Visual Merchandiser,2023-07-11,86770,2.7,True
+E01983,S0100,Chandresh Sarma,Visual Merchandiser,2023-12-02,53365,3.0,True
+E01984,S0106,Indrajit Cherian,Stock Associate,2021-01-08,47640,3.8,False
+E01985,S0108,Benjamin Tripathi,Stock Associate,2023-08-01,15190,4.9,True
+E01986,S0049,Oliver Dalal,Stock Associate,2019-06-10,90578,2.6,True
+E01987,S0031,Janaki Dugar,Visual Merchandiser,2019-06-27,108201,2.1,False
+E01988,S0012,Riya Toor,Sales Associate,2022-06-05,32427,4.9,True
+E01989,S0029,Hardik Dube,Store Manager,2020-05-10,109009,2.3,True
+E01990,S0106,Gaurika Devi,Sales Associate,2021-10-30,42044,3.3,True
+E01991,S0032,Saksham Sarna,Customer Service Rep,2021-08-24,68887,3.1,True
+E01992,S0071,Abeer Korpal,Warehouse Staff,2020-04-05,98237,2.4,True
+E01993,S0049,Harita Mangat,Visual Merchandiser,2023-06-30,79082,4.8,True
+E01994,S0065,Frederick Lata,Store Manager,2022-11-10,75762,2.5,True
+E01995,S0016,Oeshi Patel,Warehouse Staff,2023-11-18,52889,2.6,True
+E01996,S0074,Max Wagle,Cashier,2021-03-06,51612,2.5,True
+E01997,S0122,Vedant Devi,Sales Associate,2023-02-05,60592,2.9,True
+E01998,S0052,Odika Rout,Stock Associate,2023-05-08,66196,2.8,True
+E01999,S0113,Zaitra Pathak,Cashier,2018-03-12,117368,2.7,True
+E02000,S0057,Saanvi Dhingra,Cashier,2019-03-26,50084,4.2,True
+E02001,S0026,Zansi Boase,Stock Associate,2023-10-17,119786,2.9,True
+E02002,S0017,Hamsini Murty,Sales Associate,2020-09-15,52068,2.8,True
+E02003,S0143,Nitesh Saraf,Cashier,2023-07-29,84248,2.0,False
+E02004,S0084,Maya Bansal,Security,2021-10-29,15191,3.4,True
+E02005,S0079,Dalbir Venkatesh,Security,2020-10-25,106229,4.4,True
+E02006,S0103,Oni Ratti,Customer Service Rep,2019-01-29,64797,3.4,True
+E02007,S0063,Dipta Padmanabhan,Customer Service Rep,2018-07-07,59059,3.1,True
+E02008,S0137,Ati Wable,Customer Service Rep,2023-07-13,44829,3.3,True
+E02009,S0020,Netra Sehgal,Sales Associate,2019-07-16,45317,3.2,True
+E02010,S0120,Riya Pai,Security,2024-01-01,111811,2.2,True
+E02011,S0141,Rudra Mitra,Warehouse Staff,2019-07-10,43931,4.2,True
+E02012,S0025,Balhaar Yogi,Store Manager,2020-11-16,16533,4.8,True
+E02013,S0072,Madhavi Date,Warehouse Staff,2020-05-06,27252,3.0,True
+E02014,S0031,Tanay Chander,Sales Associate,2020-10-22,118690,3.8,True
+E02015,S0062,Harini Dutta,Store Manager,2023-05-04,105308,2.8,True
+E02016,S0002,Ayaan Zacharia,Warehouse Staff,2020-06-05,119296,3.2,True
+E02017,S0023,Wyatt Modi,Visual Merchandiser,2021-02-11,15012,3.3,True
+E02018,S0092,Yashasvi Choudhry,Warehouse Staff,2019-11-04,18525,4.2,False
+E02019,S0147,Kashish Lad,Store Manager,2021-02-01,40237,2.5,True
+E02020,S0012,Jatin Batta,Cashier,2020-03-13,42403,2.6,True
+E02021,S0016,Saumya Misra,Warehouse Staff,2020-07-13,96087,2.4,True
+E02022,S0053,Sudiksha Nori,Customer Service Rep,2021-05-12,105014,3.3,True
+E02023,S0041,Vivaan Palla,Warehouse Staff,2022-03-29,15999,2.5,True
+E02024,S0045,Bhavani Dey,Security,2019-03-21,26118,4.3,True
+E02025,S0040,Zinal Kota,Security,2019-03-21,71966,2.7,True
+E02026,S0069,Falak Varty,Customer Service Rep,2023-01-30,35630,4.5,True
+E02027,S0146,Jalsa Sha,Visual Merchandiser,2023-01-14,70690,2.5,True
+E02028,S0114,Manan Sandal,Stock Associate,2021-07-17,49108,3.8,False
+E02029,S0006,Finn Chanda,Visual Merchandiser,2022-07-21,53736,3.1,True
+E02030,S0024,Pavani De,Sales Associate,2019-06-04,22050,2.7,True
+E02031,S0029,Tanish Sehgal,Warehouse Staff,2022-06-05,100151,3.7,True
+E02032,S0035,Kala Vora,Store Manager,2023-10-23,38565,3.6,True
+E02033,S0033,Zilmil Rana,Visual Merchandiser,2018-07-27,81639,4.6,True
+E02034,S0019,Wishi Sampath,Visual Merchandiser,2018-12-09,59448,3.6,True
+E02035,S0067,Vrishti Saha,Customer Service Rep,2019-07-12,38371,2.1,True
+E02036,S0053,Maanas Tiwari,Cashier,2020-06-22,106589,3.9,True
+E02037,S0114,Vedhika Shankar,Sales Associate,2022-09-26,109492,3.9,True
+E02038,S0083,Yochana Wadhwa,Warehouse Staff,2019-11-06,104304,2.8,True
+E02039,S0008,Simon Shah,Store Manager,2018-02-17,117242,2.1,True
+E02040,S0007,Bachittar Dugar,Store Manager,2018-12-09,57270,2.5,True
+E02041,S0150,Jagat Rege,Sales Associate,2018-12-05,105171,2.6,False
+E02042,S0026,Jai Pingle,Warehouse Staff,2022-03-02,22503,4.4,True
+E02043,S0007,Banjeet Virk,Cashier,2021-12-18,56005,3.1,True
+E02044,S0130,Jacob Prabhu,Stock Associate,2021-04-11,49184,2.5,True
+E02045,S0038,Kavya Mitter,Warehouse Staff,2021-03-22,79374,3.6,True
+E02046,S0039,Vedika Bala,Cashier,2021-03-29,80721,3.9,True
+E02047,S0098,Lucky Sama,Warehouse Staff,2018-06-15,81472,3.3,True
+E02048,S0013,Dalaja Mander,Store Manager,2020-12-06,47192,3.1,True
+E02049,S0023,Qadim Suresh,Customer Service Rep,2023-10-15,51055,3.6,True
+E02050,S0145,Jason Palla,Sales Associate,2020-08-23,69129,2.4,True
+E02051,S0059,Chaitanya Sahni,Customer Service Rep,2022-02-22,101681,2.1,True
+E02052,S0044,Dayita Sethi,Security,2018-06-21,87422,4.1,True
+E02053,S0014,Krishna Soman,Security,2020-05-01,46508,3.2,False
+E02054,S0143,Lakshit Thaman,Warehouse Staff,2021-12-25,118091,5.0,True
+E02055,S0135,Shivani Sen,Cashier,2019-05-31,23456,2.2,True
+E02056,S0032,Eshana Chakraborty,Security,2020-11-01,84281,2.4,True
+E02057,S0136,Lila Kaul,Store Manager,2020-12-07,96995,4.2,False
+E02058,S0046,Harinakshi Zachariah,Warehouse Staff,2023-08-04,47638,3.5,True
+E02059,S0049,Saanvi Mall,Sales Associate,2022-06-26,50101,2.7,True
+E02060,S0037,Noah Bakshi,Security,2021-04-23,110156,2.5,True
+E02061,S0079,Jatin Chada,Security,2021-05-03,35787,2.1,False
+E02062,S0034,Chatresh Vig,Customer Service Rep,2023-12-05,71477,2.6,True
+E02063,S0065,Vamakshi Thakkar,Sales Associate,2023-03-08,20344,4.5,True
+E02064,S0100,Jai Wali,Cashier,2021-12-23,113342,3.1,True
+E02065,S0011,Anirudh Maharaj,Cashier,2022-07-10,118371,2.7,True
+E02066,S0088,Yatan Sawhney,Cashier,2021-04-18,40122,4.9,False
+E02067,S0006,Ekani Ratti,Sales Associate,2023-04-09,64449,2.9,True
+E02068,S0075,Vyanjana Bajaj,Store Manager,2020-07-14,110784,2.3,True
+E02069,S0129,Rajeshri Gole,Cashier,2021-02-02,58457,4.2,True
+E02070,S0016,Arjun Wable,Customer Service Rep,2018-06-03,52971,4.1,True
+E02071,S0075,Lavanya Kurian,Visual Merchandiser,2020-04-18,43329,2.6,True
+E02072,S0091,Ishwar Chaudhary,Visual Merchandiser,2023-11-26,48779,3.8,False
+E02073,S0032,Bhavika Dhawan,Security,2020-06-27,33535,4.4,True
+E02074,S0117,Aadhya Chakraborty,Warehouse Staff,2019-05-22,86352,2.1,False
+E02075,S0062,Damyanti Reddy,Sales Associate,2020-03-21,79563,2.7,True
+E02076,S0083,Daniel Nanda,Visual Merchandiser,2018-06-10,68300,4.6,True
+E02077,S0022,Avi Bhardwaj,Warehouse Staff,2021-09-03,66031,2.3,False
+E02078,S0105,Madhavi Chaudhary,Store Manager,2018-02-13,39225,2.6,True
+E02079,S0008,Lucky Sachar,Sales Associate,2021-10-02,117056,3.2,True
+E02080,S0135,Aarna Prashad,Store Manager,2020-09-28,105229,3.1,True
+E02081,S0128,Charles Jain,Stock Associate,2021-03-07,93128,2.4,True
+E02082,S0107,Warjas Tailor,Store Manager,2020-05-25,66348,3.1,True
+E02083,S0035,Ishwar Luthra,Store Manager,2018-11-09,55793,3.8,True
+E02084,S0135,Eesha Shetty,Stock Associate,2019-03-22,85677,2.9,True
+E02085,S0136,Dominic Sule,Warehouse Staff,2021-11-05,18457,3.8,True
+E02086,S0105,Nikita Kaur,Visual Merchandiser,2019-11-30,109759,2.5,True
+E02087,S0130,Amruta Chaudhuri,Cashier,2018-10-29,46475,3.4,True
+E02088,S0108,Jeremiah Modi,Sales Associate,2019-01-13,48442,4.8,True
+E02089,S0076,Sanaya Chacko,Cashier,2023-10-30,85268,3.2,True
+E02090,S0094,Lucky Prakash,Store Manager,2021-10-14,46149,3.5,True
+E02091,S0112,Yatan Yogi,Store Manager,2023-10-29,105922,2.3,True
+E02092,S0110,Siya Barman,Store Manager,2018-06-22,40288,4.6,True
+E02093,S0053,Ucchal Mann,Customer Service Rep,2022-05-19,67144,4.7,True
+E02094,S0007,Aadi Bhasin,Security,2019-09-23,104772,3.4,True
+E02095,S0055,Anjali Krishna,Sales Associate,2019-12-20,115610,2.7,False
+E02096,S0092,Indali Kala,Store Manager,2022-10-27,81725,3.7,True
+E02097,S0028,Chakradev Edwin,Warehouse Staff,2023-06-11,70636,4.3,True
+E02098,S0037,Charita Chakraborty,Visual Merchandiser,2023-11-19,49574,2.9,False
+E02099,S0030,Jason Dey,Visual Merchandiser,2021-05-30,87683,2.0,True
+E02100,S0115,Rachana Kade,Visual Merchandiser,2021-11-04,54117,2.7,False
+E02101,S0141,Hema Lal,Cashier,2022-07-27,21045,2.6,True
+E02102,S0032,Anjali Korpal,Store Manager,2019-02-24,102428,3.1,True
+E02103,S0005,Harita Kade,Store Manager,2023-09-10,63266,5.0,True
+E02104,S0017,Falguni Babu,Stock Associate,2021-03-16,90246,2.5,True
+E02105,S0116,Aarnav Soni,Stock Associate,2019-11-10,67803,4.3,True
+E02106,S0108,Aditya Ghose,Security,2021-04-29,87443,3.9,True
+E02107,S0117,Vrinda Ramaswamy,Sales Associate,2023-11-09,53738,2.4,True
+E02108,S0149,Faras Yohannan,Security,2020-10-13,34258,3.0,True
+E02109,S0006,Sai Dasgupta,Stock Associate,2020-03-07,37953,4.7,True
+E02110,S0058,Krisha Parmar,Stock Associate,2019-08-02,116747,4.9,True
+E02111,S0144,Peter Anand,Store Manager,2022-07-29,96555,4.1,False
+E02112,S0122,Turvi Prabhakar,Cashier,2022-06-19,98917,2.4,True
+E02113,S0008,Sai Andra,Warehouse Staff,2019-12-14,113209,2.6,True
+E02114,S0059,Anmol Mand,Visual Merchandiser,2021-08-27,102837,4.0,False
+E02115,S0063,Rehaan Chana,Cashier,2018-03-13,52316,4.5,False
+E02116,S0105,Timothy Kaur,Sales Associate,2019-08-07,106113,3.7,True
+E02117,S0008,Janani Bansal,Cashier,2022-07-22,92399,4.3,True
+E02118,S0038,Waida Kadakia,Security,2020-12-25,27254,4.4,True
+E02119,S0097,Rohan Randhawa,Customer Service Rep,2022-07-25,97621,2.2,True
+E02120,S0004,Arunima Tella,Warehouse Staff,2022-10-11,27878,4.0,True
+E02121,S0038,Onkar Hari,Visual Merchandiser,2023-12-05,56116,3.7,False
+E02122,S0031,Dhruv Dave,Stock Associate,2020-02-26,116871,2.8,True
+E02123,S0062,Joshua Lad,Stock Associate,2023-09-16,50638,3.9,True
+E02124,S0008,Anusha Handa,Cashier,2023-05-14,113609,2.7,True
+E02125,S0132,Zayyan Setty,Security,2022-05-20,66024,2.2,True
+E02126,S0100,Prisha Ben,Visual Merchandiser,2018-11-04,25644,4.0,True
+E02127,S0086,Rachana Ray,Store Manager,2018-07-16,23679,3.1,True
+E02128,S0072,Jairaj Vasa,Sales Associate,2021-04-15,97557,3.8,False
+E02129,S0083,Warhi Pathak,Store Manager,2023-01-31,68449,4.3,False
+E02130,S0134,Udarsh Batta,Visual Merchandiser,2022-12-21,99157,3.2,True
+E02131,S0095,Osha Walia,Visual Merchandiser,2021-02-20,50405,2.1,True
+E02132,S0114,Diya Ahluwalia,Stock Associate,2022-05-20,36274,2.2,False
+E02133,S0036,Robert Natt,Security,2022-08-14,103000,2.4,True
+E02134,S0005,Aryan Kara,Sales Associate,2023-07-09,110025,3.9,True
+E02135,S0099,Falan Krish,Store Manager,2019-10-22,89110,4.1,True
+E02136,S0068,Nitesh Narayan,Store Manager,2022-06-16,83679,4.0,True
+E02137,S0050,Dev Chatterjee,Visual Merchandiser,2020-04-10,74489,2.7,False
+E02138,S0081,Varsha Sankaran,Customer Service Rep,2019-12-03,41557,3.0,False
+E02139,S0028,Gaurika Krishna,Warehouse Staff,2018-11-21,75850,2.0,True
+E02140,S0043,Hritik Solanki,Sales Associate,2018-11-18,94026,2.5,True
+E02141,S0057,Harini Bhagat,Security,2020-09-01,82278,4.9,True
+E02142,S0120,Zinal Khalsa,Warehouse Staff,2021-11-13,64280,2.4,True
+E02143,S0020,Reva Chandran,Stock Associate,2021-06-11,49681,3.8,True
+E02144,S0044,Jeet Chada,Customer Service Rep,2018-07-15,33461,4.6,True
+E02145,S0012,Bahadurjit Purohit,Sales Associate,2022-11-02,51096,2.9,True
+E02146,S0116,Dhruv Datta,Visual Merchandiser,2020-10-21,28318,3.2,True
+E02147,S0037,Riya Bhakta,Warehouse Staff,2023-08-09,102461,3.5,False
+E02148,S0020,Rachana Bhatti,Store Manager,2019-10-24,98763,2.3,True
+E02149,S0138,Daksh Ben,Cashier,2019-02-24,97348,2.6,True
+E02150,S0108,Lakshmi Ratti,Cashier,2021-10-25,111278,4.5,True
+E02151,S0113,Nirja Kaul,Visual Merchandiser,2022-10-11,45360,4.6,True
+E02152,S0030,Sudiksha Rajagopalan,Cashier,2021-07-28,68533,2.1,True
+E02153,S0116,Priya Chaudhuri,Store Manager,2023-07-12,117971,4.1,True
+E02154,S0110,Atharv Setty,Security,2019-05-03,74450,3.4,True
+E02155,S0128,Reyansh Chokshi,Visual Merchandiser,2022-07-18,82931,4.3,True
+E02156,S0004,Advik Bir,Customer Service Rep,2018-01-10,64298,3.6,True
+E02157,S0044,Jonathan Upadhyay,Cashier,2020-07-06,97467,3.0,True
+E02158,S0023,Isha Sama,Security,2022-02-08,16944,4.3,True
+E02159,S0115,Sai Grewal,Sales Associate,2020-12-21,68075,3.7,True
+E02160,S0134,Laksh Basu,Cashier,2018-10-25,89792,2.4,True
+E02161,S0117,Joshua Muni,Store Manager,2023-12-29,116262,4.0,True
+E02162,S0139,Yochana Parmar,Stock Associate,2018-03-08,35753,2.4,False
+E02163,S0085,Madhav Din,Store Manager,2020-07-30,101810,4.5,True
+E02164,S0065,Dayamai Oza,Stock Associate,2019-06-17,54077,4.6,True
+E02165,S0132,Jyoti Anand,Sales Associate,2018-12-11,52167,3.0,True
+E02166,S0130,Dakshesh Khanna,Warehouse Staff,2018-05-27,106131,4.0,True
+E02167,S0046,Pahal Padmanabhan,Visual Merchandiser,2022-07-04,73665,3.2,True
+E02168,S0048,Sai Jaggi,Store Manager,2023-01-26,51031,3.1,True
+E02169,S0017,Harita Gulati,Warehouse Staff,2023-07-21,95010,3.6,True
+E02170,S0039,Unni Narula,Security,2023-09-03,80172,4.2,True
+E02171,S0034,Chandani Sahota,Customer Service Rep,2023-10-16,90602,2.6,False
+E02172,S0010,Nicholas Cheema,Customer Service Rep,2023-11-18,15085,3.2,True
+E02173,S0061,Brijesh Tandon,Customer Service Rep,2018-08-01,106160,2.8,True
+E02174,S0093,Aarush Kapoor,Security,2022-04-10,110379,3.9,True
+E02175,S0146,Unnati Kala,Store Manager,2018-05-06,103212,2.4,True
+E02176,S0139,Vasana Narula,Cashier,2021-11-04,64090,2.8,True
+E02177,S0135,Samesh Ratta,Security,2023-03-02,92803,3.2,True
+E02178,S0076,Abeer Patil,Cashier,2020-10-07,98092,4.9,True
+E02179,S0148,Ethan Parmar,Stock Associate,2022-05-23,44123,4.6,True
+E02180,S0147,Ishwar Dhar,Sales Associate,2021-10-25,68071,2.5,True
+E02181,S0084,Ria Hayer,Cashier,2023-12-24,114811,3.0,False
+E02182,S0124,Caleb Balan,Cashier,2021-11-07,65997,2.5,True
+E02183,S0104,Rudra Mander,Visual Merchandiser,2020-06-29,60000,3.6,True
+E02184,S0095,Theodore Lala,Sales Associate,2020-07-04,81123,2.3,True
+E02185,S0095,Harinakshi Korpal,Customer Service Rep,2018-04-16,99649,3.5,True
+E02186,S0099,Rohan Bains,Customer Service Rep,2018-03-06,94938,3.0,True
+E02187,S0074,Adweta Chaudhuri,Stock Associate,2020-07-07,15996,2.6,True
+E02188,S0031,Laksh Raghavan,Sales Associate,2019-04-09,78074,3.8,True
+E02189,S0051,Hamsini Kade,Customer Service Rep,2020-08-24,50275,4.4,True
+E02190,S0094,Tanmayi Khatri,Visual Merchandiser,2022-06-04,55315,2.3,True
+E02191,S0028,Kashish Garg,Customer Service Rep,2021-09-04,41515,2.3,True
+E02192,S0094,Dhruv Dani,Visual Merchandiser,2022-09-15,77371,4.2,False
+E02193,S0025,Kalpit Gupta,Visual Merchandiser,2022-10-12,73632,4.6,True
+E02194,S0069,Kritika Prasad,Cashier,2019-03-23,52156,4.9,True
+E02195,S0010,Pushti Konda,Customer Service Rep,2019-12-28,74851,3.1,True
+E02196,S0032,Ranbir Wason,Warehouse Staff,2018-09-04,94307,4.2,True
+E02197,S0123,Manthan Narang,Store Manager,2021-01-17,62315,2.4,True
+E02198,S0135,Chatresh Mammen,Customer Service Rep,2022-07-06,36337,4.7,False
+E02199,S0143,Yashoda Suresh,Security,2022-09-01,22650,4.9,False
+E02200,S0150,Finn Singhal,Security,2023-01-17,85636,3.3,True
+E02201,S0043,Oliver Trivedi,Cashier,2023-07-12,107550,3.0,True
+E02202,S0072,Yashodhara Prasad,Customer Service Rep,2022-09-25,62672,4.4,True
+E02203,S0074,Zilmil Shetty,Cashier,2023-08-19,31894,2.9,True
+E02204,S0031,Ekanta Prakash,Sales Associate,2022-10-20,58554,2.1,False
+E02205,S0002,Warda Som,Store Manager,2018-06-25,35439,4.4,True
+E02206,S0059,Nandini Bansal,Visual Merchandiser,2018-10-25,45988,2.4,False
+E02207,S0030,Theodore Jain,Customer Service Rep,2021-07-23,24075,2.6,True
+E02208,S0124,Wahab Randhawa,Store Manager,2023-11-08,41750,3.9,True
+E02209,S0047,Damini Sandal,Sales Associate,2021-03-08,54749,2.9,True
+E02210,S0099,Naksh Prasad,Security,2023-07-03,33883,3.5,False
+E02211,S0057,Frado Desai,Security,2023-01-14,98535,4.4,True
+E02212,S0075,Chakrika Saxena,Security,2019-09-06,112897,2.0,True
+E02213,S0132,Victor Barman,Cashier,2022-02-19,52737,2.6,False
+E02214,S0135,Yauvani Nayar,Visual Merchandiser,2019-12-10,107742,3.6,True
+E02215,S0035,Shravya Sibal,Visual Merchandiser,2018-09-15,31553,2.6,True
+E02216,S0002,Nilima Pillai,Stock Associate,2019-01-15,22731,3.1,True
+E02217,S0024,Edhitha Mahajan,Visual Merchandiser,2022-08-29,49392,3.5,True
+E02218,S0142,Aryan Gola,Warehouse Staff,2021-11-14,18175,3.6,True
+E02219,S0104,Vivaan Lanka,Sales Associate,2023-02-11,38192,4.4,False
+E02220,S0123,Jagrati Butala,Warehouse Staff,2021-08-07,49123,4.2,True
+E02221,S0069,Yachana Varghese,Warehouse Staff,2019-07-10,64664,2.5,True
+E02222,S0009,Aradhana Kari,Customer Service Rep,2019-08-07,96082,2.3,True
+E02223,S0117,Jagat Bora,Security,2020-09-14,110624,2.3,True
+E02224,S0047,Balvan Iyer,Warehouse Staff,2019-05-11,99596,3.4,True
+E02225,S0056,Ronith Narayan,Visual Merchandiser,2022-12-20,118181,4.2,True
+E02226,S0145,Chasmum Maharaj,Cashier,2018-04-30,57706,2.5,True
+E02227,S0146,Lakshit Lal,Visual Merchandiser,2022-08-15,37438,4.9,True
+E02228,S0084,Chandani Manda,Sales Associate,2021-05-26,45968,3.7,True
+E02229,S0043,Netra Ravi,Customer Service Rep,2022-01-29,107074,4.9,True
+E02230,S0139,Urmi Vala,Visual Merchandiser,2021-08-04,87868,4.8,True
+E02231,S0032,Mitali Kari,Warehouse Staff,2023-03-12,111615,4.2,True
+E02232,S0042,Shaurya Som,Security,2021-04-02,47392,4.8,True
+E02233,S0067,Zaitra Sidhu,Stock Associate,2023-08-03,95112,4.1,True
+E02234,S0115,Harini Chada,Warehouse Staff,2018-01-12,39483,3.7,True
+E02235,S0042,Raghav Sanghvi,Store Manager,2021-09-18,47307,4.0,True
+E02236,S0135,Shaurya Sarna,Warehouse Staff,2019-04-06,43080,3.5,False
+E02237,S0084,Ayushman Prasad,Cashier,2023-10-27,46854,2.4,True
+E02238,S0026,Kabir Mody,Cashier,2022-02-01,67052,4.2,True
+E02239,S0014,Xalak Pant,Visual Merchandiser,2019-12-11,19935,4.7,True
+E02240,S0142,Umang Saini,Warehouse Staff,2023-03-23,82977,3.5,False
+E02241,S0113,Netra Yogi,Customer Service Rep,2020-05-12,105874,4.2,True
+E02242,S0096,Eshana Bajaj,Customer Service Rep,2020-01-27,46037,3.9,True
+E02243,S0016,Liam Dube,Store Manager,2020-04-07,17272,2.8,True
+E02244,S0100,Mahika Raj,Sales Associate,2021-08-06,29349,3.4,True
+E02245,S0042,Mahika Bhatt,Visual Merchandiser,2019-01-19,17993,4.3,True
+E02246,S0043,Raghav Soman,Customer Service Rep,2018-04-09,27120,2.9,True
+E02247,S0131,Falguni Seth,Visual Merchandiser,2018-08-21,95226,4.5,False
+E02248,S0148,Girik Garg,Security,2023-04-10,25832,2.6,True
+E02249,S0024,Peter Balay,Sales Associate,2019-08-18,67142,2.1,True
+E02250,S0039,Avi Grover,Sales Associate,2020-04-28,35631,2.4,True
+E02251,S0118,Ekaraj Raju,Security,2023-03-27,113652,4.0,True
+E02252,S0023,Samesh Kaul,Sales Associate,2019-04-07,65145,3.2,True
+E02253,S0047,Ekaraj Sha,Store Manager,2019-05-11,95938,4.2,True
+E02254,S0088,Jyoti Vasa,Warehouse Staff,2020-10-15,40945,4.8,True
+E02255,S0055,Onveer Narain,Store Manager,2021-04-17,89957,2.6,True
+E02256,S0054,Mahika Dugar,Store Manager,2020-01-03,74682,4.0,True
+E02257,S0078,Kai Yadav,Sales Associate,2019-09-05,115186,4.4,True
+E02258,S0024,Vanya Biswas,Stock Associate,2018-04-04,118525,3.7,True
+E02259,S0135,Samuel De,Cashier,2021-10-12,16145,3.7,True
+E02260,S0035,Dayita Sankaran,Cashier,2021-03-20,64227,2.4,True
+E02261,S0050,Nathan Mukherjee,Customer Service Rep,2021-12-04,109578,3.1,True
+E02262,S0001,Yadavi Shanker,Visual Merchandiser,2021-11-15,31803,4.3,True
+E02263,S0005,Saksham Amble,Sales Associate,2020-07-26,74471,2.4,True
+E02264,S0109,Sanaya Bhatt,Customer Service Rep,2021-08-30,85731,3.1,True
+E02265,S0034,Yatin Vora,Visual Merchandiser,2018-04-21,48994,4.8,False
+E02266,S0040,Vritti Sharma,Store Manager,2019-07-31,78157,4.8,True
+E02267,S0093,Balveer Chand,Cashier,2023-05-18,45252,3.7,True
+E02268,S0043,Tanmayi Palan,Store Manager,2022-12-20,109219,4.2,True
+E02269,S0110,Mahika Gill,Store Manager,2022-08-16,44910,2.4,False
+E02270,S0136,Zaid Gola,Sales Associate,2021-11-03,56869,2.8,False
+E02271,S0002,Tanvi Rajagopalan,Visual Merchandiser,2021-03-15,19244,2.7,True
+E02272,S0093,Girish Ramaswamy,Security,2023-07-27,88980,4.7,True
+E02273,S0095,Wriddhish Dugar,Security,2021-06-16,96645,2.2,True
+E02274,S0090,Bishakha Bhavsar,Customer Service Rep,2021-03-13,70727,4.5,False
+E02275,S0065,Wakeeta Sabharwal,Warehouse Staff,2019-03-12,32938,4.5,True
+E02276,S0112,Jyoti Bose,Store Manager,2019-03-29,20783,3.7,True
+E02277,S0132,Yamini Nanda,Sales Associate,2018-06-08,42160,2.1,False
+E02278,S0106,Shravya Gala,Visual Merchandiser,2019-02-16,73894,3.2,True
+E02279,S0024,Sarthak Toor,Warehouse Staff,2019-10-26,70549,3.5,True
+E02280,S0133,Turvi Bala,Sales Associate,2022-02-09,73688,2.3,True
+E02281,S0028,Triya Raj,Customer Service Rep,2018-09-07,75746,2.3,True
+E02282,S0105,Mohini Hayer,Warehouse Staff,2019-02-21,47309,2.2,True
+E02283,S0086,Baljiwan Anne,Sales Associate,2018-07-15,52712,3.1,True
+E02284,S0071,Ishwar Deshpande,Warehouse Staff,2021-05-14,41148,4.4,True
+E02285,S0051,Ucchal Sundaram,Store Manager,2018-03-13,89072,3.3,True
+E02286,S0136,Ekansh Butala,Customer Service Rep,2023-01-05,70824,4.1,True
+E02287,S0128,Raksha Dey,Store Manager,2020-04-17,30793,3.7,True
+E02288,S0052,Arya Edwin,Security,2019-10-04,72603,4.8,True
+E02289,S0101,Andrew Chaudhry,Security,2019-09-02,25345,3.1,True
+E02290,S0062,Chaitaly Dash,Cashier,2023-04-30,17487,2.1,False
+E02291,S0104,Om Brahmbhatt,Security,2022-10-10,28129,2.9,True
+E02292,S0007,Anjali Dube,Sales Associate,2019-04-23,21629,3.3,True
+E02293,S0120,Ishita Gokhale,Sales Associate,2020-10-30,19895,2.1,True
+E02294,S0150,Bakhshi Walia,Visual Merchandiser,2018-10-06,108703,3.7,True
+E02295,S0070,Riya Batta,Store Manager,2021-07-14,47675,4.0,True
+E02296,S0082,Madhavi Morar,Cashier,2018-06-23,48491,3.8,True
+E02297,S0077,Charles Agrawal,Warehouse Staff,2022-06-06,117672,3.8,False
+E02298,S0058,Krishna Jaggi,Sales Associate,2020-03-24,75718,3.8,True
+E02299,S0107,Kavya Khare,Security,2021-04-13,28376,3.2,True
+E02300,S0026,Gavin Babu,Cashier,2020-06-04,78564,2.9,True
+E02301,S0123,Ayaan Atwal,Stock Associate,2020-10-13,45578,4.5,True
+E02302,S0112,Rehaan Bhatnagar,Cashier,2020-05-13,111595,4.1,True
+E02303,S0075,Gopal Ganesh,Sales Associate,2023-01-02,16921,2.2,True
+E02304,S0068,Chaitanya Sagar,Cashier,2022-10-31,101549,2.4,True
+E02305,S0014,Eta Naidu,Warehouse Staff,2019-12-04,28853,2.3,True
+E02306,S0041,Sarthak Rana,Store Manager,2020-11-28,27462,4.5,False
+E02307,S0140,Jai Kata,Sales Associate,2020-08-21,63414,4.1,True
+E02308,S0147,Hitesh Parikh,Warehouse Staff,2019-08-24,29674,2.3,True
+E02309,S0006,Oscar Aurora,Stock Associate,2023-09-13,19002,4.4,False
+E02310,S0140,Diya Arora,Security,2020-12-01,54860,3.6,True
+E02311,S0031,Simon Shanker,Warehouse Staff,2021-12-29,83412,3.5,False
+E02312,S0147,Dominic Mallick,Warehouse Staff,2023-09-08,63994,3.3,True
+E02313,S0045,Caleb Bhavsar,Store Manager,2018-04-16,49013,3.6,True
+E02314,S0082,Nirja Mitra,Warehouse Staff,2019-01-19,38570,4.5,True
+E02315,S0022,Harsh Yadav,Stock Associate,2022-07-10,26993,4.3,True
+E02316,S0041,Zayan Chandran,Warehouse Staff,2021-01-12,118738,2.5,True
+E02317,S0144,Lipika Deol,Cashier,2023-03-13,110185,4.3,True
+E02318,S0123,Parth Nadkarni,Store Manager,2020-12-30,20653,3.8,True
+E02319,S0031,Ekansh Nayak,Stock Associate,2018-12-29,118562,3.7,True
+E02320,S0110,Saumya Raja,Store Manager,2023-07-18,87331,3.9,True
+E02321,S0073,Yahvi Arya,Visual Merchandiser,2021-09-27,109747,3.1,True
+E02322,S0118,Ansh Dash,Security,2020-01-15,53384,3.9,False
+E02323,S0108,Warjas Sangha,Stock Associate,2022-03-22,65296,3.6,True
+E02324,S0110,Fariq Bhasin,Store Manager,2020-12-24,74383,3.5,True
+E02325,S0114,Kavya Tara,Store Manager,2019-09-19,88509,3.0,True
+E02326,S0041,Saksham Doshi,Customer Service Rep,2020-09-22,97616,3.2,True
+E02327,S0033,Samarth Barad,Store Manager,2023-08-21,90218,4.9,True
+E02328,S0069,Sachi Narasimhan,Security,2023-12-22,106316,3.5,True
+E02329,S0112,Arunima Nadkarni,Cashier,2020-11-24,66798,3.4,False
+E02330,S0135,Oeshi Mani,Warehouse Staff,2018-10-07,70694,2.1,True
+E02331,S0023,Veer Narula,Stock Associate,2018-10-30,43108,5.0,True
+E02332,S0064,Xavier Jha,Customer Service Rep,2019-10-31,41813,4.1,True
+E02333,S0055,Yuvraj Kapadia,Warehouse Staff,2022-07-28,15055,3.0,False
+E02334,S0012,Ekanta Goswami,Stock Associate,2021-08-08,87914,3.5,True
+E02335,S0006,Abeer Bhattacharyya,Cashier,2022-01-15,51492,4.3,True
+E02336,S0068,Ekaraj Hans,Sales Associate,2019-02-03,71219,3.0,True
+E02337,S0050,Lohit Jayaraman,Stock Associate,2021-01-25,18703,4.4,True
+E02338,S0017,Gavin Ghose,Warehouse Staff,2023-06-07,112979,2.2,True
+E02339,S0067,Warinder Tripathi,Store Manager,2018-01-12,67521,3.4,True
+E02340,S0025,Pooja Sibal,Stock Associate,2018-11-23,73045,2.8,True
+E02341,S0027,Nitesh Hora,Visual Merchandiser,2021-08-30,96598,2.6,True
+E02342,S0097,Panini Goda,Stock Associate,2022-09-26,95801,4.0,True
+E02343,S0064,Chavvi Mangal,Security,2022-12-09,55844,4.8,True
+E02344,S0080,Saksham Magar,Sales Associate,2021-09-02,59601,3.8,False
+E02345,S0013,Fariq Parsa,Sales Associate,2019-05-24,95438,2.4,True
+E02346,S0047,Krishna Ganesh,Store Manager,2023-05-11,62358,2.7,False
+E02347,S0012,Ridhi Sami,Customer Service Rep,2019-04-10,24225,3.4,True
+E02348,S0016,Nachiket Subramaniam,Visual Merchandiser,2022-06-06,42150,3.3,True
+E02349,S0033,Lakshmi Sane,Sales Associate,2023-10-10,90925,2.8,True
+E02350,S0015,Charita Yogi,Security,2023-06-12,16006,2.1,True
+E02351,S0147,Parth Kurian,Stock Associate,2019-07-11,54152,3.6,True
+E02352,S0046,Ubika Mohan,Store Manager,2021-04-16,64327,5.0,True
+E02353,S0071,Bhanumati Prashad,Security,2022-11-02,80208,3.2,True
+E02354,S0112,Ekbal Nath,Stock Associate,2019-10-25,16881,4.5,False
+E02355,S0081,Upasna Hayre,Security,2022-01-31,79229,4.3,True
+E02356,S0008,Ranveer Agrawal,Warehouse Staff,2021-06-17,115664,3.0,True
+E02357,S0130,Xiti Prasad,Store Manager,2022-10-08,32151,2.7,True
+E02358,S0067,Nidhi Sagar,Security,2022-04-11,117665,2.4,True
+E02359,S0108,Kashvi Rajagopalan,Customer Service Rep,2021-03-30,22103,2.3,True
+E02360,S0089,Darika Bobal,Visual Merchandiser,2018-08-08,16200,4.1,True
+E02361,S0042,Balvan Dash,Cashier,2019-05-01,37925,2.5,True
+E02362,S0116,Nicholas Hari,Security,2023-05-14,105957,4.0,True
+E02363,S0035,Aadhya Pall,Customer Service Rep,2018-10-03,66136,2.1,True
+E02364,S0072,Jyoti Bhardwaj,Sales Associate,2019-01-14,63825,4.7,False
+E02365,S0065,Panini Koshy,Security,2018-09-03,15802,4.3,False
+E02366,S0004,Vanya Banerjee,Sales Associate,2023-04-28,92176,3.5,True
+E02367,S0127,Ayaan Divan,Cashier,2020-03-13,25372,2.5,True
+E02368,S0092,Tamanna Din,Warehouse Staff,2018-02-25,50808,3.3,False
+E02369,S0105,Yug Edwin,Stock Associate,2019-11-04,98701,4.4,True
+E02370,S0029,Jackson Chanda,Cashier,2018-08-08,41724,3.6,True
+E02371,S0123,Mitali Buch,Customer Service Rep,2020-07-22,71371,3.0,True
+E02372,S0099,Pallavi Gandhi,Store Manager,2023-03-05,87627,3.1,True
+E02373,S0044,Zayyan Mittal,Customer Service Rep,2020-12-20,82378,2.5,True
+E02374,S0143,Darika Sabharwal,Visual Merchandiser,2023-08-25,57506,4.6,True
+E02375,S0069,Ikbal Padmanabhan,Store Manager,2018-05-09,103581,4.8,True
+E02376,S0095,Amruta Kadakia,Stock Associate,2023-03-29,59373,4.2,False
+E02377,S0020,Darika Ahuja,Sales Associate,2019-07-28,40368,2.5,True
+E02378,S0115,Vyanjana Agarwal,Stock Associate,2023-07-06,104413,4.8,True
+E02379,S0022,Ekaraj Sahni,Warehouse Staff,2022-12-01,116391,3.2,True
+E02380,S0076,Bhavya Sankar,Cashier,2023-06-28,37245,2.1,False
+E02381,S0143,Patrick Prasad,Security,2019-11-27,24538,4.7,True
+E02382,S0004,Krish Hora,Store Manager,2018-10-03,94526,4.4,False
+E02383,S0011,Qabil Thakkar,Stock Associate,2021-09-09,108684,3.9,True
+E02384,S0059,Shravya Kala,Customer Service Rep,2023-08-23,33982,2.8,False
+E02385,S0085,Sai Bhargava,Visual Merchandiser,2021-06-05,16548,2.1,False
+E02386,S0027,Rehaan Lad,Sales Associate,2022-06-12,72742,3.4,True
+E02387,S0018,Ridhi Chopra,Security,2021-11-15,37577,2.8,True
+E02388,S0093,Fariq Memon,Stock Associate,2020-12-08,71032,2.2,True
+E02389,S0137,Krishna Dash,Customer Service Rep,2018-09-28,77273,3.8,True
+E02390,S0142,Devansh Oommen,Sales Associate,2018-03-05,99120,4.1,True
+E02391,S0083,Wahab Sridhar,Visual Merchandiser,2019-05-21,34278,3.6,False
+E02392,S0132,Harrison Andra,Stock Associate,2022-05-01,96539,3.7,True
+E02393,S0136,Amaira Amble,Cashier,2018-09-07,55117,5.0,True
+E02394,S0149,Gunbir Kakar,Cashier,2023-05-18,28717,2.8,True
+E02395,S0036,Keya Venkatesh,Stock Associate,2022-03-24,45480,2.1,True
+E02396,S0139,Vedika Solanki,Security,2020-10-31,37941,2.8,False
+E02397,S0143,Pushti Nayar,Visual Merchandiser,2023-01-16,36329,3.6,True
+E02398,S0027,Hemal Murty,Cashier,2019-04-07,99681,4.0,True
+E02399,S0101,Jalsa Rastogi,Cashier,2020-05-10,37597,3.6,True
+E02400,S0013,Dakshesh Parekh,Visual Merchandiser,2019-11-19,34097,2.4,True
+E02401,S0004,Harish Aggarwal,Cashier,2020-07-31,38033,4.7,True
+E02402,S0134,Neelima Dewan,Security,2023-03-05,71881,3.1,True
+E02403,S0008,Jason Wali,Warehouse Staff,2022-05-02,30951,2.0,True
+E02404,S0076,Yuvraj Pillay,Visual Merchandiser,2022-03-07,65294,4.4,True
+E02405,S0061,Vaishnavi Varma,Stock Associate,2021-07-31,100180,2.7,False
+E02406,S0131,Raghav Aggarwal,Store Manager,2023-05-31,51223,3.3,True
+E02407,S0141,Anay Parsa,Cashier,2020-03-09,56269,2.9,False
+E02408,S0081,Eshana Sawhney,Sales Associate,2018-05-23,15478,2.6,True
+E02409,S0005,Vedhika Ratta,Warehouse Staff,2022-07-14,38904,2.0,True
+E02410,S0072,Ijaya Sangha,Customer Service Rep,2022-04-03,72348,4.5,True
+E02411,S0012,Harish Rajan,Security,2022-11-08,102614,3.2,True
+E02412,S0019,Robert Dhar,Store Manager,2022-05-29,63623,2.9,True
+E02413,S0024,Joshua Tank,Visual Merchandiser,2021-03-01,15207,4.4,True
+E02414,S0026,Charvi Sibal,Security,2021-01-06,116243,3.9,True
+E02415,S0004,Sanaya D’Alia,Customer Service Rep,2020-03-08,71347,3.3,True
+E02416,S0142,Wridesh Kohli,Cashier,2022-03-28,85031,4.2,True
+E02417,S0104,Onkar Chakraborty,Cashier,2022-05-10,94551,3.4,True
+E02418,S0060,Radhika Balakrishnan,Security,2023-11-01,98267,3.7,True
+E02419,S0125,Eta Rajagopal,Sales Associate,2022-01-31,19015,3.1,True
+E02420,S0047,Thomas Kurian,Customer Service Rep,2023-02-01,25162,3.7,False
+E02421,S0006,Jatin Deshpande,Visual Merchandiser,2019-06-03,17919,4.8,True
+E02422,S0092,Gautam Natarajan,Warehouse Staff,2023-11-09,90669,3.7,False
+E02423,S0098,Dhruv Oza,Store Manager,2021-05-24,25310,3.7,True
+E02424,S0147,Lakshmi Sarkar,Customer Service Rep,2019-07-25,24547,4.4,True
+E02425,S0131,Udant Lad,Customer Service Rep,2019-04-28,75367,3.5,True
+E02426,S0024,Bina Chahal,Cashier,2023-06-23,53901,3.2,True
+E02427,S0020,Gaurav Oak,Sales Associate,2019-08-16,51743,2.3,True
+E02428,S0104,Jack Pillai,Cashier,2022-11-20,49900,2.5,True
+E02429,S0123,Dhriti Rai,Customer Service Rep,2023-09-30,92022,2.2,True
+E02430,S0068,Deepa Bhatia,Customer Service Rep,2020-12-27,32287,2.3,True
+E02431,S0076,Lipika Sampath,Customer Service Rep,2023-06-15,20946,3.0,True
+E02432,S0033,Janya Date,Store Manager,2019-08-03,31558,4.5,True
+E02433,S0001,Hredhaan Rana,Store Manager,2018-07-23,23305,3.9,True
+E02434,S0088,Triveni Mutti,Security,2021-01-31,21925,3.4,True
+E02435,S0035,Chaman Kanda,Stock Associate,2023-04-10,38281,3.5,False
+E02436,S0084,Tamanna Din,Stock Associate,2018-01-21,22656,2.3,True
+E02437,S0133,Madhav Banerjee,Cashier,2019-10-22,105288,2.8,True
+E02438,S0024,Dayamai Thakkar,Cashier,2022-09-16,24501,3.2,False
+E02439,S0096,Anusha Sridhar,Store Manager,2023-05-27,23639,2.2,True
+E02440,S0144,Warda Manne,Store Manager,2019-01-10,30226,3.7,False
+E02441,S0046,Daniel Nath,Warehouse Staff,2019-03-24,101106,2.3,True
+E02442,S0021,Shivansh Kar,Store Manager,2022-01-25,44807,4.8,False
+E02443,S0113,Praneel Sura,Store Manager,2019-07-12,41163,2.1,True
+E02444,S0111,Chandani Dutta,Customer Service Rep,2018-03-02,15603,4.9,True
+E02445,S0023,Manya Nazareth,Stock Associate,2021-09-02,106635,2.9,True
+E02446,S0037,Urvashi Pall,Warehouse Staff,2022-08-20,92738,3.7,True
+E02447,S0106,Mahika Bora,Customer Service Rep,2019-06-23,93011,2.8,False
+E02448,S0030,Barkha Hayer,Security,2018-12-27,96842,4.4,True
+E02449,S0037,Gunbir Deep,Warehouse Staff,2020-04-08,55744,4.4,True
+E02450,S0019,Chatura Modi,Store Manager,2020-11-22,58553,2.1,True
+E02451,S0144,Nihal Devan,Security,2020-06-27,104732,2.5,True
+E02452,S0076,Vasudha Manne,Visual Merchandiser,2022-01-14,72389,2.8,True
+E02453,S0062,Shaurya Kamdar,Customer Service Rep,2019-09-13,70138,3.6,True
+E02454,S0070,Aditya Pathak,Security,2018-06-09,112692,3.3,True
+E02455,S0141,Manbir Puri,Visual Merchandiser,2020-10-26,54265,4.8,True
+E02456,S0141,Om Bhalla,Stock Associate,2019-12-26,56670,4.4,True
+E02457,S0077,Ishani Som,Security,2019-07-19,85804,2.1,True
+E02458,S0115,Charles Dalal,Warehouse Staff,2021-02-07,107364,2.2,True
+E02459,S0086,Radha Dixit,Customer Service Rep,2018-11-24,62739,4.9,True
+E02460,S0145,Yash Bandi,Cashier,2018-02-09,92865,2.1,False
+E02461,S0084,Wridesh Ranganathan,Sales Associate,2018-06-24,79668,3.9,True
+E02462,S0008,Chasmum Gera,Sales Associate,2020-08-14,28071,4.9,False
+E02463,S0119,Gaurav Sheth,Security,2019-01-24,93777,5.0,True
+E02464,S0085,Anvi Saxena,Stock Associate,2022-12-29,104388,3.2,True
+E02465,S0046,Advay Dar,Cashier,2018-04-08,68231,4.2,True
+E02466,S0060,Fitan Dara,Customer Service Rep,2021-01-02,106571,4.8,True
+E02467,S0001,Yashodhara Kar,Sales Associate,2019-07-08,38886,3.3,True
+E02468,S0145,Varsha Mahal,Customer Service Rep,2018-09-01,16386,2.5,True
+E02469,S0013,Pratyush Rajagopalan,Sales Associate,2021-08-01,29548,3.0,False
+E02470,S0047,Radha Misra,Customer Service Rep,2020-11-29,72691,3.9,True
+E02471,S0009,Hardik Nanda,Warehouse Staff,2021-03-03,20744,4.9,True
+E02472,S0114,Qasim Ravi,Visual Merchandiser,2019-06-13,75777,3.8,True
+E02473,S0091,Meera Yadav,Customer Service Rep,2018-04-25,45225,4.0,True
+E02474,S0013,Devansh Venkataraman,Store Manager,2022-05-28,52728,4.9,True
+E02475,S0078,Sarthak Dalal,Store Manager,2020-04-12,105443,4.7,True
+E02476,S0072,Pranit Ahluwalia,Customer Service Rep,2019-06-01,19119,4.6,True
+E02477,S0130,Dipta Das,Stock Associate,2018-09-21,24438,3.6,True
+E02478,S0025,Kabir Jhaveri,Visual Merchandiser,2021-10-11,95658,3.8,True
+E02479,S0140,Gagan Kunda,Customer Service Rep,2021-11-18,114610,4.3,False
+E02480,S0146,Frado Dash,Customer Service Rep,2019-08-24,20990,3.1,True
+E02481,S0016,Januja Garg,Security,2023-06-18,89631,4.8,True
+E02482,S0005,Aadi Kothari,Security,2022-10-22,86761,2.2,True
+E02483,S0113,Chakradhar Venkataraman,Warehouse Staff,2020-12-12,20778,4.3,False
+E02484,S0123,Sai Dey,Stock Associate,2019-05-29,108933,4.7,True
+E02485,S0050,Dhriti Virk,Stock Associate,2021-06-10,91159,4.1,False
+E02486,S0058,Yashvi Kadakia,Store Manager,2018-01-12,66462,3.5,True
+E02487,S0041,Chaitanya Khalsa,Customer Service Rep,2021-09-05,16055,2.7,True
+E02488,S0003,Raghav Dhar,Sales Associate,2023-07-14,42854,5.0,True
+E02489,S0034,Tanveer Desai,Security,2020-01-23,52469,2.3,True
+E02490,S0048,Jagrati Mall,Store Manager,2020-02-05,101703,4.8,True
+E02491,S0039,Pahal Borde,Visual Merchandiser,2020-06-25,55332,3.0,True
+E02492,S0004,Abha Raj,Store Manager,2018-06-13,99299,4.7,True
+E02493,S0012,Mugdha Shan,Customer Service Rep,2020-09-27,15736,3.9,False
+E02494,S0143,Aachal Sandal,Security,2023-09-22,48197,2.7,True
+E02495,S0030,Samar Bobal,Sales Associate,2022-04-22,66456,3.3,True
+E02496,S0002,Reyansh Pradhan,Stock Associate,2021-10-02,74839,3.0,False
+E02497,S0145,Oni Dube,Warehouse Staff,2021-08-17,89133,4.6,True
+E02498,S0109,Radha Raghavan,Stock Associate,2019-11-18,66805,2.1,False
+E02499,S0062,Yug Brahmbhatt,Security,2020-01-04,119508,2.0,True
+E02500,S0118,Jeet Wali,Customer Service Rep,2021-12-19,83244,2.6,True
