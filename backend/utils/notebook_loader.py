@@ -1,8 +1,11 @@
 import json
 import logging
 import sys
+import types as _types
+from importlib.machinery import ModuleSpec
 from pathlib import Path
 from types import ModuleType
+from unittest.mock import MagicMock
 
 logger = logging.getLogger(__name__)
 
@@ -32,21 +35,34 @@ def get_notebook_module(notebook_name: str) -> ModuleType:
     mod = ModuleType(notebook_name.split(".")[0])
     mod.__file__ = str(nb_path)
 
-    # Pre-populate custom mock environments for GUI/plotting libraries
-    from unittest.mock import MagicMock
-    mock_plt = MagicMock()
-    mock_fig = MagicMock()
-    mock_ax = MagicMock()
-    mock_plt.subplots.return_value = (mock_fig, mock_ax)
-    sys.modules['matplotlib.pyplot'] = mock_plt
-    sys.modules['matplotlib'] = MagicMock()
-
+    # Ensure matplotlib is importable inside notebooks.
+    # Use a real Agg backend if installed; otherwise inject a spec-compliant
+    # MagicMock so that `import matplotlib.pyplot` inside notebooks doesn't
+    # raise "ValueError: matplotlib.__spec__ is not set".
     try:
         import matplotlib
+        import matplotlib.pyplot as _mpl_plt
         matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-    except ImportError:
-        pass
+    except Exception:
+        _loader = _types.ModuleType.__class__  # any hashable non-None object
+        _mock_mpl = MagicMock(spec=_types.ModuleType("matplotlib"))
+        _mock_mpl.__spec__    = ModuleSpec("matplotlib", None)
+        _mock_mpl.__path__    = []
+        _mock_mpl.__package__ = "matplotlib"
+        _mock_mpl.__loader__  = None
+        _mock_mpl.use         = MagicMock()
+
+        _mock_plt = MagicMock(spec=_types.ModuleType("matplotlib.pyplot"))
+        _mock_plt.__spec__    = ModuleSpec("matplotlib.pyplot", None)
+        _mock_plt.__package__ = "matplotlib"
+        _mock_plt.__loader__  = None
+        _mock_fig = MagicMock()
+        _mock_ax  = MagicMock()
+        _mock_plt.subplots.return_value = (_mock_fig, _mock_ax)
+
+        sys.modules.setdefault("matplotlib",        _mock_mpl)
+        sys.modules.setdefault("matplotlib.pyplot", _mock_plt)
+
 
     # Extract and run code cells sequentially
     for idx, cell in enumerate(nb_data.get("cells", [])):

@@ -6,11 +6,18 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 
 from backend.services.merchandising import (
-    forecast_demand, get_dynamic_price,
+    assortment_plan, forecast_demand, get_dynamic_price,
     optimise_promotion, monitor_competitor_prices,
 )
 
 router = APIRouter(prefix="/api/v1/merchandising", tags=["Merchandising Intelligence"])
+
+
+@router.get("/assortment-plan")
+def get_assortment_plan(region: Optional[str] = Query(None)):
+    """Regional SKU assortment analysis — adds, drops and Pareto concentration."""
+    return assortment_plan(region=region)
+
 
 
 class PricingRequest(BaseModel):

@@ -1,12 +1,16 @@
 """
-Domain 01 — Customer Experience (Calsoft Retail AI deck, slide 4).
+Domain 01 — Customer Experience (notebooks 01–04).
 
-All six capability cards are served by FastAPI over the real retail datasets.
-This page is the reference implementation the other four domains follow.
+Four capability cards — all data-driven, served by FastAPI:
+  1. Hyper-personalised Recommendations  (nb 01) — Admin view
+  2. Personalised Buying Assistants       (nb 02)
+  3. Next-Best-Offer Engines              (nb 03)
+  4. Communication Timing Optimiser       (nb 04)
 """
 from __future__ import annotations
 
 import dash
+import plotly.graph_objects as go
 from dash import Input, Output, State, callback, dcc, html
 
 from frontend_dash.components import cards as C
@@ -24,85 +28,251 @@ CAP = {c.key: c for c in D.capabilities}
 
 def _customer_options(limit: int = 60):
     rows = api_get("/api/v1/customer-experience/customers", {"limit": limit}) or []
-    return [{"label": f"{r['name']} ({r['segment']})",
+    return [{"label": f"{r['name']} ({r.get('segment', '—')})",
              "value": r["customer_id"]} for r in rows]
 
 
-def _segment_options():
-    """Persona segments shared by the segmentation, NBO and churn cards, so the
-    page reads as one continuous story keyed off the same vocabulary."""
-    d = api_get("/api/v1/customer-experience/segmentation") or {}
-    return [{"label": s["segment"], "value": s["segment"]} for s in (d.get("segments") or [])]
-
-
 # ══════════════════════════════════════════════════════════════════════════════
-# 1 — Customer Segmentation (Admin View)
+# 1 — Hyper-personalised Recommendations  (notebook 01) — Admin View
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _card_segmentation():
-    d = api_get("/api/v1/customer-experience/segmentation")
-    segs = (d or {}).get("segments") or []
-    if not segs:
-        return C.card(cap("cx", "recommendations").title,
-                      C.empty("Segmentation unavailable."), span=2)
-
-    # Bubble map: recency (x) against average spend (y), bubble area = segment
-    # size — the standard RFM read, one glance tells you which segments are big,
-    # loyal (low recency) and high-value (high spend).
-    sizes = [s["customers"] for s in segs]
-    smax = max(sizes) or 1
-    fig = T.figure(height=250, margin=dict(l=8, r=8, t=8, b=6))
-    fig.add_scatter(
-        x=[s["avg_recency_days"] for s in segs],
-        y=[s["avg_monetary"] / 100000 for s in segs],
-        mode="markers+text",
-        text=[s["segment"] for s in segs], textposition="top center",
-        textfont=dict(size=9.5), cliponaxis=False,
-        marker=dict(size=sizes, sizemode="area", sizeref=2.0 * smax / (46 ** 2), sizemin=7,
-                    color=[colors.CATEGORICAL[i % len(colors.CATEGORICAL)] for i in range(len(segs))],
-                    line=dict(width=1, color="rgba(255,255,255,.75)")),
-        customdata=[[s["customers"], s["avg_frequency"], s["avg_churn_risk_pct"]] for s in segs],
-        hovertemplate="<b>%{text}</b><br>%{customdata[0]:,} customers · recency %{x:.0f}d<br>"
-                      "avg spend ₹%{y:.1f}L · %{customdata[1]:.0f} orders · churn %{customdata[2]}%<extra></extra>",
-    )
-    fig.update_layout(hovermode="closest",
-                      xaxis=dict(title="Avg recency (days)", showgrid=True, gridcolor=colors.LIGHT["grid"]),
-                      yaxis=dict(title="Avg spend (₹L)", showgrid=True, gridcolor=colors.LIGHT["grid"]))
-
-    rows = []
-    for s in segs:
-        risk = s["avg_churn_risk_pct"]
-        lvl = "high" if risk >= 35 else "medium" if risk >= 15 else "low"
-        rows.append([
-            s["segment"], f"{s['customers']:,}", f"{s['pct_of_total']}%",
-            f"{s['avg_recency_days']:.0f}d", f"{s['avg_frequency']:.0f}",
-            C.money(s["avg_monetary"]), C.pill(f"{risk}%", lvl),
-        ])
-
+def _card_recommendations(opts):
     return C.card(
         cap("cx", "recommendations").title,
         [
-            C.kpi_grid([
-                C.kpi("Customers", f"{d['total_customers']:,}"),
-                C.kpi("Segments", d["n_segments"]),
-                C.kpi("Book value", C.money(d["total_value"]), "lifetime spend"),
-                C.kpi("Top-value segment", segs[0]["segment"], f"{segs[0]['customers']:,} customers"),
-            ]),
-            html.Div(C.graph(fig, 250), className="mt-14"),
-            C.table(["Segment", "Customers", "% base", "Avg recency", "Avg orders", "Avg spend", "Churn risk"],
-                    rows, numeric={1, 2, 3, 4, 5}),
+            html.Div(
+                [
+                    dcc.Dropdown(id="cx-rec-cust", options=opts,
+                                 value=opts[0]["value"] if opts else None,
+                                 clearable=False, className="dash-dropdown grow",
+                                 placeholder="Select a customer"),
+                    dcc.Input(id="cx-rec-n", type="number", value=10, min=1, max=25,
+                              className="cp-input", style={"width": "72px"},
+                              placeholder="Top-N"),
+                    html.Button("Recommend", id="cx-rec-go", className="cp-go", n_clicks=0),
+                ],
+                className="cp-row",
+            ),
+            html.Div(id="cx-rec-out"),
         ],
-        caption="Every customer bucketed into a behavioural persona and profiled by recency, "
-                "frequency and spend — the base each offer and retention play on this page targets.",
-        info="<b>Source:</b> real order history joined to customer records. Bubble position is "
-             "average recency (x) vs. average spend (y); bubble area is the number of customers "
-             "in the segment. These are the same personas the offer and churn cards below key off.",
+        caption=(
+            "Admin view — shows why each product was recommended: past purchases, "
+            "ratings, and what similar shoppers actually bought."
+        ),
+        info=(
+            "<b>Algorithm:</b> user–user collaborative filtering on the purchase matrix. "
+            "Products are ranked by how many similar customers bought them + avg rating. "
+            "<b>Reasons</b> explain each recommendation in plain English — no raw scores. "
+            "<b>Cold-start:</b> falls back to bestsellers in the customer's preferred category."
+        ),
         span=2,
     )
 
 
+@callback(Output("cx-rec-out", "children"),
+          Input("cx-rec-go", "n_clicks"), Input("cx-rec-cust", "value"),
+          State("cx-rec-n", "value"))
+def _recommendations(_n, customer_id, top_n):
+    if not customer_id:
+        return C.empty("Pick a customer to generate recommendations.")
+    data = api_post("/api/v1/customer-experience/recommendations",
+                    {"customer_id": customer_id, "top_n": int(top_n or 10)})
+    if not data:
+        return C.empty("Recommendations unavailable — is the backend running?")
+
+    recs             = data.get("recommendations") or []
+    profile          = data.get("profile") or {}
+    algo             = data.get("algorithm", "—")
+    similar_custs    = data.get("similar_customers") or []
+    category_affinity = data.get("category_affinity") or []
+
+    if not recs:
+        return C.empty("No recommendations returned for this customer.")
+
+    # ── Customer profile pills ────────────────────────────────────────────────
+    segment   = profile.get("segment") or "—"
+    loyalty   = profile.get("loyalty_tier") or "—"
+    pref_cat  = profile.get("preferred_category") or "—"
+
+    meta_pills = html.Div([
+        html.Div("👤 Customer Profile", style={"fontWeight": 600, "marginBottom": "6px",
+                                               "fontSize": "12px", "color": colors.INK_SOFT}),
+        html.Div([
+            C.pill(f"🏷 Segment: {segment}", "info"),
+            C.pill(f"⭐ Loyalty: {loyalty}", "neutral"),
+            C.pill(f"📦 Preferred: {pref_cat}", "neutral"),
+        ], className="row-wrap"),
+    ], style={"marginBottom": "14px", "padding": "10px 12px",
+              "background": "rgba(92,143,110,.07)", "borderRadius": "8px",
+              "border": "1px solid rgba(92,143,110,.18)"})
+
+    # ── "You may like this" product cards ─────────────────────────────────────
+    prod_cards = []
+    for r in recs:
+        reasons     = r.get("reasons") or ["Popular among shoppers"]
+        freq        = r.get("freq_by_similar", 0)
+        avg_rating  = r.get("avg_rating", 0.0)
+        review_cnt  = r.get("review_count", 0)
+        price       = r.get("price", 0)
+
+        # Reason tags
+        reason_tags = html.Div(
+            [html.Span(f"✓ {rsn}", style={
+                "fontSize": "10.5px", "color": colors.OK_INK,
+                "background": colors.OK_SOFT, "borderRadius": "4px",
+                "padding": "2px 7px", "marginRight": "4px", "marginBottom": "3px",
+                "display": "inline-block",
+            }) for rsn in reasons],
+            style={"marginTop": "4px"}
+        )
+
+        # Freq badge
+        freq_badge = html.Span(
+            f"{freq} similar customers bought this",
+            style={"fontSize": "10px", "color": colors.BRAND,
+                   "fontWeight": 600, "display": "block", "marginTop": "4px"}
+        ) if freq > 0 else html.Span()
+
+        # Stars
+        full  = int(avg_rating)
+        stars = "★" * full + "☆" * (5 - full)
+        rating_line = html.Span(
+            f"{stars}  {avg_rating:.1f}  ({review_cnt} reviews)",
+            style={"fontSize": "11px", "color": colors.WARN_INK}
+        )
+
+        card_div = html.Div([
+            html.Div([
+                html.Div(r.get("product_name", "—"),
+                         style={"fontWeight": 700, "fontSize": "13px"}),
+                html.Div(f"{r.get('brand', '—')}  ·  {r.get('category', '—')}",
+                         className="small muted"),
+            ]),
+            html.Div([
+                html.Div(f"₹{price:,.0f}",
+                         style={"fontWeight": 700, "fontSize": "15px", "color": colors.BRAND}),
+                rating_line,
+                freq_badge,
+                reason_tags,
+            ], style={"marginTop": "6px"}),
+        ], style={
+            "padding": "10px 14px",
+            "background": "rgba(92,143,110,.04)",
+            "border": "1px solid rgba(92,143,110,.15)",
+            "borderRadius": "8px",
+            "marginBottom": "8px",
+        })
+        prod_cards.append(card_div)
+
+    products_section = html.Div([
+        html.Div("🛍️ You may like these", style={
+            "fontWeight": 700, "fontSize": "13px", "marginBottom": "8px",
+            "color": colors.INK,
+        }),
+        html.Div(prod_cards),
+    ], style={"marginBottom": "16px"})
+
+    # ── Graph 1: Why it was recommended — reasons frequency ──────────────────
+    reason_counter: dict[str, int] = {}
+    for r in recs:
+        for rsn in (r.get("reasons") or []):
+            reason_counter[rsn] = reason_counter.get(rsn, 0) + 1
+
+    fig_why = T.figure(height=200, margin=dict(l=8, r=8, t=28, b=8))
+    if reason_counter:
+        labels = list(reason_counter.keys())
+        vals   = list(reason_counter.values())
+        fig_why.add_bar(
+            x=vals, y=labels, orientation="h",
+            marker_color=colors.CATEGORICAL[:len(labels)],
+            hovertemplate="%{y}<br>%{x} products<extra></extra>",
+        )
+        fig_why.update_layout(
+            title=dict(text="Why were products recommended?",
+                       font=dict(size=11.5, color=colors.INK_SOFT)),
+            xaxis=dict(title="# of products", showgrid=True,
+                       gridcolor=colors.LIGHT["grid"]),
+            yaxis=dict(autorange="reversed"),
+        )
+    why_chart = C.graph(fig_why, 200)
+
+    # ── Graph 2: Similar customers — similarity bar ───────────────────────────
+    if similar_custs:
+        names  = [c["name"] for c in similar_custs]
+        sims   = [c["similarity"] for c in similar_custs]
+        bar_colors = T.bar_colors(sims)
+        fig_sim = T.figure(height=220, margin=dict(l=8, r=8, t=28, b=8))
+        fig_sim.add_bar(
+            x=sims, y=names, orientation="h",
+            marker_color=bar_colors,
+            hovertemplate="%{y}<br>Similarity: %{x:.3f}<extra></extra>",
+        )
+        fig_sim.update_layout(
+            title=dict(text="Similar customers used for recommendations",
+                       font=dict(size=11.5, color=colors.INK_SOFT)),
+            xaxis=dict(title="Cosine similarity", range=[0, 1], showgrid=True,
+                       gridcolor=colors.LIGHT["grid"]),
+            yaxis=dict(autorange="reversed"),
+        )
+        sim_chart = C.graph(fig_sim, 220)
+    else:
+        sim_chart = html.Div()
+
+    # ── Graph 3: Category affinity ────────────────────────────────────────────
+    if category_affinity:
+        cats = [c["category"] for c in category_affinity]
+        pcts = [c["purchase_pct"] for c in category_affinity]
+        fig_cat = T.figure(height=200, margin=dict(l=8, r=8, t=28, b=8))
+        fig_cat.add_bar(
+            x=pcts, y=cats, orientation="h",
+            marker_color=colors.CATEGORICAL[:len(cats)],
+            hovertemplate="%{y}: %{x:.1f}% of purchases<extra></extra>",
+            text=[f"{p:.0f}%" for p in pcts],
+            textposition="outside",
+        )
+        fig_cat.update_layout(
+            title=dict(text="Customer's purchase history by category",
+                       font=dict(size=11.5, color=colors.INK_SOFT)),
+            xaxis=dict(title="% of past purchases", showgrid=True,
+                       gridcolor=colors.LIGHT["grid"]),
+            yaxis=dict(autorange="reversed"),
+        )
+        cat_chart = C.graph(fig_cat, 200)
+    else:
+        cat_chart = html.Div()
+
+    # ── Algorithm badge ───────────────────────────────────────────────────────
+    algo_badge = html.Div(
+        f"⚙ {algo}",
+        style={"fontSize": "11px", "color": colors.INK_SOFT, "marginTop": "8px"}
+    )
+
+    return [
+        meta_pills,
+        products_section,
+        html.Div([
+            html.Div("📊 Admin Diagnostics", style={
+                "fontWeight": 700, "fontSize": "13px",
+                "marginBottom": "12px", "color": colors.INK,
+            }),
+            why_chart,
+            html.Div(style={"height": "12px"}),
+            sim_chart,
+            html.Div(style={"height": "12px"}),
+            cat_chart,
+        ], style={
+            "padding": "12px 14px",
+            "background": "rgba(0,0,0,.025)",
+            "borderRadius": "8px",
+            "border": "1px solid " + colors.CARD_LINE,
+            "marginTop": "4px",
+        }),
+        algo_badge,
+    ]
+
+
 # ══════════════════════════════════════════════════════════════════════════════
-# 2 — Personalized Buying Assistants
+# 2 — Personalized Buying Assistants  (notebook 02)
 # ══════════════════════════════════════════════════════════════════════════════
 
 SUGGESTED = ["red jackets under 3000", "formal shirts for office",
@@ -130,9 +300,12 @@ def _card_assistant(opts):
                       for i, s in enumerate(SUGGESTED)], className="mb-10"),
             html.Div(id="cx-asst-out"),
         ],
-        caption="Natural-language intent extraction — category, colour and price ceiling are parsed, then matched against stock.",
-        info="<b>Flow:</b> the LLM (or a rule-based fallback when no key is set) extracts "
-             "<b>intent</b>, <b>category</b> and <b>max price</b>, which become a catalogue filter.",
+        caption="Natural-language intent extraction — category, colour and price ceiling parsed, matched against live stock.",
+        info=(
+            "<b>Flow:</b> the LLM (or a rule-based fallback when no key is set) extracts "
+            "<b>intent</b>, <b>category</b> and <b>max price</b>, which become a catalogue filter. "
+            "Product suggestions come directly from the backend catalogue, not hardcoded lists."
+        ),
     )
 
 
@@ -176,16 +349,22 @@ def _assistant(_n, message, customer_id):
     if sugg:
         out.append(C.table(
             ["Product", "Brand", "Price"],
-            [[s.get("product_name", "—"), s.get("brand", "—"), f"₹{s.get('price', 0):,.0f}"]
-             for s in sugg],
+            [[s.get("product_name", "—"), s.get("brand", "—"),
+              f"₹{s.get('price', 0):,.0f}"] for s in sugg],
             numeric={2},
         ))
     return out
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# 3 — Next-Best-Offer Engines
+# 3 — Next-Best-Offer Engines  (notebook 03)
 # ══════════════════════════════════════════════════════════════════════════════
+
+def _segment_options():
+    """Fetched live from backend — NOT hardcoded."""
+    d = api_get("/api/v1/customer-experience/segmentation") or {}
+    return [{"label": s["segment"], "value": s["segment"]} for s in (d.get("segments") or [])]
+
 
 def _card_nbo(seg_opts):
     return C.card(
@@ -204,9 +383,11 @@ def _card_nbo(seg_opts):
             html.Div(id="cx-nbo-out"),
         ],
         caption="The offers most worth pushing to a whole segment, ranked by fit and predicted uplift.",
-        info="<b>Campaign-planning view:</b> active promotions are scored against the segment's "
-             "dominant preferred category and channel and whether they on-target the segment, then "
-             "ranked. This answers 'what do we push to this segment', not 'what for one shopper'.",
+        info=(
+            "<b>Campaign-planning view:</b> active promotions are scored against the segment's "
+            "dominant preferred category and channel and whether they on-target the segment, then "
+            "ranked. Segments are loaded live from the backend — no hardcoded list."
+        ),
     )
 
 
@@ -239,123 +420,94 @@ def _nbo(_n, segment):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# 4 — Churn & Loyalty Propensity
+# 4 — Communication Timing Optimiser  (notebook 04)
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _card_churn(seg_opts):
-    d = api_get("/api/v1/customer-experience/churn-propensity", {"top_n": 6})
-    if not d:
-        return C.card(cap("cx", "churn").title, C.empty("Churn scoring unavailable."),
-                      span=2)
-
-    by_seg = d.get("by_segment") or []
-
-    # Value at risk grouped by segment — where the retention budget goes first,
-    # as a chart instead of a raw per-customer list (the drill-down below opens
-    # the individual customers for whichever segment you pick).
-    order = sorted(by_seg, key=lambda s: s["clv_at_risk"])
-    fig = T.figure(height=210, margin=dict(l=8, r=8, t=6, b=6))
-    fig.add_bar(
-        x=[s["clv_at_risk"] / 10000000 for s in order],
-        y=[s["segment"] for s in order], orientation="h",
-        marker=dict(color=colors.ACCENT, cornerradius=6),
-        customdata=[[s["churn_risk_pct"], s["customers"]] for s in order],
-        hovertemplate="<b>%{y}</b><br>₹%{x:.2f}Cr at risk · churn %{customdata[0]}%"
-                      " · %{customdata[1]:,} customers<extra></extra>",
-    )
-    fig.update_layout(hovermode="closest", bargap=.34,
-                      xaxis=dict(title="Value at risk (₹Cr)", showgrid=True,
-                                 gridcolor=colors.LIGHT["grid"]))
-
-    seg_rows = []
-    for s in by_seg:
-        risk = s["churn_risk_pct"]
-        lvl = "high" if risk >= 35 else "medium" if risk >= 15 else "low"
-        seg_rows.append([
-            s["segment"], f"{s['customers']:,}", C.pill(f"{risk}%", lvl),
-            C.money(s["clv_at_risk"]), f"{s['avg_recency_days']:.0f}d",
-            html.Span(s["action"], className="small muted"),
-        ])
-
+def _card_comm_timing(opts):
     return C.card(
-        cap("cx", "churn").title,
+        cap("cx", "comm_timing").title,
         [
-            C.kpi_grid([
-                C.kpi("Customers scored", f"{d['customers_scored']:,}", f"as of {d['as_of']}"),
-                C.kpi("At risk", f"{d['at_risk_customers']:,}", "risk ≥ 35%", "down"),
-                C.kpi("Value at risk", C.money(d["clv_at_risk_total"]), "spend × P(churn)", "down"),
-                C.kpi("Model AUC", f"{d['model_auc']}", f"base rate {d['holdout_base_rate_pct']}%"),
-            ]),
-            html.Div("Value at risk by segment", className="card-sub mt-14"),
-            C.graph(fig, 210),
-            C.table(["Segment", "Customers", "Churn risk", "Value at risk", "Avg recency", "Triggered action"],
-                    seg_rows, numeric={1, 3, 4}),
-            html.Div("Drill into a segment — its highest-value at-risk customers",
-                     className="card-sub mt-14"),
             html.Div(
-                dcc.Dropdown(id="cx-churn-seg", options=seg_opts,
-                             value=seg_opts[0]["value"] if seg_opts else None,
-                             clearable=False, className="dash-dropdown grow"),
+                [
+                    dcc.Dropdown(id="cx-ct-cust", options=opts,
+                                 value=opts[0]["value"] if opts else None,
+                                 clearable=False, className="dash-dropdown grow",
+                                 placeholder="Select a customer"),
+                    html.Button("Analyse", id="cx-ct-go", className="cp-go", n_clicks=0),
+                ],
                 className="cp-row",
             ),
-            html.Div(id="cx-churn-drill"),
+            html.Div(id="cx-ct-out"),
         ],
-        caption="Churn scored against each customer's own buying cadence, grouped by segment so "
-                "retention budget lands where the most spend is actually at stake.",
-        info="<b>Model:</b> gradient-boosted classifier trained on a 90-day holdout — a customer "
-             "active in the year before the cutoff but silent during it is labelled churned, so "
-             "the label never leaks into the features. <b>Lapse ratio</b> (silence ÷ that "
-             "customer's median inter-purchase gap) is the key feature: a monthly shopper quiet "
-             "for 90 days is in trouble, a twice-yearly shopper is not.",
-        span=2,
+        caption=(
+            "Optimal send-time, day and channel for each customer, derived from their real "
+            "browsing activity — no assumed schedules."
+        ),
+        info=(
+            "<b>Source:</b> notebook 04 aggregates the customer's session log by hour and "
+            "day-of-week to surface the window when they are most active online. "
+            "<b>Channel</b> is inferred from device and session patterns — all live data, "
+            "nothing hardcoded."
+        ),
     )
 
 
-@callback(Output("cx-churn-drill", "children"), Input("cx-churn-seg", "value"))
-def _churn_drill(segment):
-    if not segment:
-        return C.empty("Pick a segment to see its at-risk customers.")
-    d = api_get("/api/v1/customer-experience/churn-propensity/segment",
-                {"segment": segment, "top_n": 12})
-    custs = (d or {}).get("customers") or []
-    if not custs:
-        return C.empty("No at-risk customers in this segment.")
+@callback(Output("cx-ct-out", "children"),
+          Input("cx-ct-go", "n_clicks"), State("cx-ct-cust", "value"))
+def _comm_timing(_n, customer_id):
+    if not customer_id:
+        return C.empty("Select a customer to optimise their communication timing.")
+    data = api_get("/api/v1/customer-experience/communication-timing",
+                   {"customer_id": customer_id})
+    if not data:
+        return C.empty("Communication timing unavailable — is the backend running?")
 
-    head = html.Div(
-        [
-            C.pill(f"{d['segment_size']:,} in segment", "neutral"),
-            C.pill(f"{d['at_risk_customers']:,} at risk ≥ 35%", "high"),
-            C.pill(f"{C.money(d['clv_at_risk'])} at risk", "info"),
-        ],
-        className="row-wrap mb-10",
-    )
-    rows = [
-        [c.get("name", c["customer_id"]),
-         C.pill(f"{c['churn_risk_pct']}%", "high" if c["churn_risk_pct"] >= 35 else "medium"),
-         f"{c['recency_days']}d", f"{c['frequency']}", C.money(c["monetary"]),
-         C.money(c["value_at_risk"]), html.Span(c["action"], className="small muted")]
-        for c in custs
+    hourly = data.get("hourly_activity") or {}
+    if hourly:
+        hours_sorted = sorted(hourly.items(), key=lambda kv: int(kv[0]))
+        hours = [f"{int(h):02d}:00" for h, _ in hours_sorted]
+        pcts  = [round(v * 100, 1) for _, v in hours_sorted]
+        fig = T.figure(height=180, margin=dict(l=8, r=8, t=4, b=4))
+        fig.add_bar(x=hours, y=pcts, name="Activity",
+                    marker_color=colors.BRAND, width=0.65,
+                    hovertemplate="%{x}<br>%{y:.1f}% of sessions<extra></extra>")
+        fig.update_layout(
+            xaxis=dict(title="Hour of day", showgrid=False),
+            yaxis=dict(title="% sessions", showgrid=True, gridcolor=colors.LIGHT["grid"]),
+        )
+        chart = [C.graph(fig, 180)]
+    else:
+        chart = []
+
+    open_rate = data.get("predicted_open_rate")
+    open_pct  = f"{open_rate * 100:.1f}%" if open_rate is not None else "—"
+
+    return [
+        C.kpi_grid([
+            C.kpi("Best send time", data.get("best_send_hour_label", "—")),
+            C.kpi("Best day",       data.get("best_day_of_week", "—")),
+            C.kpi("Recommended channel", data.get("recommended_channel", "—")),
+            C.kpi("Predicted open rate", open_pct),
+        ]),
+        *chart,
     ]
-    return [head, C.table(
-        ["Customer", "Risk", "Recency", "Orders", "Spend", "Value at risk", "Action"],
-        rows, numeric={2, 3, 4, 5})]
 
 
 # ══════════════════════════════════════════════════════════════════════════════
 
 def layout():
-    seg_opts = _segment_options()
     cust_opts = _customer_options()
-    banner = [] if seg_opts else [C.offline_banner()]
+    seg_opts  = _segment_options()
+    banner = [] if cust_opts else [C.offline_banner()]
     return module_page(
         D.index, D.title, D.summary,
         banner + [
             html.Div(
                 [
-                    _card_segmentation(),
+                    _card_recommendations(cust_opts),
                     _card_nbo(seg_opts),
                     _card_assistant(cust_opts),
-                    _card_churn(seg_opts),
+                    _card_comm_timing(cust_opts),
                 ],
                 className="grid-2",
             )

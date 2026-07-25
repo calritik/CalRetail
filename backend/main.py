@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 from backend.config.settings import settings
 from backend.routers.customer_experience import router as ce_router
 from backend.routers.merchandising import router as merch_router
-from backend.routers.ops_support_monetise import ops_router, support_router, monetise_router
+from backend.routers.ops_support_monetise import ops_router, support_router
 from backend.utils.logger import logger
 
 # ── App init ──────────────────────────────────────────────────────────────────
@@ -24,8 +24,8 @@ app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
     description=(
-        "Enterprise Retail AI Intelligence Platform — 20 AI capabilities "
-        "across 5 business modules for a fashion retail company."
+        "Enterprise Retail AI Intelligence Platform — 16 AI capabilities "
+        "across 4 business domains."
     ),
     docs_url="/docs",
     redoc_url="/redoc",
@@ -58,7 +58,6 @@ app.include_router(ce_router)
 app.include_router(merch_router)
 app.include_router(ops_router)
 app.include_router(support_router)
-app.include_router(monetise_router)
 
 
 # ── Root & health ─────────────────────────────────────────────────────────────
@@ -69,14 +68,13 @@ def root():
         "platform": settings.APP_NAME,
         "version":  settings.APP_VERSION,
         "status":   "running",
-        "modules": [
+        "domains": [
             "Customer Experience",
             "Merchandising Intelligence",
             "Operational Excellence",
             "Customer Support Intelligence",
-            "First Party Data Monetisation",
         ],
-        "total_ai_capabilities": 20,
+        "total_ai_capabilities": 16,
         "docs": "/docs",
     }
 

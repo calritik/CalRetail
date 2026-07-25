@@ -1,7 +1,7 @@
 """
 Domain 02 — Merchandising (Calsoft Retail AI deck, slide 5).
 
-Six capability cards, every one served by FastAPI.
+Five capability cards, every one served by FastAPI.
 Structure, idioms and callback shapes follow module1_customer_experience.py.
 """
 from __future__ import annotations
@@ -538,88 +538,6 @@ def _forecast(_n, product_id):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# 6 — Product Matching & Digital Shelf
-# ══════════════════════════════════════════════════════════════════════════════
-
-def _shelf_body(d: dict, rows: list) -> list:
-    """The card's contents. Nothing here is interactive, so it is built once at
-    layout time rather than behind a callback."""
-    fig = T.figure(height=200, margin=dict(l=8, r=8, t=4, b=4))
-    fig.add_bar(
-        y=[r["category"] for r in rows][::-1],
-        x=[r["share_of_search_pct"] for r in rows][::-1],
-        orientation="h", marker_color=colors.BRAND, width=.62,
-        hovertemplate="%{y}<br>Share of clicked search %{x:.2f}%<extra></extra>",
-    )
-    fig.update_layout(hovermode="closest",
-                      xaxis=dict(showgrid=True, gridcolor=colors.LIGHT["grid"], ticksuffix="%"))
-
-    cat_rows = []
-    for r in rows:
-        gaps = int(r.get("content_gaps", 0) or 0)
-        lvl = "high" if gaps > 25 else "medium" if gaps > 0 else "low"
-        cat_rows.append([
-            r["category"],
-            f"{r['skus']:,}",
-            C.pill(f"{gaps}", lvl),
-            f"{r['avg_competitors']:.2f}",
-            f"{r['share_of_search_pct']:.2f}%",
-            f"{r['price_gap_pct']:+.2f}%",
-        ])
-
-    # The worklist — the SKUs whose shelf score is lowest, each carrying the
-    # component that dragged it down so the fix needs no second lookup.
-    worst = []
-    for r in (d.get("worst_skus") or [])[:6]:
-        worst.append([
-            html.Div([html.Div(r["product_name"], style={"fontWeight": 600}),
-                      html.Div(f"{r['category']}", className="small muted")]),
-            C.pill(f"{r['shelf_score']:.1f}", "high" if r["shelf_score"] < 80 else "medium"),
-            f"{r['competitors']} of {d.get('competitors_tracked', 0)}",
-            f"{r['availability_pct']:.0f}%",
-        ])
-
-    gaps_total = int(d.get("skus_with_content_gaps", 0) or 0)
-    return [
-        C.kpi_grid([
-            C.kpi("Content completeness", f"{d.get('content_completeness_pct', 0)}%",
-                  f"{d.get('attribute_fields_checked', 0)} attribute fields · "
-                  f"{gaps_total:,} SKUs with a gap",
-                  "down" if gaps_total else "up"),
-            C.kpi("Marketplace coverage", f"{d.get('match_coverage_pct', 0)}%",
-                  f"avg {d.get('avg_competitors_per_sku', 0)} of "
-                  f"{d.get('competitors_tracked', 0)} competitors"),
-            C.kpi("Competitor in-stock", f"{d.get('competitor_availability_pct', 0)}%",
-                  f"of {d.get('competitor_listings', 0):,} scraped listings"),
-            C.kpi("Priced below market", f"{d.get('below_market_pct', 0)}%",
-                  f"avg gap {float(d.get('price_gap_pct', 0) or 0):+.2f}%", "up"),
-        ]),
-        html.Div(C.graph(fig, 200), className="mt-14"),
-        html.Div(C.table(["Category", "SKUs", "Content gaps", "Competitors", "Share of search",
-                          "vs market"], cat_rows, numeric={1, 3, 4, 5}), className="mt-14"),
-        html.Div(C.table(["Weakest listings", "Shelf score", "Carried by", "In stock"],
-                         worst, numeric={1, 2, 3}), className="mt-14"),
-    ]
-
-
-def _card_digital_shelf():
-    d = api_get("/api/v1/merchandising/digital-shelf") or {}
-    rows = d.get("by_category") or []
-    return C.card(
-        cap("merch", "digital_shelf").title,
-        _shelf_body(d, rows) if rows else C.empty("Digital shelf feed unavailable."),
-        caption="Catalogue content, marketplace coverage and share of clicked search, measured per category.",
-        info="<b>Content completeness</b> is counted cell by cell over <b>7 attribute fields</b> "
-             "(sub-category, brand, colour, size, style tag, season, MRP); a blank string does not "
-             "count as filled. <b>Coverage</b> is how many of the tracked competitors actually "
-             "carry each SKU. <b>Share of search</b> is taken over clicked searches only — an "
-             "unclicked query is no evidence about any SKU. <b>Shelf score</b> averages the three "
-             "components that are genuine 0-100 shares (content, coverage, competitor "
-             "availability); the price gap is reported beside it rather than folded in.",
-    )
-
-
-# ══════════════════════════════════════════════════════════════════════════════
 
 def layout():
     prod_opts = _product_options()
@@ -637,7 +555,6 @@ def layout():
                     _card_promotion(promo_opts),
                     _card_assortment(_region_options()),
                     _card_forecast(prod_opts),
-                    _card_digital_shelf(),
                 ],
                 className="grid-2",
             )

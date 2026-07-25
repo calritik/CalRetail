@@ -7,7 +7,7 @@ vocabulary is narrow (deterministic keyword fallback when no LLM key is
 configured, which is most of the time right now — the Gemini key is
 rate-limited). To let this page "know about" the full deck rather than a
 handful of endpoints, a local, deterministic keyword table is checked first,
-built from real trigger phrases tied to each of the platform's capabilities
+built from real trigger phrases tied to each of the platform's 16 capabilities
 across all four domains. Only when nothing local matches does the page fall
 back to the router's narrower action set, and only when that also comes back
 "general_chat" does it show the router's own friendly response.
@@ -170,48 +170,23 @@ def _run_next_best_offer(cid, _pid, _q):
     return [note] + out if note else out
 
 
-def _run_churn(_cid, _pid, _q):
-    d = api_get("/api/v1/customer-experience/churn-propensity", {"top_n": 6})
+def _run_comm_timing(cid, _pid, _q):
+    cid, note = _resolve_or_pick(cid, _default_customer, "communication timing")
+    if not cid:
+        return C.empty("No customer available for communication timing.")
+    d = api_get("/api/v1/customer-experience/communication-timing", {"customer_id": cid})
     if not d:
-        return C.empty("Churn scoring unavailable.")
-    rows = [
-        [s.get("segment", "—"), f"{s.get('customers', 0):,}",
-         C.pill(f"{s.get('churn_risk_pct', 0)}%", "high" if s.get("churn_risk_pct", 0) >= 35
-                else "medium" if s.get("churn_risk_pct", 0) >= 15 else "low"),
-         C.money(s.get("clv_at_risk", 0))]
-        for s in (d.get("by_segment") or [])
-    ]
-    return [
+        return [note] if note else C.empty("Communication timing unavailable.")
+    open_rate = d.get("predicted_open_rate")
+    out = [
         C.kpi_grid([
-            C.kpi("Customers scored", f"{d.get('customers_scored', 0):,}"),
-            C.kpi("At risk", f"{d.get('at_risk_customers', 0):,}", "risk ≥ 35%", "down"),
-            C.kpi("Value at risk", C.money(d.get("clv_at_risk_total")), "", "down"),
-            C.kpi("Model AUC", f"{d.get('model_auc', 0)}"),
+            C.kpi("Best send time",  d.get("best_send_hour_label", "\u2014")),
+            C.kpi("Best day",        d.get("best_day_of_week", "\u2014")),
+            C.kpi("Channel",         d.get("recommended_channel", "\u2014")),
+            C.kpi("Pred. open rate", f"{open_rate * 100:.1f}%" if open_rate else "\u2014"),
         ]),
-        html.Div(C.table(["Segment", "Customers", "Churn risk", "Value at risk"], rows, numeric={1, 3}),
-                 className="mt-14"),
     ]
-
-
-def _run_segmentation(_cid, _pid, _q):
-    d = api_get("/api/v1/customer-experience/segmentation")
-    segs = (d or {}).get("segments") or []
-    if not segs:
-        return C.empty("Segmentation unavailable.")
-    top = max(segs, key=lambda s: s.get("avg_monetary", 0))
-    rows = [[s.get("segment", "—"), f"{s.get('customers', 0):,}", f"{s.get('pct_of_total', 0)}%",
-             C.money(s.get("avg_monetary", 0))] for s in segs]
-    return [
-        C.kpi_grid([
-            C.kpi("Customers", f"{d.get('total_customers', 0):,}"),
-            C.kpi("Segments", d.get("n_segments", len(segs))),
-            C.kpi("Book value", C.money(d.get("total_value")), "lifetime spend"),
-            C.kpi("Top-value segment", top.get("segment", "—")),
-        ]),
-        html.Div(C.table(["Segment", "Customers", "% base", "Avg spend"], rows, numeric={1, 2, 3}),
-                 className="mt-14"),
-    ]
-
+    return [note] + out if note else out
 
 
 def _run_buying_assistant(cid, _pid, query):
@@ -306,45 +281,6 @@ def _run_competitor_monitoring(_cid, _pid, _q):
     ]
 
 
-def _run_assortment(_cid, _pid, _q):
-    d = api_get("/api/v1/merchandising/assortment-plan")
-    rows = (d or {}).get("by_region") or []
-    if not rows:
-        return C.empty("Assortment plan unavailable.")
-    tbl = [[r.get("region", "—"), f"{r.get('skus_selling', 0):,}", C.money(r.get("revenue", 0)),
-            f"+{r.get('add', 0)}", f"−{r.get('drop', 0)}"] for r in rows]
-    return [
-        C.kpi_grid([
-            C.kpi("SKUs selling", f"{d.get('skus_selling', 0):,}", f"of {d.get('catalogue_skus', 0):,} catalogue"),
-            C.kpi("Add candidates", f"+{d.get('add_candidates_total', 0):,}",
-                  f"{C.money(d.get('opportunity_value', 0))} shortfall", "up"),
-            C.kpi("Drop candidates", f"−{d.get('drop_candidates_total', 0):,}",
-                  f"{C.money(d.get('tied_capital', 0))} tied up", "down"),
-        ]),
-        html.Div(C.table(["Region", "SKUs selling", "Revenue", "Add", "Drop"], tbl, numeric={1, 2, 3, 4}),
-                 className="mt-14"),
-    ]
-
-
-def _run_digital_shelf(_cid, _pid, _q):
-    d = api_get("/api/v1/merchandising/digital-shelf")
-    rows = (d or {}).get("by_category") or []
-    if not rows:
-        return C.empty("Digital shelf feed unavailable.")
-    tbl = [[r.get("category", "—"), f"{r.get('skus', 0):,}", f"{r.get('content_gaps', 0)}",
-            f"{r.get('share_of_search_pct', 0):.1f}%"] for r in rows[:6]]
-    return [
-        C.kpi_grid([
-            C.kpi("Content completeness", f"{d.get('content_completeness_pct', 0)}%"),
-            C.kpi("Marketplace coverage", f"{d.get('match_coverage_pct', 0)}%"),
-            C.kpi("Competitor in-stock", f"{d.get('competitor_availability_pct', 0)}%"),
-            C.kpi("Priced below market", f"{d.get('below_market_pct', 0)}%"),
-        ]),
-        html.Div(C.table(["Category", "SKUs", "Content gaps", "Share of search"], tbl, numeric={1, 2, 3}),
-                 className="mt-14"),
-    ]
-
-
 def _run_promotion_optimization(_cid, _pid, _q):
     promo_id, note = _resolve_or_pick(None, _default_promo, "promotion evaluation")
     if not promo_id:
@@ -384,6 +320,22 @@ def _run_inventory(_cid, _pid, _q):
         ]),
         html.Div(C.table(["Product", "Location", "Stock", "Days cover", "Risk"], tbl, numeric={2, 3}),
                  className="mt-14"),
+    ]
+
+
+def _run_replenishment(_cid, _pid, _q):
+    d = api_get("/api/v1/operations/replenishment")
+    rows = (d or {}).get("replenishment_orders") or []
+    if not rows:
+        return C.empty("No replenishment orders pending.")
+    tbl = [[r.get("product_name", "—"), f"{r.get('qty', 0):,}", r.get("supplier", "—"),
+            r.get("priority", "—")] for r in rows[:6]]
+    return [
+        C.kpi_grid([
+            C.kpi("Orders pending", f"{d.get('total_orders', 0):,}"),
+            C.kpi("Total value", C.money(d.get('total_value', 0))),
+        ]),
+        html.Div(C.table(["Product", "Qty", "Supplier", "Priority"], tbl, numeric={1}), className="mt-14"),
     ]
 
 
@@ -431,41 +383,6 @@ def _run_route_optimization(_cid, _pid, _q):
     return [note] + out if note else out
 
 
-
-def _run_store_vision(_cid, _pid, _q):
-    d = api_get("/api/v1/operations/store-vision")
-    if not d or not d.get("sessions"):
-        return C.empty("No session activity recorded.")
-    conv = float(d.get("conversion_pct", 0) or 0)
-    base = float(d.get("baseline_purchase_rate_pct", 0) or 0)
-    return [
-        C.kpi_grid([
-            C.kpi("Sessions", f"{d.get('sessions', 0):,}", "network-wide"),
-            C.kpi("Peak hour", d.get("peak_hour", "—"), f"{d.get('peak_hour_sessions', 0):,} logins"),
-            C.kpi("Avg dwell", f"{float(d.get('avg_dwell_mins') or 0):.1f} min"),
-            C.kpi("Same-day conversion", f"{conv:.2f}%", f"base rate {base:.2f}%"),
-        ]),
-    ]
-
-
-def _run_markdown_candidates(_cid, _pid, _q):
-    d = api_get("/api/v1/operations/markdown-candidates", {"top_n": 6})
-    rows = (d or {}).get("candidates") or []
-    if not rows:
-        return C.empty("No markdown candidates found.")
-    tbl = [[c.get("product_name", "—"), f"{c.get('stock', 0):,}", f"{c.get('days_cover', 0):,.0f}",
-            C.money(c.get("stock_value", 0)), C.pill(f"−{c.get('suggested_markdown_pct', 0)}%", "medium")]
-           for c in rows]
-    return [
-        C.kpi_grid([
-            C.kpi("Overstocked SKUs", f"{d.get('overstocked_skus', len(rows)):,}", "", "down"),
-            C.kpi("Capital freed at markdown", C.money(d.get("freed_at_markdown", 0))),
-        ]),
-        html.Div(C.table(["Product", "Stock", "Days cover", "Value tied up", "Markdown"], tbl, numeric={1, 2, 3}),
-                 className="mt-14"),
-    ]
-
-
 # — Domain 04 · Customer Support ----------------------------------------------
 
 def _run_triage(cid, _pid, query=""):
@@ -505,6 +422,52 @@ def _run_chatbot(cid, _pid, query):
     return [note] + out if note else out
 
 
+def _run_agent_assist(cid, _pid, query):
+    cid, note = _resolve_or_pick(cid, _default_customer, "agent assist")
+    if not cid:
+        return C.empty("No customer available for agent assist.")
+    d = api_post("/api/v1/support/agent-assist", {"query_text": query, "customer_id": cid})
+    if not d:
+        return [note] if note else C.empty("Agent assist unavailable.")
+    conf = float(d.get("confidence", 0) or 0)
+    response = d.get("suggested_response") or d.get("resolution", "\u2014")
+    sop = d.get("matched_sop") or d.get("sop", "")
+    parts = []
+    if sop:
+        parts.append(html.Div(sop, className="chat-bubble-ai copilot-in mb-6"))
+    parts.append(html.Div(response, className="chat-bubble-ai copilot-in"))
+    if conf:
+        tone = "ok" if conf >= 0.7 else "warn" if conf >= 0.4 else "danger"
+        parts.append(C.bar_row("Retrieval confidence", f"{conf:.0%}", conf * 100, tone))
+    return [note] + parts if note else parts
+
+
+def _run_voc(_cid, pid, _q):
+    params = {"product_id": pid} if pid else {}
+    d = api_get("/api/v1/support/voice-of-customer", params or None)
+    if not d or not d.get("total_reviews"):
+        return C.empty("No reviews available for that product.")
+    total = d.get("total_reviews", 0)
+    avg_r = float(d.get("avg_rating", 0))
+    sent  = d.get("sentiment_distribution") or {}
+    aspects = d.get("aspect_analysis") or {}
+    parts = [
+        C.kpi_grid([
+            C.kpi("Reviews", f"{total:,}"),
+            C.kpi("Avg rating", f"{avg_r:.2f} / 5.0", "",
+                  "down" if d.get("alert") else "up"),
+            C.kpi("Positive", f"{sent.get('Positive', 0):,}"),
+            C.kpi("Negative", f"{sent.get('Negative', 0):,}", "", "down" if sent.get("Negative", 0) else ""),
+        ]),
+    ]
+    if aspects:
+        tbl = [[asp, f"{info['mention_count']:,}", f"{info['avg_rating']:.2f}",
+                f"{info['pct_positive']:.0f}%"]
+               for asp, info in sorted(aspects.items(),
+                                       key=lambda kv: kv[1]["mention_count"], reverse=True)[:6]]
+        parts.append(html.Div(C.table(["Aspect", "Mentions", "Avg rating", "% Positive"],
+                                      tbl, numeric={1, 2, 3}), className="mt-14"))
+    return parts
 
 
 
@@ -522,29 +485,25 @@ CAPS = {
     # Domain 01 — Customer Experience
     "recommendations": {
         "title": "Hyper-personalized Recommendations", "domain": _CX,
-        "keywords": ["recommend", "recommendation", "suggest product", "product suggestion"],
+        "keywords": ["recommend", "recommendation", "suggest product", "what should i buy"],
         "run": _run_recommendations,
-    },
-    "next_best_offer": {
-        "title": "Next-Best-Offer Engines", "domain": _CX,
-        "keywords": ["next best offer", "next-best-offer", "best offer for", "nbo"],
-        "run": _run_next_best_offer,
-    },
-    "churn": {
-        "title": "Churn & Loyalty Propensity", "domain": _CX,
-        "keywords": ["churn", "loyalty risk", "retention risk", "at-risk customers", "at risk customers"],
-        "run": _run_churn,
-    },
-    "customer_segmentation": {
-        "title": "Customer Segmentation", "domain": _CX,
-        "keywords": ["customer segmentation", "behavioural persona", "behavioral persona", "segmentation view"],
-        "run": _run_segmentation,
     },
     "buying_assistant": {
         "title": "Personalized Buying Assistants", "domain": _CX,
-        "keywords": ["buying assistant", "shopping assistant", "help me find a product",
-                     "conversational assistant", "personal shopper"],
+        "keywords": ["buying assistant", "find me a product", "help me find", "personal shopper",
+                     "conversational assistant", "shopping assistant"],
         "run": _run_buying_assistant,
+    },
+    "next_best_offer": {
+        "title": "Next-Best-Offer Engines", "domain": _CX,
+        "keywords": ["next best offer", "best offer for", "nbo", "offer to send"],
+        "run": _run_next_best_offer,
+    },
+    "comm_timing": {
+        "title": "Communication Timing Optimiser", "domain": _CX,
+        "keywords": ["communication timing", "best time to send", "when to email", "optimal send time",
+                     "open rate", "best channel"],
+        "run": _run_comm_timing,
     },
 
     # Domain 02 — Merchandising
@@ -560,37 +519,30 @@ CAPS = {
                      "optimal price", "reprice"],
         "run": _run_dynamic_pricing,
     },
-    "competitor_monitoring": {
-        "title": "Competitor Price Monitoring", "domain": _MERCH,
-        "keywords": ["competitor price", "competitor monitoring", "underpriced",
-                     "price gap", "overpriced"],
-        "run": _run_competitor_monitoring,
-    },
-    "assortment_plan": {
-        "title": "Assortment Planning", "domain": _MERCH,
-        "keywords": ["assortment", "sku mix", "products to add", "drop from assortment",
-                     "which products to add"],
-        "run": _run_assortment,
-    },
-    "digital_shelf": {
-        "title": "Product Matching & Digital Shelf", "domain": _MERCH,
-        "keywords": ["digital shelf", "content score", "catalogue completeness",
-                     "content completeness", "catalog completeness"],
-        "run": _run_digital_shelf,
-    },
     "promotion_optimization": {
         "title": "Promotion Optimization", "domain": _MERCH,
         "keywords": ["promotion optimization", "promo uplift", "cannibalization",
                      "evaluate promotion", "promotion roi"],
         "run": _run_promotion_optimization,
     },
+    "competitor_monitoring": {
+        "title": "Competitor Price Monitoring", "domain": _MERCH,
+        "keywords": ["competitor price", "competitor monitoring", "underpriced",
+                     "price gap", "overpriced"],
+        "run": _run_competitor_monitoring,
+    },
 
-    # Domain 03 — Operational Efficiency
+    # Domain 03 — Operational Efficiency (notebooks 09–12)
     "inventory_health": {
         "title": "Smart Inventory Management", "domain": _OPS,
         "keywords": ["low on stock", "running low", "stock level", "inventory health",
                      "stock-out", "stockout", "which items are low"],
         "run": _run_inventory,
+    },
+    "replenishment": {
+        "title": "Automated Replenishment", "domain": _OPS,
+        "keywords": ["replenish", "reorder", "automated replenishment", "restock"],
+        "run": _run_replenishment,
     },
     "warehouse_optimization": {
         "title": "Warehouse Optimization", "domain": _OPS,
@@ -604,28 +556,29 @@ CAPS = {
                      "fleet optimization", "warehouse route"],
         "run": _run_route_optimization,
     },
-    "store_vision": {
-        "title": "Store Vision AI", "domain": _OPS,
-        "keywords": ["store vision", "foot traffic", "dwell time", "store traffic", "footfall"],
-        "run": _run_store_vision,
-    },
-    "markdown_candidates": {
-        "title": "Markdown & Overstock Optimization", "domain": _OPS,
-        "keywords": ["markdown candidates", "overstocked", "discount candidates",
-                     "idle sku", "markdown"],
-        "run": _run_markdown_candidates,
-    },
 
-    # Domain 04 — Customer Support
+    # Domain 04 — Customer Support (notebooks 13–16)
+    "chatbot": {
+        "title": "24x7 AI Chatbots", "domain": _SUPPORT,
+        "keywords": ["chatbot", "ask the chatbot", "24x7 support", "order tracking chat", "support bot"],
+        "run": _run_chatbot,
+    },
     "ticket_triage": {
         "title": "Intelligent Ticket Triage", "domain": _SUPPORT,
         "keywords": ["ticket", "complaint", "triage", "damaged", "replacement", "order arrived"],
         "run": _run_triage,
     },
-    "chatbot": {
-        "title": "24x7 AI Chatbots", "domain": _SUPPORT,
-        "keywords": ["chatbot", "ask the chatbot", "24x7 support", "order tracking chat", "support bot"],
-        "run": _run_chatbot,
+    "agent_assist": {
+        "title": "Agent Assist", "domain": _SUPPORT,
+        "keywords": ["agent assist", "live agent", "agent suggestion", "resolution suggestion",
+                     "sop lookup", "agent support"],
+        "run": _run_agent_assist,
+    },
+    "voc": {
+        "title": "Voice of Customer", "domain": _SUPPORT,
+        "keywords": ["voice of customer", "sentiment", "product reviews", "review analysis",
+                     "aspect analysis", "customer feedback"],
+        "run": _run_voc,
     },
 }
 

@@ -196,3 +196,165 @@ def monitor_competitor_prices(product_id: str = None, category: str = None) -> l
         
     return processed_results
 
+
+def assortment_plan(region: str = None) -> dict:
+    """
+    Data-driven assortment analysis:
+    - Joins orders → stores → products to get regional SKU revenue
+    - Computes 80/20 Pareto concentration per region
+    - Identifies add candidates (proven elsewhere but underperforming here)
+    - Identifies drop candidates (below median revenue, inventory potentially tied up)
+    """
+    import pandas as pd
+    from backend.utils.data_loader import (
+        get_orders, get_stores, get_products, get_inventory
+    )
+
+    orders  = get_orders()
+    stores  = get_stores()
+    prods   = get_products()
+    inv     = get_inventory()
+
+    # Only confirmed revenue orders
+    if "status" in orders.columns:
+        orders = orders[~orders["status"].isin(["Cancelled", "Returned"])]
+
+    # Join store region
+    if "store_id" in orders.columns and "store_id" in stores.columns:
+        store_region = stores[["store_id", "region"]].drop_duplicates("store_id")
+        orders = orders.merge(store_region, on="store_id", how="left")
+    else:
+        orders["region"] = "All"
+
+    # Join product info
+    prod_cols = ["product_id", "product_name", "category", "price"]
+    prod_cols = [c for c in prod_cols if c in prods.columns]
+    orders = orders.merge(prods[prod_cols].drop_duplicates("product_id"),
+                          on="product_id", how="left")
+
+    # Revenue column
+    rev_col = "total_amount" if "total_amount" in orders.columns else \
+              "price" if "price" in orders.columns else None
+    if rev_col is None:
+        orders["_rev"] = 1.0
+        rev_col = "_rev"
+
+    orders["_rev"] = orders[rev_col].astype(float).fillna(0)
+
+    if region:
+        orders = orders[orders["region"] == region]
+
+    # Global stats
+    catalogue_skus = int(prods["product_id"].nunique())
+    skus_selling   = int(orders["product_id"].nunique())
+    revenue_total  = float(orders["_rev"].sum())
+    orders_analysed = int(len(orders))
+
+    # Pareto — share of SKUs that earn the first 80% revenue
+    sku_rev = orders.groupby("product_id")["_rev"].sum().sort_values(ascending=False)
+    cumsum  = sku_rev.cumsum()
+    pareto_skus = int((cumsum <= revenue_total * 0.80).sum())
+    pareto_sku_pct = round(pareto_skus / max(skus_selling, 1) * 100, 1)
+
+    # ── Per-region breakdown ──────────────────────────────────────────────────
+    by_region = []
+    all_regions = orders["region"].dropna().unique()
+    for reg in sorted(all_regions):
+        reg_ord = orders[orders["region"] == reg]
+        reg_rev = float(reg_ord["_rev"].sum())
+        reg_skus_selling = int(reg_ord["product_id"].nunique())
+
+        # Pareto within region
+        reg_sku_rev = reg_ord.groupby("product_id")["_rev"].sum().sort_values(ascending=False)
+        reg_cum = reg_sku_rev.cumsum()
+        reg_pareto = int((reg_cum <= reg_rev * 0.80).sum())
+        reg_pareto_pct = round(reg_pareto / max(reg_skus_selling, 1) * 100, 1)
+
+        # Threshold for add/drop within this region
+        median_rev = float(reg_sku_rev.median()) if len(reg_sku_rev) else 0.0
+        reg_products = set(reg_ord["product_id"].unique())
+
+        # Drop: product sells here but below 25% of region median
+        drop_ids = set(reg_sku_rev[reg_sku_rev < median_rev * 0.25].index.tolist())
+
+        # Add: product sells well in OTHER regions (> peer median there) but not here
+        other_sku_rev = orders[orders["region"] != reg].groupby("product_id")["_rev"].sum()
+        other_median = float(other_sku_rev.median()) if len(other_sku_rev) else 0.0
+        add_ids = set(other_sku_rev[
+            (other_sku_rev > other_median) &
+            (~other_sku_rev.index.isin(reg_products))
+        ].head(15).index.tolist())
+
+        by_region.append({
+            "region":         reg,
+            "skus_selling":   reg_skus_selling,
+            "revenue":        round(reg_rev, 2),
+            "pareto_sku_pct": reg_pareto_pct,
+            "add":            len(add_ids),
+            "drop":           len(drop_ids),
+        })
+
+    # ── Add / drop candidate details ─────────────────────────────────────────
+    # Inventory index for tied capital
+    inv_stock = {}
+    if "product_id" in inv.columns and "quantity_on_hand" in inv.columns:
+        inv_stock = dict(zip(inv["product_id"],
+                             inv["quantity_on_hand"].astype(float).fillna(0)))
+
+    prod_info = prods.set_index("product_id")[
+        [c for c in ["product_name", "category", "price"] if c in prods.columns]
+    ].to_dict("index")
+
+    # Add candidates: top opportunities from other-region best sellers
+    other_best = orders[orders["region"] != (region or "")]\
+                     .groupby("product_id")["_rev"].sum()\
+                     .sort_values(ascending=False).head(20)
+    selling_everywhere = set(orders["product_id"].unique())
+    add_candidates = []
+    for pid, opp in other_best.items():
+        if pid in selling_everywhere:
+            continue
+        info = prod_info.get(pid, {})
+        add_candidates.append({
+            "product_id":   pid,
+            "product_name": info.get("product_name", pid),
+            "category":     info.get("category", "—"),
+            "region":       region or "New",
+            "opportunity":  round(float(opp) * 0.15, 2),  # estimated share
+            "status":       "Not stocked in target region",
+        })
+        if len(add_candidates) >= 10:
+            break
+
+    # Drop candidates: consistent lowest performers
+    global_sku_rev = orders.groupby("product_id")["_rev"].sum()
+    global_median  = float(global_sku_rev.median()) if len(global_sku_rev) else 0.0
+    drop_ids_global = global_sku_rev[global_sku_rev < global_median * 0.25].index.tolist()
+    drop_candidates = []
+    for pid in drop_ids_global[:10]:
+        info = prod_info.get(pid, {})
+        stock = inv_stock.get(pid, 0.0)
+        price = float(info.get("price", 0) or 0)
+        drop_candidates.append({
+            "product_id":   pid,
+            "product_name": info.get("product_name", pid),
+            "category":     info.get("category", "—"),
+            "region":       region or "All",
+            "tied_capital": round(stock * price, 2),
+            "status":       "Below 25% of median SKU revenue",
+        })
+
+    return {
+        "catalogue_skus":       catalogue_skus,
+        "skus_selling":         skus_selling,
+        "revenue_total":        round(revenue_total, 2),
+        "orders_analysed":      orders_analysed,
+        "pareto_sku_pct":       pareto_sku_pct,
+        "add_candidates_total": len(add_candidates),
+        "drop_candidates_total":len(drop_candidates),
+        "opportunity_value":    round(sum(a["opportunity"] for a in add_candidates), 2),
+        "tied_capital":         round(sum(d["tied_capital"] for d in drop_candidates), 2),
+        "by_region":            by_region,
+        "add_candidates":       add_candidates,
+        "drop_candidates":      drop_candidates,
+    }

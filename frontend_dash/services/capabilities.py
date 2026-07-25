@@ -1,14 +1,8 @@
 """
-CalRetail — capability catalogue.
+CalRetail — capability catalogue (16 capabilities, notebooks 01–16).
 
-A curated subset of the Calsoft "Retail AI Solutions" deck across four domains.
-Titles, blurbs and the Impact / Data / Speed / Wave qualifiers are transcribed
-from the slides so the console and the deck never drift apart.
-
-`source` is "api" for every capability: each card is served by a FastAPI
-endpoint computing over the real retail datasets. The field is kept because it
-drives the "live" counts on the overview page, and because a capability added
-ahead of its data would need to be marked — but nothing is generated today.
+Every capability is backed by a Jupyter notebook in notebooks/capabilities/
+and served live via FastAPI. Titles and qualifiers match the Calsoft deck.
 """
 from __future__ import annotations
 
@@ -43,7 +37,7 @@ class Domain:
     capabilities: list[Capability] = field(default_factory=list)
 
 
-# ── Domain 01 — Customer Experience (slide 4) ────────────────────────────────
+# ── Domain 01 — Customer Experience (notebooks 01–04) ────────────────────────
 CUSTOMER_EXPERIENCE = Domain(
     key="cx", index="Domain 01",
     title="Customer Experience",
@@ -52,13 +46,10 @@ CUSTOMER_EXPERIENCE = Domain(
              "across online, mobile, and physical stores to improve conversion and reduce friction."),
     path="/customer-experience",
     capabilities=[
-        # Deck slide 4 lists this as "Hyper-personalized Recommendations". On the
-        # console it's reframed as the admin segmentation view it feeds — the base
-        # every offer and retention play on this page is aimed at.
-        Capability("recommendations", "Customer Segmentation",
-                   "Admin view of the behavioural personas every play targets.",
+        Capability("recommendations", "Hyper-personalized Recommendations",
+                   "Collaborative-filtering recommendations driven by real purchase history.",
                    "Growth", "High", "Fast", 1, "api",
-                   "GET /api/v1/customer-experience/segmentation"),
+                   "POST /api/v1/customer-experience/recommendations"),
         Capability("assistant", "Personalized Buying Assistants",
                    "Conversational guidance to the right product.",
                    "Growth", "Med", "Med", None, "api",
@@ -67,14 +58,14 @@ CUSTOMER_EXPERIENCE = Domain(
                    "Triggers to improve conversion and basket size.",
                    "Growth", "High", "Fast", None, "api",
                    "GET /api/v1/customer-experience/next-best-offer"),
-        Capability("churn", "Churn & Loyalty Propensity Models",
-                   "Triggered retention interventions.",
-                   "Efficiency", "High", "Med", 2, "api",
-                   "GET /api/v1/customer-experience/churn-propensity"),
+        Capability("comm_timing", "Communication Timing Optimiser",
+                   "Best send time, day and channel per customer from real browsing patterns.",
+                   "Efficiency", "High", "Fast", 2, "api",
+                   "GET /api/v1/customer-experience/communication-timing"),
     ],
 )
 
-# ── Domain 02 — Merchandising (slide 5) ──────────────────────────────────────
+# ── Domain 02 — Merchandising (notebooks 05–08) ───────────────────────────────
 MERCHANDISING = Domain(
     key="merch", index="Domain 02",
     title="Merchandising",
@@ -83,34 +74,26 @@ MERCHANDISING = Domain(
              "inventory decisions across all regions and seasons."),
     path="/merchandising",
     capabilities=[
-        Capability("pricing", "Dynamic Pricing Engines",
-                   "Balancing demand, competition, and margin.",
-                   "Growth", "High", "Fast", 1, "api",
-                   "POST /api/v1/merchandising/dynamic-pricing"),
-        Capability("competitor", "Competitor Price Monitoring",
-                   "Intelligence across marketplaces and channels.",
-                   "Efficiency", "Med", "Fast", None, "api",
-                   "GET /api/v1/merchandising/competitor-monitoring"),
-        Capability("promotion", "Promotion Optimization",
-                   "Targeting offers by geography, persona, and buying signal.",
-                   "Growth", "High", "Med", None, "api",
-                   "GET /api/v1/merchandising/promotion-optimization"),
-        Capability("assortment", "Assortment Planning",
-                   "Optimizing SKU mix by store, region, channel, and season.",
-                   "Efficiency", "Med", "Med", 2, "api",
-                   "GET /api/v1/merchandising/assortment-plan"),
         Capability("forecast", "Demand Forecasting",
                    "Product and category-level inventory foresight.",
                    "Efficiency", "High", "Fast", 1, "api",
                    "GET /api/v1/merchandising/demand-forecast"),
-        Capability("digital_shelf", "Product Matching & Digital Shelf",
-                   "Analytics for discovery and compliance.",
-                   "Growth", "Med", "Med", None, "api",
-                   "GET /api/v1/merchandising/digital-shelf"),
+        Capability("pricing", "Dynamic Pricing Engines",
+                   "Balancing demand, competition, and margin in real time.",
+                   "Growth", "High", "Fast", 1, "api",
+                   "POST /api/v1/merchandising/dynamic-pricing"),
+        Capability("promotion", "Promotion Optimization",
+                   "Targeting offers by geography, persona, and buying signal.",
+                   "Growth", "High", "Med", None, "api",
+                   "GET /api/v1/merchandising/promotion-optimization"),
+        Capability("competitor", "Competitor Price Monitoring",
+                   "Intelligence across marketplaces and channels.",
+                   "Efficiency", "Med", "Fast", None, "api",
+                   "GET /api/v1/merchandising/competitor-monitoring"),
     ],
 )
 
-# ── Domain 03 — Operational Efficiency (slide 6) ─────────────────────────────
+# ── Domain 03 — Operational Efficiency (notebooks 09–12) ─────────────────────
 OPERATIONS = Domain(
     key="ops", index="Domain 03",
     title="Operational Efficiency",
@@ -120,7 +103,7 @@ OPERATIONS = Domain(
     path="/operations",
     capabilities=[
         Capability("inventory", "Smart Inventory Management",
-                   "Reducing stock-outs and overstocks.",
+                   "Reducing stock-outs and overstocks across locations.",
                    "Efficiency", "Med", "Med", None, "api",
                    "GET /api/v1/operations/inventory-health"),
         Capability("replenishment", "Automated Replenishment",
@@ -135,14 +118,10 @@ OPERATIONS = Domain(
                    "Real-time tracking and delivery efficiency.",
                    "Efficiency", "Med", "Fast", None, "api",
                    "POST /api/v1/operations/route-optimization"),
-        Capability("store_vision", "Store Vision AI",
-                   "Dwell time, hourly traffic, and journey-to-purchase analysis.",
-                   "Efficiency", "Low", "Fast", 1, "api",
-                   "GET /api/v1/operations/store-vision"),
     ],
 )
 
-# ── Domain 04 — Customer Support (slide 7) ───────────────────────────────────
+# ── Domain 04 — Customer Support (notebooks 13–16) ───────────────────────────
 SUPPORT = Domain(
     key="support", index="Domain 04",
     title="Customer Support",
@@ -159,6 +138,14 @@ SUPPORT = Domain(
                    "Routing to reduce resolution time and cost.",
                    "Efficiency", "High", "Fast", None, "api",
                    "POST /api/v1/support/ticket-triage"),
+        Capability("agent_assist", "Agent Assist",
+                   "Real-time resolution suggestions and SOP lookups for live agents.",
+                   "Efficiency", "Med", "Fast", 2, "api",
+                   "POST /api/v1/support/agent-assist"),
+        Capability("voc", "Voice of Customer",
+                   "Sentiment, aspect and trend mining from real product reviews.",
+                   "Growth", "High", "Med", None, "api",
+                   "GET /api/v1/support/voice-of-customer"),
     ],
 )
 

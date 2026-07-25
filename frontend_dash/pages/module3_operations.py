@@ -1,9 +1,13 @@
 """
-Domain 03 — Operational Efficiency (Calsoft Retail AI deck, slide 6).
+Domain 03 — Operational Efficiency (notebooks 09–12).
 
-All six capability cards are served by FastAPI over the real datasets.
-Follows the Domain 01 reference implementation.
+Four capability cards — all data-driven, served by FastAPI:
+  1. Smart Inventory Management    (nb 09)
+  2. Automated Replenishment       (nb 10)
+  3. Warehouse Optimization        (nb 11)
+  4. Logistics & Route Opt.        (nb 12)
 """
+
 from __future__ import annotations
 
 import math
@@ -668,139 +672,14 @@ def _route(_n, warehouse_id):
     ]
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# 5 — Store Vision AI
-# ══════════════════════════════════════════════════════════════════════════════
-
-def _card_store_vision(opts):
-    return C.card(
-        cap("ops", "store_vision").title,
-        [
-            html.Div(
-                [
-                    dcc.Dropdown(id="op-sv-store", options=opts, value=None,
-                                 clearable=True, className="dash-dropdown grow",
-                                 placeholder="All stores — network-wide"),
-                    html.Button("Analyse", id="op-sv-go", className="cp-go", n_clicks=0),
-                ],
-                className="cp-row",
-            ),
-            html.Div(id="op-sv-out"),
-        ],
-        caption="When visits arrive, how long they last, how deep they go — and how much of "
-                "that turns into a purchase the same day.",
-        info="<b>Source:</b> the session log (customer_sessions.csv, 150,000 logged visits) — "
-             "<b>not camera telemetry</b>. There is no vision feed anywhere in this dataset "
-             "and none is simulated here. <b>Traffic</b> buckets the real <b>login_time</b> by "
-             "hour, <b>dwell</b> is the logged <b>duration_mins</b>, <b>engagement</b> is "
-             "<b>pages_visited</b>, and <b>conversion</b> is the share of sessions whose "
-             "customer ordered the same day — shown against the base rate any customer-day "
-             "would hit anyway, so the reader can see whether a visit signals intent. Sessions "
-             "carry no store_id, so picking a store narrows the set to that store's own "
-             "shoppers and scores conversion on orders placed there. A camera would add "
-             "anonymous walk-in footfall and in-aisle position; neither is claimed here.",
-        span=2,
-    )
-
-
-@callback(Output("op-sv-out", "children"),
-          Input("op-sv-go", "n_clicks"), Input("op-sv-store", "value"))
-def _store_vision(_n, store_id):
-    d = api_get("/api/v1/operations/store-vision",
-                {"store_id": store_id} if store_id else None)
-    if not d or d.get("error") or not d.get("sessions"):
-        return C.empty("No session activity recorded for this scope.")
-
-    hours = d.get("hours") or []
-    traffic = d.get("traffic_by_hour") or []
-    dwell = d.get("dwell_by_hour") or []
-
-    # Volume and dwell answer different questions — when to staff, and how long a
-    # visit holds — so they share an x axis and nothing else. Bars for the count,
-    # a line on its own right-hand scale for the minutes.
-    fig = T.figure(height=210, showlegend=True, margin=dict(l=8, r=8, t=4, b=4))
-    fig.add_bar(x=hours, y=traffic, name="Sessions", marker_color=colors.BRAND3, width=.62,
-                hovertemplate="%{x}<br>%{y:,} sessions<extra></extra>")
-    fig.add_scatter(x=hours, y=dwell, name="Avg dwell", yaxis="y2", mode="lines+markers",
-                    line=dict(color=colors.BRAND, width=2, shape="spline"),
-                    marker=dict(color=colors.BRAND, size=4),
-                    hovertemplate="%{x}<br>%{y:.1f} min dwell<extra></extra>")
-    # yaxis2 is not part of the shared base layout, so its chrome is spelled out
-    # against the same tokens rather than inheriting Plotly's defaults.
-    _muted = dict(size=10.5, color=colors.LIGHT["ink_muted"])
-    fig.update_layout(
-        yaxis=dict(title="Sessions", showgrid=True, gridcolor=colors.LIGHT["grid"]),
-        yaxis2=dict(title=dict(text="Dwell (min)", font=_muted), tickfont=_muted,
-                    overlaying="y", side="right", showgrid=False, zeroline=False,
-                    showline=False, ticks="", rangemode="tozero", automargin=True),
-    )
-
-    conv = float(d.get("conversion_pct") or 0)
-    base = float(d.get("baseline_purchase_rate_pct") or 0)
-    lift = float(d.get("conversion_lift_pct") or 0)
-    scope = d.get("store_name") or "Network-wide"
-
-    devices = d.get("by_device") or []
-    dev_total = sum(x["sessions"] for x in devices) or 1
-    dev_rows = [
-        C.bar_row(f"{x['device']} · {x['avg_dwell_mins']} min · {x['conversion_pct']}% converted",
-                  f"{x['sessions']:,}", x["sessions"] / dev_total * 100)
-        for x in devices
-    ]
-
-    rows = []
-    for s in (d.get("by_store") or [])[:8]:
-        attach = float(s["digital_attach_pct"])
-        rows.append([
-            html.Div([html.Div(s["store_name"], style={"fontWeight": 600}),
-                      html.Div(f"{s['city']} · {s['store_type']}", className="small muted")]),
-            f"{s['sessions']:,}",
-            f"{s['orders']:,}",
-            C.money(s["revenue"]),
-            C.money(s["aov"]),
-            f"{s['avg_dwell_mins']:.0f} min",
-            C.pill(f"{attach:.2f}%", "low" if attach >= 2 else
-                                     "medium" if attach >= 1.5 else "high"),
-        ])
-
-    return [
-        C.kpi_grid([
-            C.kpi("Sessions", f"{d['sessions']:,}", scope),
-            C.kpi("Peak hour", d.get("peak_hour", "—"),
-                  f"{d.get('peak_hour_sessions', 0):,} logins · "
-                  f"{float(d.get('peak_to_quiet_spread_pct') or 0):.1f}% over quietest"),
-            C.kpi("Avg dwell", f"{float(d.get('avg_dwell_mins') or 0):.1f} min",
-                  f"median {float(d.get('median_dwell_mins') or 0):.0f} min"),
-            C.kpi("Pages per visit", f"{float(d.get('avg_pages') or 0):.1f}"),
-            C.kpi("Same-day conversion", f"{conv:.2f}%", f"base rate {base:.2f}%",
-                  "up" if lift > 0 else "down"),
-        ]),
-        html.Div(C.graph(fig, 210), className="mt-14"),
-        html.Div(dev_rows, className="mt-14"),
-        html.Div(C.stat_list([
-            ("Converting sessions",
-             f"{d.get('converting_sessions', 0):,} of {d['sessions']:,}"),
-            ("Same-day order value per converting session",
-             C.money(d.get("revenue_per_converting_session"))),
-            ("Conversion against base rate", f"{lift:+.2f} pts"),
-        ]), className="mt-14"),
-        html.Div(C.table(["Store", "Linked sessions", "Orders", "Revenue", "AOV",
-                          "Avg dwell", "Digital attach"], rows, numeric={1, 2, 3, 4, 5}),
-                 className="mt-14"),
-        html.Div("Linked sessions are visits credited to a store because that customer "
-                 "ordered there the same day — the only link the session log supports. "
-                 "Digital attach is those sessions as a share of the store's own orders.",
-                 className="small muted mt-8"),
-    ]
-
 
 # ══════════════════════════════════════════════════════════════════════════════
+
 
 def layout():
     prods = _product_options()
     whs = _warehouse_options()
-    stores = _store_options()
-    banner = [] if (prods or whs or stores) else [C.offline_banner()]
+    banner = [] if (prods or whs) else [C.offline_banner()]
     return module_page(
         D.index, D.title, D.summary,
         banner + [
@@ -810,7 +689,6 @@ def layout():
                     _card_replenishment(prods),
                     _card_warehouse(whs),
                     _card_route(whs),
-                    _card_store_vision(stores),
                 ],
                 className="grid-2",
             )
