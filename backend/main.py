@@ -16,6 +16,7 @@ from backend.config.settings import settings
 from backend.routers.customer_experience import router as ce_router
 from backend.routers.merchandising import router as merch_router
 from backend.routers.ops_support_monetise import ops_router, support_router
+from backend.routers.overview import router as overview_router
 from backend.utils.logger import logger
 
 # ── App init ──────────────────────────────────────────────────────────────────
@@ -54,6 +55,7 @@ async def log_requests(request: Request, call_next):
 
 # ── Routers ───────────────────────────────────────────────────────────────────
 
+app.include_router(overview_router)
 app.include_router(ce_router)
 app.include_router(merch_router)
 app.include_router(ops_router)
@@ -105,16 +107,28 @@ async def startup_event():
     logger.info("=" * 55)
     logger.info(f"  {settings.APP_NAME} v{settings.APP_VERSION}")
     logger.info("  Warming up data caches...")
-    try:
-        from backend.utils.data_loader import (
-            get_customers, get_products, get_transactions
-        )
-        c = get_customers()
-        p = get_products()
-        t = get_transactions()
-        logger.info(f"  ✓ Customers: {len(c):,}  Products: {len(p):,}  Transactions: {len(t):,}")
-    except Exception as e:
-        logger.warning(f"  Data warmup failed: {e} — run notebooks first!")
+    from backend.utils import db
+
+    if not db.database_exists():
+        # Worth shouting about: without the database every capability falls back
+        # to an empty frame and the console looks merely "wrong" rather than
+        # unconfigured, which is a slow thing to diagnose from the UI alone.
+        logger.error("  ✗ No database at %s", db.DB_PATH)
+        logger.error("    Build it with:  python -m notebooks.build_db")
+    else:
+        try:
+            from backend.utils.data_loader import (
+                get_customers, get_products, get_transactions
+            )
+            c = get_customers()
+            p = get_products()
+            t = get_transactions()
+            logger.info(f"  ✓ Customers: {len(c):,}  Products: {len(p):,}  Transactions: {len(t):,}")
+            logger.info(f"  ✓ Database: {db.DB_PATH.name} "
+                        f"({db.DB_PATH.stat().st_size / 1_048_576:.1f} MB, "
+                        f"{len(db.table_names())} tables)")
+        except Exception as e:
+            logger.warning(f"  Data warmup failed: {e}")
 
     # Pre-load Module 2 notebooks in the background so the first page visit
     # doesn't block on notebook execution (which can take 10-30 s each).

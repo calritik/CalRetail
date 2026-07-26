@@ -1,33 +1,31 @@
 """
 Nexalyze — Feature Engineering Script
-Reads processed CSVs and creates ML-ready feature datasets.
-Outputs to data/processed/ as feature_*.csv files.
+Reads the cleaned tables from the shipped database and writes ML-ready
+feature tables back into it as feature_* tables.
+Run via: python -m notebooks.feature_engineering  OR  python -m notebooks.build_db
 """
 
 import logging
 import warnings
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
+from notebooks.pipeline_io import load_processed, save_processed
+
 warnings.filterwarnings("ignore")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
 log = logging.getLogger("nexalyze.features")
 
-PROC_DIR = Path(__file__).parent.parent / "data" / "processed"
-PROC_DIR.mkdir(parents=True, exist_ok=True)
-
 
 def load(name: str) -> pd.DataFrame:
-    return pd.read_csv(PROC_DIR / f"{name}.csv", low_memory=False)
+    return load_processed(name)
 
 
 def save(df: pd.DataFrame, name: str) -> None:
-    path = PROC_DIR / f"feature_{name}.csv"
-    df.to_csv(path, index=False)
-    log.info(f"Saved feature_{name}.csv  ({len(df):,} rows, {df.shape[1]} cols)")
+    save_processed(df, f"feature_{name}")
+    log.info(f"Saved feature_{name}  ({len(df):,} rows, {df.shape[1]} cols)")
 
 
 # ─────────────────────────────────────────────────────────────────────────────

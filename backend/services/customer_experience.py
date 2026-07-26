@@ -221,6 +221,7 @@ def get_recommendations_debug(customer_id: str, top_n: int = 10) -> dict:
 
     return {
         "customer_id":     customer_id,
+        "customer_name":   (profile or {}).get("name") or customer_id,
         "profile":         profile,
         "purchase_history":   purchase_history,
         "category_affinity":  category_affinity,

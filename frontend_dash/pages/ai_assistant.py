@@ -142,11 +142,14 @@ def _run_recommendations(cid, _pid, _q):
     recs = (d or {}).get("recommendations") or []
     if not recs:
         return [note] if note else C.empty("No recommendations available for that customer.")
+    # No Score column: a bare 0.184 tells the reader nothing they can act on,
+    # and this page's whole premise is that it never surfaces raw model output.
+    # Dropping it also gives the product name the width it was competing for.
     table = C.table(
-        ["Product", "Category", "Price", "Score"],
+        ["Product", "Category", "Price"],
         [[r.get("product_name", "—"), C.pill(r.get("category", "—"), "info"),
-          f"₹{r.get('price', 0):,.0f}", f"{r.get('score', 0):.3f}"] for r in recs],
-        numeric={2, 3},
+          f"₹{r.get('price', 0):,.0f}"] for r in recs],
+        numeric={2}, wide={0},
     )
     return [note, table] if note else table
 

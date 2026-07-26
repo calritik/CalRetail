@@ -3,27 +3,34 @@ Module 4 — Customer Support Intelligence AI Services Wrapper
 Logic is loaded dynamically from Jupyter capability notebooks.
 """
 from typing import Optional
+
+from backend.utils import naming
 from backend.utils.notebook_loader import get_notebook_module
 
 def chatbot_respond(customer_id: str, message: str, session_id: str) -> dict:
     mod = get_notebook_module("13_ai_chatbot.ipynb")
     res = mod.chatbot_response(customer_id, message, session_id)
     res["session_id"] = session_id
+    # Every card that shows a conversation also shows who it is with; without
+    # this the header falls back to the raw id.
+    res["customer_name"] = naming.customer(customer_id)
     if "powered_by" not in res:
         res["powered_by"] = "Notebook Engine"
-    return res
+    return naming.annotate(res)
 
 def triage_ticket(description: str, customer_id: str) -> dict:
     mod = get_notebook_module("14_ticket_triage.ipynb")
     res = mod.triage_ticket(description)
     res["customer_id"] = customer_id
-    return res
+    res["customer_name"] = naming.customer(customer_id)
+    return naming.annotate(res)
 
 def agent_assist(query_text: str, customer_id: str) -> dict:
     mod = get_notebook_module("15_agent_assist.ipynb")
     res = mod.get_agent_assist(query_text)
     res["customer_id"] = customer_id
-    return res
+    res["customer_name"] = naming.customer(customer_id)
+    return naming.annotate(res)
 
 def voice_of_customer(product_id: Optional[str] = None,
                        date_from: Optional[str] = None,

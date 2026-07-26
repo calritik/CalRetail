@@ -165,11 +165,13 @@ def _recommendations(_n, customer_id, top_n):
         prod_cards.append(card_div)
 
     products_section = html.Div([
-        html.Div("🛍️ You may like these", style={
+        html.Div(f"🛍️ You may like these · {len(prod_cards)}", style={
             "fontWeight": 700, "fontSize": "13px", "marginBottom": "8px",
             "color": colors.INK,
         }),
-        html.Div(prod_cards),
+        # Top-N is the reader's choice and goes to 25 — scrolled, so a large N
+        # can't stretch the card past the diagnostics column beside it.
+        html.Div(prod_cards, className="scroll-pane"),
     ], style={"marginBottom": "16px"})
 
     # ── Graph 1: Why it was recommended — reasons frequency ──────────────────
@@ -247,26 +249,31 @@ def _recommendations(_n, customer_id, top_n):
         style={"fontSize": "11px", "color": colors.INK_SOFT, "marginTop": "8px"}
     )
 
+    # The recommendations and the evidence behind them are two parallel readings
+    # of the same result, so they sit side by side: what to show the shopper on
+    # the left, why the model chose it on the right. Stacked, the three
+    # diagnostic charts pushed the product list a full screen out of view.
     return [
-        meta_pills,
-        products_section,
-        html.Div([
-            html.Div("📊 Admin Diagnostics", style={
-                "fontWeight": 700, "fontSize": "13px",
-                "marginBottom": "12px", "color": colors.INK,
+        C.split(
+            [meta_pills, products_section],
+            html.Div([
+                html.Div("📊 Admin Diagnostics", style={
+                    "fontWeight": 700, "fontSize": "13px",
+                    "marginBottom": "12px", "color": colors.INK,
+                }),
+                why_chart,
+                html.Div(style={"height": "12px"}),
+                sim_chart,
+                html.Div(style={"height": "12px"}),
+                cat_chart,
+            ], style={
+                "padding": "12px 14px",
+                "background": "rgba(0,0,0,.025)",
+                "borderRadius": "8px",
+                "border": "1px solid " + colors.CARD_LINE,
             }),
-            why_chart,
-            html.Div(style={"height": "12px"}),
-            sim_chart,
-            html.Div(style={"height": "12px"}),
-            cat_chart,
-        ], style={
-            "padding": "12px 14px",
-            "background": "rgba(0,0,0,.025)",
-            "borderRadius": "8px",
-            "border": "1px solid " + colors.CARD_LINE,
-            "marginTop": "4px",
-        }),
+            ruled=False,
+        ),
         algo_badge,
     ]
 
@@ -351,7 +358,7 @@ def _assistant(_n, message, customer_id):
             ["Product", "Brand", "Price"],
             [[s.get("product_name", "—"), s.get("brand", "—"),
               f"₹{s.get('price', 0):,.0f}"] for s in sugg],
-            numeric={2},
+            numeric={2}, wide={0},
         ))
     return out
 
@@ -407,15 +414,24 @@ def _nbo(_n, segment):
         C.pill(f"prefers {d.get('preferred_category', '—')}", "neutral"),
         C.pill(f"via {d.get('preferred_channel', '—')}", "neutral"),
     ]
+    # An off-target row used to put the segment name *inside* the pill, and a pill
+    # can't be narrower than its longest word — "Professional" alone set a ~100px
+    # floor on this column and pushed the five columns wider than the card. The
+    # verdict stays a pill; the segment it actually targets drops to a sub-line,
+    # where it wraps freely.
     rows = [
         [o["promo_type"], C.pill(o["category"], "info"), f"{o['discount_pct']:.0f}%",
-         C.pill("on-target", "low") if o["on_target"] else C.pill(o["target_segment"], "neutral"),
+         C.pill("on-target", "low") if o["on_target"] else
+         html.Div([C.pill("off-target", "neutral"),
+                   html.Div(o["target_segment"], className="small muted")],
+                  className="cell-stack"),
          f"{o['predicted_uplift_pct']:.0f}%"]
         for o in offers
     ]
     return [
         html.Div(chips, className="row-wrap mb-10"),
-        C.table(["Offer", "Category", "Discount", "Targeting", "Pred. uplift"], rows, numeric={2, 4}),
+        C.table(["Offer", "Category", "Disc.", "Targeting", "Uplift"], rows,
+                numeric={2, 4}, wide={0}),
     ]
 
 
@@ -449,6 +465,10 @@ def _card_comm_timing(opts):
             "<b>Channel</b> is inferred from device and session patterns — all live data, "
             "nothing hardcoded."
         ),
+        # Spans the grid so the page ends on a full-width row instead of a lone
+        # half-width card beside an empty column — and so the hourly histogram
+        # gets enough width for 24 legible hour labels.
+        span=2,
     )
 
 
@@ -475,21 +495,26 @@ def _comm_timing(_n, customer_id):
             xaxis=dict(title="Hour of day", showgrid=False),
             yaxis=dict(title="% sessions", showgrid=True, gridcolor=colors.LIGHT["grid"]),
         )
-        chart = [C.graph(fig, 180)]
+        chart = C.graph(fig, 220)
     else:
-        chart = []
+        chart = C.empty("No session history to derive an activity profile from.")
 
     open_rate = data.get("predicted_open_rate")
     open_pct  = f"{open_rate * 100:.1f}%" if open_rate is not None else "—"
 
+    # The four recommendations are the answer; the histogram is the evidence.
+    # Side by side, one explains the other without needing to be scrolled to.
     return [
-        C.kpi_grid([
-            C.kpi("Best send time", data.get("best_send_hour_label", "—")),
-            C.kpi("Best day",       data.get("best_day_of_week", "—")),
-            C.kpi("Recommended channel", data.get("recommended_channel", "—")),
-            C.kpi("Predicted open rate", open_pct),
-        ]),
-        *chart,
+        C.split(
+            C.kpi_grid([
+                C.kpi("Best send time", data.get("best_send_hour_label", "—")),
+                C.kpi("Best day",       data.get("best_day_of_week", "—")),
+                C.kpi("Recommended channel", data.get("recommended_channel", "—")),
+                C.kpi("Predicted open rate", open_pct),
+            ]),
+            [C.subhead("When this customer is actually online"), chart],
+            weight="wide-right",
+        ),
     ]
 
 

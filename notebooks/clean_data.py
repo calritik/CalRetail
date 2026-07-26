@@ -1,36 +1,32 @@
 """
 Nexalyze — Data Cleaning Script
-Reads raw CSVs, applies cleaning rules, and saves to data/processed/
-Run via: python clean_data.py  OR  from Data_Cleaning.ipynb
+Reads the raw build database, applies cleaning rules, and writes the cleaned
+tables into the shipped database (data/calretail.db).
+Run via: python -m notebooks.clean_data  OR  python -m notebooks.build_db
 """
 
 import warnings
 import logging
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+from notebooks.pipeline_io import load_raw, save_processed
 
 warnings.filterwarnings("ignore")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
 log = logging.getLogger("nexalyze.cleaning")
 
-RAW_DIR  = Path(__file__).parent.parent / "data" / "raw"
-PROC_DIR = Path(__file__).parent.parent / "data" / "processed"
-PROC_DIR.mkdir(parents=True, exist_ok=True)
-
 
 def load(name: str) -> pd.DataFrame:
-    path = RAW_DIR / f"{name}.csv"
-    df = pd.read_csv(path, low_memory=False)
+    df = load_raw(name)
     log.info(f"Loaded {name}  — {len(df):,} rows, {df.shape[1]} cols")
     return df
 
 
 def save(df: pd.DataFrame, name: str) -> None:
-    path = PROC_DIR / f"{name}.csv"
-    df.to_csv(path, index=False)
-    log.info(f"Saved  {name}  — {len(df):,} rows  →  {path.name}")
+    save_processed(df, name)
+    log.info(f"Saved  {name}  — {len(df):,} rows")
 
 
 def report_nulls(df: pd.DataFrame, name: str) -> None:

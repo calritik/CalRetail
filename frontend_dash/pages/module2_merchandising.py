@@ -77,8 +77,13 @@ def _load_product_opts(_):
 
 
 @callback(Output("mc-price-out", "children"),
-          Input("mc-price-go", "n_clicks"), State("mc-price-prod", "value"))
+          Input("mc-price-go", "n_clicks"), Input("mc-price-prod", "value"))
 def _pricing(_n, product_id):
+    # The product is an Input, not State, so the card fills in as soon as the
+    # dropdown finishes loading. As State it only ever fired once — before the
+    # options arrived — and then sat on "Pick a product" with a product already
+    # picked, until someone happened to press Reprice. Forecasting and Promotion
+    # on this page already work this way.
     if not product_id:
         return C.empty("Pick a product to run the pricing engine.")
     d = api_post("/api/v1/merchandising/dynamic-pricing", {"product_id": product_id})
@@ -111,31 +116,51 @@ def _pricing(_n, product_id):
         "comp_min": float(d.get("min_competitor_price", 0) or 0),
         "recommended": rec,
     }
+    # Left: what the engine recommends. Right: what happens if you disagree.
+    # Two independent readings, so they sit side by side rather than the second
+    # being buried a screen below the first.
     return [
-        C.kpi_grid([
-            C.kpi("Current price", f"₹{ctx['current']:,.0f}"),
-            C.kpi("Recommended price", f"₹{rec:,.0f}",
-                  f"{delta:+.2f}% vs. current", "up" if delta >= 0 else "down"),
-            C.kpi("Expected revenue lift", f"{lift:+.1f}%", "at the recommended price",
-                  "up" if lift >= 0 else "down"),
-            C.kpi("Stock on hand", f"{int(d.get('stock_level', 0) or 0):,}", "units"),
-        ]),
-        html.Div(C.graph(fig, 200), className="mt-14"),
-        html.Div(d.get("rationale", ""), className="small muted mt-8"),
-        dcc.Store(id="mc-price-ctx", data=ctx),
-        html.Div("Override the price and check the numbers", className="card-sub mt-14"),
-        html.Div(
+        C.split(
             [
-                html.Span("₹", className="muted", style={"fontWeight": 700, "fontSize": "15px"}),
-                dcc.Input(id="mc-price-override", type="number", value=round(rec, 2),
-                          min=0, step=1, debounce=False, className="cp-input",
-                          style={"maxWidth": "140px"}),
-                html.Button("Reset to recommended", id="mc-price-reset",
-                            className="chip", n_clicks=0),
+                C.kpi_grid([
+                    C.kpi("Current price", f"₹{ctx['current']:,.0f}"),
+                    C.kpi("Recommended price", f"₹{rec:,.0f}",
+                          f"{delta:+.2f}% vs. current", "up" if delta >= 0 else "down"),
+                    C.kpi("Expected revenue lift", f"{lift:+.1f}%", "at the recommended price",
+                          "up" if lift >= 0 else "down"),
+                    C.kpi("Stock on hand", f"{int(d.get('stock_level', 0) or 0):,}", "units"),
+                ]),
+                html.Div(C.graph(fig, 200), className="mt-14"),
+                html.Div(d.get("rationale", ""), className="small muted mt-8"),
             ],
-            className="cp-row",
+            [
+                html.Div("Override the price and check the numbers",
+                         className="card-sub mt-0"),
+                html.Div(
+                    [
+                        html.Span("₹", className="muted",
+                                  style={"fontWeight": 700, "fontSize": "15px"}),
+                        # Whole rupees, and the seeded value is rounded to match.
+                        # step=1 with a value of 2584.4 failed the field's own
+                        # step constraint, so the box opened :invalid and drew
+                        # its digits in red before anyone had typed anything.
+                        # Every other price on this card is shown to the rupee,
+                        # so rounding here is what the reader already expects.
+                        #
+                        # Width fits a five-figure price *plus* the browser's
+                        # spin buttons; at 140px the two competed for the space.
+                        dcc.Input(id="mc-price-override", type="number", value=round(rec),
+                                  min=0, step=1, debounce=False, className="cp-input",
+                                  style={"maxWidth": "168px"}),
+                        html.Button("Reset to recommended", id="mc-price-reset",
+                                    className="chip", n_clicks=0),
+                    ],
+                    className="cp-row",
+                ),
+                html.Div(id="mc-price-sim"),
+            ],
         ),
-        html.Div(id="mc-price-sim"),
+        dcc.Store(id="mc-price-ctx", data=ctx),
     ]
 
 
@@ -143,7 +168,9 @@ def _pricing(_n, product_id):
           Input("mc-price-reset", "n_clicks"), State("mc-price-ctx", "data"),
           prevent_initial_call=True)
 def _price_reset(_n, ctx):
-    return round(float((ctx or {}).get("recommended", 0) or 0), 2)
+    # Rounded the same way the field is seeded, so Reset can't put the input
+    # back into the :invalid state that step=1 rejects.
+    return round(float((ctx or {}).get("recommended", 0) or 0))
 
 
 @callback(Output("mc-price-sim", "children"),
@@ -203,9 +230,13 @@ def _card_competitor():
         "Competitor Price Monitoring",
         [
             dcc.Loading(
+                # These filters rest at "no filter", so their placeholder is
+                # their resting state, not "Loading…" — with value=None the
+                # placeholder never clears, and the card sat there claiming to
+                # still be loading long after the table beneath it had filled in.
                 dcc.Dropdown(id="mc-comp-cat", options=[], value=None,
                              clearable=True, className="dash-dropdown grow",
-                             placeholder="Loading categories…"),
+                             placeholder="All categories"),
                 type="circle", color=colors.BRAND,
             ),
             dcc.Loading(html.Div(id="mc-comp-out"), type="dot", color=colors.BRAND),
@@ -217,62 +248,14 @@ def _card_competitor():
     )
 
 
-@callback(Output("mc-comp-cat", "options"),
-          Output("mc-comp-out", "children"),
-          Input("mc-page-load", "data"))
-def _load_competitor(_):
-    """Load competitor data lazily — this triggers the slow notebook."""
-    rows = (api_get("/api/v1/merchandising/competitor-monitoring") or {}).get("results") or []
-    cat_opts = [{"label": c, "value": c}
-                for c in sorted({r["category"] for r in rows if r.get("category")})]
+def _build_competitor_content(rows):
+    """
+    The KPI + breach-table view of a competitor sweep.
 
-    if not rows:
-        return cat_opts, C.empty("Competitor monitoring feed unavailable.")
-
-    total = len(rows)
-    alerts = [r for r in rows if r.get("alert_flag")]
-    above = sum(1 for r in rows if float(r.get("price_gap_pct", 0) or 0) > 0)
-    below = total - above
-
-    worst = sorted(alerts, key=lambda r: -abs(float(r.get("price_gap_pct", 0) or 0)))[:8]
-    body = []
-    for r in worst:
-        gap = float(r.get("price_gap_pct", 0) or 0)
-        body.append([
-            html.Div([html.Div(r.get("product_name", "—"), style={"fontWeight": 600}),
-                      html.Div(r.get("recommended_action", ""), className="small muted")]),
-            f"₹{float(r.get('our_price', 0) or 0):,.0f}",
-            f"₹{float(r.get('avg_competitor_price', 0) or 0):,.0f}",
-            f"{gap:+.1f}%",
-            C.pill(r["status"], r["status"]),
-        ])
-
-    content = [
-        C.kpi_grid([
-            C.kpi("SKUs monitored", f"{total:,}"),
-            C.kpi("Price alerts", f"{len(alerts):,}",
-                  f"{len(alerts) / total * 100:.1f}% of the sweep", "down"),
-            C.kpi("Above market", f"{above / total * 100:.1f}%", "our price > competitor mean"),
-            C.kpi("Below market", f"{below / total * 100:.1f}%", "our price < competitor mean"),
-        ]),
-        html.Div(C.table(["Product", "Our price", "Market avg", "Gap", "Status"],
-                         body, numeric={1, 2, 3}), className="mt-14"),
-    ]
-    return cat_opts, content
-
-
-@callback(Output("mc-comp-out", "children", allow_duplicate=True),
-          Input("mc-comp-cat", "value"),
-          prevent_initial_call=True)
-def _competitor_filter(category):
-    rows = (api_get("/api/v1/merchandising/competitor-monitoring") or {}).get("results") or []
-    if not rows:
-        return C.empty("Competitor monitoring feed unavailable.")
-    if category:
-        rows = [r for r in rows if r.get("category") == category]
-    if not rows:
-        return C.empty(f"No monitored SKUs in {category}.")
-
+    Shared by the initial load and the category filter, which previously carried
+    two copies of this body — so a column-width or wording fix had to be made
+    twice to actually reach the reader.
+    """
     total = len(rows)
     alerts = [r for r in rows if r.get("alert_flag")]
     above = sum(1 for r in rows if float(r.get("price_gap_pct", 0) or 0) > 0)
@@ -299,9 +282,41 @@ def _competitor_filter(category):
             C.kpi("Above market", f"{above / total * 100:.1f}%", "our price > competitor mean"),
             C.kpi("Below market", f"{below / total * 100:.1f}%", "our price < competitor mean"),
         ]),
+        # The product column carries a name plus its recommended action; the four
+        # money/status columns only need their own width, so they're pinned
+        # narrow and the remainder goes to the text that actually varies.
         html.Div(C.table(["Product", "Our price", "Market avg", "Gap", "Status"],
-                         body, numeric={1, 2, 3}), className="mt-14"),
+                         body, numeric={1, 2, 3}, wide={0}, narrow={4}),
+                 className="mt-14"),
     ]
+
+
+@callback(Output("mc-comp-cat", "options"),
+          Output("mc-comp-out", "children"),
+          Input("mc-page-load", "data"))
+def _load_competitor(_):
+    """Load competitor data lazily — this triggers the slow notebook."""
+    rows = (api_get("/api/v1/merchandising/competitor-monitoring") or {}).get("results") or []
+    cat_opts = [{"label": c, "value": c}
+                for c in sorted({r["category"] for r in rows if r.get("category")})]
+
+    if not rows:
+        return cat_opts, C.empty("Competitor monitoring feed unavailable.")
+    return cat_opts, _build_competitor_content(rows)
+
+
+@callback(Output("mc-comp-out", "children", allow_duplicate=True),
+          Input("mc-comp-cat", "value"),
+          prevent_initial_call=True)
+def _competitor_filter(category):
+    rows = (api_get("/api/v1/merchandising/competitor-monitoring") or {}).get("results") or []
+    if not rows:
+        return C.empty("Competitor monitoring feed unavailable.")
+    if category:
+        rows = [r for r in rows if r.get("category") == category]
+    if not rows:
+        return C.empty(f"No monitored SKUs in {category}.")
+    return _build_competitor_content(rows)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -397,7 +412,7 @@ def _card_assortment():
             dcc.Loading(
                 dcc.Dropdown(id="mc-assort-region", options=[], value=None,
                              clearable=True, className="dash-dropdown grow",
-                             placeholder="Loading regions…"),
+                             placeholder="All regions"),
                 type="circle", color=colors.BRAND,
             ),
             dcc.Loading(html.Div(id="mc-assort-out"), type="dot", color=colors.BRAND),
@@ -411,6 +426,10 @@ def _card_assortment():
              "other regions yet earning under half that peer share here; a <b>drop</b> sits below "
              "a quarter of the region's median SKU revenue, with inventory joined so lines that "
              "are stocked but static surface too.",
+        # Five KPIs, a chart and two tables: the tallest card on the page by far.
+        # Spanning the grid lets the body split into two columns instead of
+        # running to roughly three screens.
+        span=2,
     )
 
 
@@ -474,24 +493,34 @@ def _build_assortment_content(d, rows):
             C.money(x["tied_capital"]),
         ])
 
+    # Left column reads the shape of the estate (totals + the add/drop mix per
+    # region); right column is the actionable detail (which regions, which SKUs).
     return [
-        C.kpi_grid([
-            C.kpi("SKUs selling", f"{d.get('skus_selling', 0):,}",
-                  f"of {d.get('catalogue_skus', 0):,} in the catalogue"),
-            C.kpi("Revenue analysed", C.money(d.get("revenue_total", 0)),
-                  f"{d.get('orders_analysed', 0):,} store-attributed orders"),
-            C.kpi("80/20 concentration", f"{float(d.get('pareto_sku_pct', 0) or 0):.1f}%",
-                  "of selling SKUs earn 80% of revenue"),
-            C.kpi("Add candidates", f"+{d.get('add_candidates_total', 0):,}",
-                  f"{C.money(d.get('opportunity_value', 0))} share shortfall", "up"),
-            C.kpi("Drop candidates", f"−{d.get('drop_candidates_total', 0):,}",
-                  f"{C.money(d.get('tied_capital', 0))} stock tied up", "down"),
-        ]),
-        html.Div(C.graph(fig, 200), className="mt-14"),
-        html.Div(C.table(["Region", "SKUs selling", "Revenue", "80/20", "Add", "Drop"],
-                         region_rows, numeric={1, 2, 4, 5}), className="mt-14"),
-        html.Div(C.table(["Move", "Product", "Region", "Value"], moves, numeric={3}),
-                 className="mt-14"),
+        C.split(
+            [
+                C.kpi_grid([
+                    C.kpi("SKUs selling", f"{d.get('skus_selling', 0):,}",
+                          f"of {d.get('catalogue_skus', 0):,} in the catalogue"),
+                    C.kpi("Revenue analysed", C.money(d.get("revenue_total", 0)),
+                          f"{d.get('orders_analysed', 0):,} store-attributed orders"),
+                    C.kpi("80/20 concentration", f"{float(d.get('pareto_sku_pct', 0) or 0):.1f}%",
+                          "of selling SKUs earn 80% of revenue"),
+                    C.kpi("Add candidates", f"+{d.get('add_candidates_total', 0):,}",
+                          f"{C.money(d.get('opportunity_value', 0))} share shortfall", "up"),
+                    C.kpi("Drop candidates", f"−{d.get('drop_candidates_total', 0):,}",
+                          f"{C.money(d.get('tied_capital', 0))} stock tied up", "down"),
+                ]),
+                html.Div(C.graph(fig, 200), className="mt-14"),
+            ],
+            [
+                C.subhead("Per-region position"),
+                C.table(["Region", "SKUs selling", "Revenue", "80/20", "Add", "Drop"],
+                        region_rows, numeric={1, 2, 4, 5}, wide={0}),
+                C.subhead("Recommended moves"),
+                C.table(["Move", "Product", "Region", "Value"], moves,
+                        numeric={3}, wide={1}, narrow={0}),
+            ],
+        ),
     ]
 
 
@@ -584,15 +613,25 @@ def _forecast(_n, product_id):
                       yaxis=dict(showgrid=True, gridcolor=colors.LIGHT["grid"], title="Units/day"))
 
     peak = max(fc, key=lambda p: p.get("predicted_qty", 0)) if fc else {}
+    # The series is the point of this card, so it takes the larger share and the
+    # summary figures stack beside it rather than above it.
     return [
-        C.kpi_grid([
-            C.kpi("30-day forecast", f"{float(d.get('total_forecast', 0) or 0):,.0f}", "units"),
-            C.kpi("Avg daily demand", f"{float(d.get('avg_daily_demand', 0) or 0):,.2f}", "units/day"),
-            C.kpi("Peak day", f"{float(peak.get('predicted_qty', 0)):,.1f}", peak.get("date", "")),
-            C.kpi("Horizon", f"{len(fc)} days", f"{len(hist)} observed points"),
-        ]),
-        html.Div([C.pill(d.get("model", "—"), "info")], className="row-wrap mt-14"),
-        html.Div(C.graph(fig, 280), className="mt-8"),
+        C.split(
+            [
+                C.kpi_grid([
+                    C.kpi("30-day forecast", f"{float(d.get('total_forecast', 0) or 0):,.0f}",
+                          "units"),
+                    C.kpi("Avg daily demand", f"{float(d.get('avg_daily_demand', 0) or 0):,.2f}",
+                          "units/day"),
+                    C.kpi("Peak day", f"{float(peak.get('predicted_qty', 0)):,.1f}",
+                          peak.get("date", "")),
+                    C.kpi("Horizon", f"{len(fc)} days", f"{len(hist)} observed points"),
+                ]),
+                html.Div([C.pill(d.get("model", "—"), "info")], className="row-wrap mt-14"),
+            ],
+            C.graph(fig, 300),
+            weight="wide-right",
+        ),
     ]
 
 
@@ -610,11 +649,11 @@ def layout():
             dcc.Store(id="mc-page-load", data=1),
             html.Div(
                 [
-                    _card_pricing(prod_opts),
-                    _card_competitor(cat_opts),
-                    _card_promotion(promo_opts),
-                    _card_assortment(_region_options()),
-                    _card_forecast(prod_opts),
+                    _card_pricing(),
+                    _card_competitor(),
+                    _card_promotion(),
+                    _card_assortment(),
+                    _card_forecast(),
                 ],
                 className="grid-2",
             ),

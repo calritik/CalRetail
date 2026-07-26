@@ -20,7 +20,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ backend/
 COPY frontend_dash/ frontend_dash/
 COPY notebooks/ notebooks/
-COPY data/processed/ data/processed/
+
+# The demo database is committed, so the image needs no build step and the
+# Space boots straight into a warm dataset. Rebuild it with
+# `python -m notebooks.build_db` if you change the pipeline.
+COPY data/calretail.db data/calretail.db
 RUN mkdir -p data/models
 COPY start.sh .
 RUN chmod +x start.sh

@@ -16,9 +16,16 @@ build/
 # Virtual environments
 myenv/
 
-# Data files (large)
-#data/raw/
-#data/processed/
+# Data
+# data/calretail.db IS committed — it is the demo database the app runs on
+# (built with `python -m notebooks.build_db`). Everything below is either an
+# intermediate or a full-scale local build that must never reach the repo.
+data/build/
+data/raw/
+data/processed/
+data/*.db-wal
+data/*.db-shm
+data/calretail.full.db
 
 # Logs
 logs/

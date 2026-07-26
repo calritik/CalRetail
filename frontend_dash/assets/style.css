@@ -51,6 +51,10 @@
      across the whole screen. Laptops (≤~1500px) fall under the cap and are
      unaffected; only very wide displays get the reined-in, centred layout. */
   --content-max: 1240px;
+
+  /* One gutter value for every grid on the console — card grid, split columns
+     and KPI tiles all breathe on the same rhythm. */
+  --gap: 18px;
 }
 
 * { box-sizing: border-box; }
@@ -67,6 +71,12 @@ body {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   font-size: 14px;
   line-height: 1.5;
+  /* Tells the engine which palette to draw *native* UI with — number-input spin
+     buttons, scrollbars, focus rings. Without it those stay light-themed on the
+     dark surface, which is why the price-override stepper appeared as a pale
+     control with mis-tinted digits sitting in a near-black field. CSS can't
+     restyle spin buttons; this is the only lever for them. */
+  color-scheme: light;
 }
 
 /* Dash injects these wrappers; make them full-height so the sticky aside works */
@@ -300,6 +310,14 @@ body.dark .ic-moon { display: block; }
   box-shadow: var(--shadow-card);
   transition: transform .35s var(--ease-out), box-shadow .35s var(--ease-out), border-color .25s var(--ease-out);
   display: flex; flex-direction: column;
+  /* Makes the card a query container so its own contents can respond to how
+     wide *the card* is, not how wide the window is. A card in a half-width
+     column and the same card spanning the full grid get different internal
+     layouts without either one having to know the viewport. See .card-split
+     and .kpi-grid below. Browsers without @container simply keep the
+     single-column defaults — the layout degrades, it never breaks. */
+  container-type: inline-size;
+  container-name: card;
 }
 .card:hover {
   transform: translateY(-3px);
@@ -314,14 +332,53 @@ body.dark .ic-moon { display: block; }
   display: flex; align-items: flex-start; justify-content: space-between;
   gap: 8px 10px; flex-wrap: wrap; padding-right: 26px;
 }
-.card-head > span:first-child { line-height: 1.25; flex: 1 1 auto; min-width: 0; }
+.card-head > span:first-child {
+  line-height: 1.25; flex: 1 1 auto; min-width: 0;
+  overflow-wrap: break-word;
+}
 .card-pad { padding: 0 20px 18px; flex: 1; min-height: 0; }
+/* margin-top:auto keeps the caption pinned to the bottom in the one place a
+   card is taller than its content — a .card-solo with a fixed max-width. */
 .card-caption {
   font-size: 12.5px; color: var(--t-62); padding: 0 20px 18px; line-height: 1.42;
+  margin-top: auto;
 }
 .card-sub {
   font-size: 11px; font-weight: 600; color: var(--t-45);
   text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px;
+  overflow-wrap: break-word;
+}
+
+/* ── Two-column card body ────────────────────────────────────────────────────
+   A full-width card carrying KPIs + a chart + two tables runs well past a
+   screen when everything is stacked, and the reader loses the top of the card
+   before reaching the bottom of it. .card-split lays that same content out as
+   two columns *inside* the card, so a tall card becomes a wide one.
+
+   It's a container query, not a media query, on purpose: the split turns on
+   when the CARD is wide enough to hold two readable columns. A card in a
+   half-width grid column stays single-column at every viewport size; the same
+   markup spanning the full grid splits. Pages never have to know which. */
+.card-split {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  gap: var(--gap); align-items: start;
+}
+.card-split > * { min-width: 0; }
+
+@container card (min-width: 680px) {
+  .card-split { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Uneven splits, for when one side is a chart and the other a stat list. */
+  .card-split.split-wide-left  { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); }
+  .card-split.split-wide-right { grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr); }
+}
+
+/* A hairline between the two columns reads as one card divided, rather than as
+   two cards that lost their borders. Only drawn once the split is actually on. */
+@container card (min-width: 680px) {
+  .card-split.split-ruled > *:nth-child(2) {
+    border-left: 1px solid var(--card-line);
+    padding-left: var(--gap);
+  }
 }
 
 /* "i" info affordance pinned top-right */
@@ -335,11 +392,18 @@ body.dark .ic-moon { display: block; }
   transition: background .2s var(--ease-out), color .2s var(--ease-out), border-color .2s var(--ease-out);
 }
 .info-ic:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
+/* Widened from 240px: the longest "how it works" notes (assortment, routing)
+   ran to a dozen lines in a narrow column and spilled off the bottom of the
+   screen. A wider, shorter popover fits on screen without needing to scroll —
+   which it can't, being pointer-events:none. It stays right-anchored, so it
+   opens leftwards from the icon and never crosses the viewport edge. */
 .info-pop {
-  position: absolute; top: calc(100% + 9px); right: -2px; width: 240px;
+  position: absolute; top: calc(100% + 9px); right: -2px;
+  width: min(340px, calc(100vw - 48px));
   background: var(--ink); color: #e8eef7;
-  font: 500 11.5px/1.5 Inter, ui-sans-serif, system-ui;
-  padding: 11px 13px; border-radius: 11px; text-align: left;
+  font: 500 11.5px/1.55 Inter, ui-sans-serif, system-ui;
+  padding: 12px 14px; border-radius: 11px; text-align: left;
+  overflow-wrap: break-word;
   box-shadow: 0 12px 34px rgba(37,53,43,.30);
   opacity: 0; visibility: hidden; transform: translateY(-5px) scale(.98);
   transform-origin: top right; z-index: 40; pointer-events: none;
@@ -366,12 +430,17 @@ body.dark .ic-moon { display: block; }
    Pills / bars / stats
    ========================================================================== */
 
+/* Pills carry short status words most of the time, but some are full sentences
+   ("below margin floor ₹1,240", "at or under market average"). `white-space:
+   nowrap` used to send those straight out of the card, so the pill wraps
+   instead: still one pill, now two lines, nothing clipped. */
 .pill {
   display: inline-flex; align-items: center; gap: 6px;
   border-radius: 999px; padding: 4px 10px;
-  font-size: 11px; font-weight: 600; white-space: nowrap;
+  font-size: 11px; font-weight: 600; line-height: 1.35;
+  max-width: 100%; overflow-wrap: break-word; text-align: left;
 }
-.pill .pdot { width: 7px; height: 7px; border-radius: 999px; flex: none; }
+.pill .pdot { width: 7px; height: 7px; border-radius: 999px; flex: none; align-self: center; }
 .pill.high   { background: var(--accent-soft); color: var(--accent-ink); }
 .pill.high .pdot   { background: var(--accent); }
 .pill.medium { background: var(--warn-soft); color: var(--warn-ink); }
@@ -396,29 +465,64 @@ body.dark .ic-moon { display: block; }
 .bar-fill.danger { background: linear-gradient(90deg, var(--accent-ink), var(--accent)); }
 @keyframes barGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
-.bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
-.bar-row-k { font-size: 12px; color: var(--t-62); flex: 0 0 auto; min-width: 92px; }
-.bar-row-v { font-size: 12px; font-weight: 700; color: var(--ink); flex: none; min-width: 46px; text-align: right; }
-
-/* KPI tiles */
-.kpi-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;
+/* Grid, not flex: the label column can now wrap ("Distance saved vs. baseline")
+   without either stealing the track's width or being cut off, because the three
+   tracks are sized independently. The track keeps a 70px floor so a long label
+   can never collapse the bar into a sliver. */
+.bar-row {
+  display: grid; grid-template-columns: minmax(0, .9fr) minmax(70px, 1.3fr) max-content;
+  align-items: center; gap: 10px; margin-bottom: 9px;
 }
+/* A bar_row() with no label (the aspect-analysis cells) drops the label track
+   entirely rather than reserving blank space for it inside a table cell. */
+.bar-row.nolabel { grid-template-columns: minmax(70px, 1fr) max-content; }
+.bar-row.nolabel > .bar-row-k { display: none; }
+.bar-row-k {
+  font-size: 12px; color: var(--t-62);
+  overflow-wrap: break-word; line-height: 1.35;
+}
+.bar-row-v {
+  font-size: 12px; font-weight: 700; color: var(--ink);
+  min-width: 46px; text-align: right; white-space: nowrap;
+}
+
+/* KPI tiles
+
+   Flex-wrap with grow, not `grid auto-fit`. auto-fit fixes the column count for
+   the whole grid, so four tiles in a card that only fits three per row leave two
+   dead cells on the second row. Flex lets the final row's tiles expand to fill
+   the width instead — no holes at any card width.
+
+   The 178px basis is tuned, not arbitrary. It is small enough that two tiles
+   still pair up in the narrowest place they appear (the ~389px left column of a
+   60/40 split at 1366px, where 190px missed by three pixels and dropped every
+   tile onto its own row) and large enough that a half-width card still lands on
+   a 2x2 block for four KPIs rather than a lopsided 3+1. */
+.kpi-grid { display: flex; flex-wrap: wrap; gap: 12px; }
 .kpi {
+  flex: 1 1 178px; min-width: 0;
   border: 1px solid var(--card-line); border-radius: 12px;
   padding: 11px 14px; background: #fbfcfe;
   transition: border-color .2s var(--ease-out), transform .2s var(--ease-out);
 }
 .kpi:hover { border-color: #cfdbef; transform: translateY(-2px); }
+/* Every line of a tile wraps rather than spilling, so a long value — a routing
+   department, a channel label — stacks inside the tile instead of pushing the
+   row out of the card. `break-word` rather than `anywhere` throughout: both
+   break a genuinely unbreakable string, but `anywhere` also lets the layout
+   shrink an element to one character wide, which turns ordinary words into
+   vertical letter stacks the moment space gets tight. */
 .kpi-k {
   font-size: 10px; font-weight: 700; letter-spacing: .09em;
   text-transform: uppercase; color: var(--t-45);
+  overflow-wrap: break-word;
 }
 .kpi-v {
   font-size: 21px; font-weight: 800; letter-spacing: -.02em;
-  color: var(--ink); margin-top: 3px; line-height: 1.1;
+  color: var(--ink); margin-top: 3px; line-height: 1.15;
+  overflow-wrap: break-word;
 }
-.kpi-d { font-size: 11px; color: var(--t-55); margin-top: 2px; }
+.kpi-d { font-size: 11px; color: var(--t-55); margin-top: 2px; overflow-wrap: break-word; }
 .kpi-d.up   { color: var(--ok-ink); font-weight: 600; }
 .kpi-d.down { color: var(--accent-ink); font-weight: 600; }
 
@@ -434,8 +538,24 @@ body.dark .ic-moon { display: block; }
 .stat-list-scroll { max-height: 220px; overflow-y: auto; }
 .stat-list-scroll::-webkit-scrollbar { width: 6px; }
 .stat-list-scroll::-webkit-scrollbar-thumb { background: #d3d8c7; border-radius: 999px; }
-.stat-k { color: var(--t-62); min-width: 0; }
-.stat-v { font-weight: 700; color: var(--ink); flex: none; }
+
+/* A list whose length is the user's choice (top-N recommendations, class
+   members) scrolls inside a fixed well instead of setting the card's height —
+   otherwise asking for 25 results silently makes the card five screens tall. */
+.scroll-pane {
+  max-height: 520px; overflow-y: auto; padding-right: 4px;
+  /* Room for the scrollbar so the last card's border isn't sat on. */
+}
+.scroll-pane::-webkit-scrollbar { width: 6px; }
+.scroll-pane::-webkit-scrollbar-thumb { background: #d3d8c7; border-radius: 999px; }
+body.dark .scroll-pane::-webkit-scrollbar-thumb { background: #2f4a38; }
+/* Neither side is `flex: none`: a long supplier name and a long value both wrap
+   inside their own half instead of one shoving the other out of the row. */
+.stat-k { color: var(--t-62); flex: 1 1 auto; min-width: 0; overflow-wrap: break-word; }
+.stat-v {
+  font-weight: 700; color: var(--ink);
+  flex: 0 1 auto; min-width: 0; text-align: right; overflow-wrap: break-word;
+}
 
 /* ==========================================================================
    Controls
@@ -530,11 +650,13 @@ body.dark .ic-moon { display: block; }
 .dash-dropdown-option:hover { background: #eaf3ec !important; color: var(--brand) !important; }
 .dash-dropdown-option.selected { background: #eaf3ec !important; color: var(--brand) !important; font-weight: 700; }
 
-/* chips */
+/* chips — some carry a whole example question, so they must be allowed to wrap
+   inside the card rather than run off its right edge. */
 .chip {
-  display: inline-block;
+  display: inline-block; max-width: 100%;
   border: 1px solid var(--card-line); background: #fff; color: var(--t-62);
   border-radius: 999px; padding: 4px 11px; font-size: 10.5px; font-weight: 600;
+  line-height: 1.4; overflow-wrap: break-word;
   cursor: pointer; margin: 0 5px 5px 0;
   transition: background .2s var(--ease-out), color .2s, border-color .2s;
 }
@@ -544,33 +666,74 @@ body.dark .ic-moon { display: block; }
    Tables
    ========================================================================== */
 
-/* table-layout:fixed + width:100% pins the table to its card so many-column
-   tables wrap to fit instead of forcing a horizontal scrollbar on the card. */
-.tbl { width: 100%; border-collapse: collapse; font-size: 12.5px; table-layout: fixed; }
+/* `table-layout: auto`, not `fixed`.
+
+   Fixed gave every column an identical share of the card, so a seven-column
+   table handed "Risk" the same width as "Product" and shredded product names
+   mid-word while the numeric columns sat half empty. Auto lets the browser give
+   each column the width its content actually needs.
+
+   Cells use `break-word`, NOT `anywhere`. The difference is invisible until the
+   table is tight: `anywhere` also drops a column's *minimum* width to a single
+   character, and auto-layout will happily take it — a "Recommended zone" header
+   collapses into one vertical letter per line, and the resulting header row is
+   tall enough to fill the scroll well on its own, hiding every data row behind
+   it. `break-word` keeps each column at least as wide as its longest word while
+   still breaking a genuinely unbreakable string. (The same trap applies to
+   pills in a narrow column, where it split "Bottoms" into "Bottom" / "s".) */
+.tbl { width: 100%; border-collapse: collapse; font-size: 12.5px; table-layout: auto; }
 .tbl th {
   text-align: left; font-size: 10px; font-weight: 700;
   letter-spacing: .1em; text-transform: uppercase; color: var(--t-45);
   padding: 0 10px 9px 0; border-bottom: 1px solid var(--card-line);
-  white-space: normal; overflow-wrap: break-word;
+  white-space: normal; overflow-wrap: break-word; vertical-align: bottom;
 }
 .tbl td {
   padding: 9px 10px 9px 0; border-bottom: 1px solid #f0f3f8; color: var(--t-90);
-  overflow-wrap: break-word; word-break: break-word;
+  overflow-wrap: break-word; vertical-align: top;
 }
 .tbl tr:last-child td { border-bottom: none; }
 .tbl tbody tr { transition: background .18s var(--ease-out); }
 .tbl tbody tr:hover { background: #f7f9fd; }
-.tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
+/* Figures are the one thing that must never wrap — "₹1,24,500" split across two
+   lines is unreadable. Keeping them intact also tells auto-layout that these
+   columns need exactly their own width and no more, which is what leaves the
+   remaining space to the text columns. */
+.tbl .num {
+  text-align: right; font-variant-numeric: tabular-nums;
+  white-space: nowrap; overflow-wrap: normal;
+}
+/* Column-width hints a page can opt into when it knows one column carries the
+   substance (a product name, an issue summary) and the rest are short codes. */
+.tbl .col-wide   { width: 34%; }
+.tbl .col-narrow { width: 1%; white-space: nowrap; }
+
+/* Two or three facts stacked inside one cell — a health score above its risk
+   pill, a product above its class badge. Folding related columns together is
+   what keeps these tables inside their card instead of scrolling sideways, and
+   the small gap stops the stack reading as one run-on line. */
+.cell-stack { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.tbl .num .cell-stack { align-items: flex-end; }
 /* Capped height + vertical scroll: an 8-row table used to push its card past
    a full screen. Five rows stay visible, the rest scroll — the data is still
    there, but one card no longer eats the whole viewport by itself. */
-.tbl-wrap { overflow-x: hidden; overflow-y: auto; max-height: 232px; }
+/* overflow-x is `auto`, not `hidden`. Keeping words intact means a genuinely
+   wide table (seven columns in a split column) can exceed its card; scrolling
+   it inside its own well is honest and readable, whereas hiding the overflow
+   silently amputates the right-hand columns. The page itself still can't scroll
+   sideways — .main-col clips that. */
+.tbl-wrap { overflow-x: auto; overflow-y: auto; max-height: 232px; }
 .tbl-wrap::-webkit-scrollbar { height: 6px; width: 6px; }
 .tbl-wrap::-webkit-scrollbar-thumb { background: #d3d8c7; border-radius: 999px; }
 .tbl thead th { position: sticky; top: 0; background: var(--surface); z-index: 1; }
 /* A table that's clearly the card's one and only focus (no chart/KPIs above
    it) earns the full card instead of a scroll well. */
 .tbl-wrap.tbl-full { max-height: none; }
+/* Inside a split column the card is no longer the tall one, so its tables can
+   afford more rows before the scroll well kicks in. */
+@container card (min-width: 680px) {
+  .card-split .tbl-wrap { max-height: 300px; }
+}
 
 /* ==========================================================================
    Chat
@@ -585,13 +748,22 @@ body.dark .ic-moon { display: block; }
 .chat-bubble-user {
   background: #eef2e8; color: var(--ink);
   border-radius: 14px 14px 14px 4px; padding: 10px 12px;
-  font-size: 12.5px; max-width: 88%; align-self: flex-start;
+  font-size: 12.5px; line-height: 1.5; max-width: 88%; align-self: flex-start;
+  overflow-wrap: break-word;
 }
 .chat-bubble-ai {
   background: linear-gradient(180deg, var(--brand2), var(--navy)); color: #fff;
   border-radius: 14px 14px 4px 14px; padding: 10px 12px;
-  font-size: 12.5px; max-width: 88%; align-self: flex-end; margin-left: auto;
+  font-size: 12.5px; line-height: 1.5; max-width: 88%; align-self: flex-end; margin-left: auto;
+  overflow-wrap: break-word;
   box-shadow: 0 6px 16px rgba(92,143,110,.25);
+}
+/* A bubble used as a standalone answer panel (Agent Assist's matched SOP and
+   suggested response) is not part of a conversation, so it takes the full
+   width of its column instead of hugging one side. */
+.chat-bubble-ai.bubble-block {
+  max-width: 100%; align-self: stretch; margin-left: 0;
+  border-radius: 12px;
 }
 .copilot-in { animation: copilotIn .38s var(--ease-out) both; }
 @keyframes copilotIn {
@@ -604,9 +776,10 @@ body.dark .ic-moon { display: block; }
    ========================================================================== */
 
 .banner {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 16px; border-radius: 13px; font-size: 12.5px;
+  display: flex; align-items: center; gap: 6px 10px; flex-wrap: wrap;
+  padding: 12px 16px; border-radius: 13px; font-size: 12.5px; line-height: 1.5;
   border: 1px solid; margin-bottom: 18px;
+  overflow-wrap: break-word;
 }
 .banner.warn { background: var(--warn-soft); border-color: #eeddb0; color: var(--warn-ink); }
 .banner.err  { background: var(--accent-soft); border-color: #f3cdbb; color: var(--accent-ink); }
@@ -619,12 +792,26 @@ body.dark .ic-moon { display: block; }
    Grid utilities
    ========================================================================== */
 
+/* The console grid.
+
+   `align-items: start`, so every card is exactly as tall as its contents.
+   Stretching cards to a common row height was tried and is worse here: these
+   cards differ enormously (Automated Replenishment beside Warehouse
+   Optimization is a ~430px difference), and a bordered card padded out with
+   that much blank reads as a rendering fault, where two cards of honestly
+   different heights just read as a dashboard. Evenness is bought instead by
+   giving genuinely tall cards the full span and splitting them into columns.
+
+   `grid-auto-flow: dense` is deliberately NOT set. With span-2 cards in the mix
+   it back-fills holes by pulling a *later* card up into an earlier gap, which
+   silently reorders the page against the reading order the page module defines. */
 .grid-2 {
   display: grid; grid-template-columns: repeat(2, minmax(0,1fr));
-  grid-auto-flow: dense; gap: 18px; align-items: start;
+  gap: var(--gap); align-items: start;
 }
 .grid-3 {
-  display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; align-items: start;
+  display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: var(--gap); align-items: start;
 }
 .span-2 { grid-column: span 2 / span 2; }
 
@@ -634,10 +821,14 @@ body.dark .ic-moon { display: block; }
 .center { align-items: center; }
 .grow { flex: 1; min-width: 0; }
 .mt-0 { margin-top: 0; }
+/* .mt-6 was already being used by module4's Agent Assist and had no rule
+   behind it, so those two bubbles sat flush against their own headings. */
+.mt-6 { margin-top: 6px; }
 .mt-8 { margin-top: 8px; }
 .mt-14 { margin-top: 11px; }
 .mb-0 { margin-bottom: 0; }
 .mb-10 { margin-bottom: 8px; }
+.mb-14 { margin-bottom: 11px; }
 .muted { color: var(--t-55); }
 .small { font-size: 11.5px; }
 .tabular { font-variant-numeric: tabular-nums; }
@@ -657,6 +848,9 @@ body.dark .ic-moon { display: block; }
   .page-head { padding: 30px 24px 20px; }
   .module-view { padding: 14px 24px 44px; }
   .page-title { font-size: 32px; }
+  /* Three columns inside ~800px of content column leaves each card too narrow
+     to hold a chart and its axis labels; two is the honest maximum here. */
+  .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
 }
 @media (max-width: 900px) {
   .app-shell { flex-direction: column-reverse; }
@@ -669,6 +863,10 @@ body.dark .ic-moon { display: block; }
   .sidebar-brand { border-bottom: none; }
   .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 14px; }
   .span-2 { grid-column: span 1 / span 1; }
+  /* One column of cards means every card is now as wide as the page, so the
+     stretch-to-row-height that tidied the two-column grid has nothing left to
+     align against — it would only pad cards out for no reason. */
+  .grid-2, .grid-3 { align-items: start; }
 }
 @media (max-width: 560px) {
   .page-head { padding: 22px 16px 16px; }
@@ -678,6 +876,10 @@ body.dark .ic-moon { display: block; }
   .card-pad { padding: 0 18px 18px; }
   .card-caption { padding: 0 18px 18px; font-size: 12.5px; }
   .nav-scroll { grid-template-columns: 1fr; }
+  /* On a phone a KPI tile that insists on 190px forces a single column and a
+     very long scroll; two smaller tiles per row read better. */
+  .kpi { flex-basis: 132px; }
+  .kpi-v { font-size: 18px; }
 }
 
 /* ==========================================================================
@@ -699,6 +901,7 @@ body.dark {
   --shadow-soft: 0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.38);
   --shadow-lift: 0 2px 6px rgba(0,0,0,.45), 0 22px 44px rgba(0,0,0,.55);
 
+  color-scheme: dark;
   color: #e2f2e6;
   background-color: #0c120d;
   background-image:
@@ -813,5 +1016,43 @@ body.dark .route-map .mapboxgl-ctrl-attrib a { color: rgba(207,224,211,.7) !impo
 .main-col { overflow-x: hidden; }
 
 /* A single, standalone card (the AI Assistant tab) shouldn't sprawl across the
-   whole content width — cap it and centre it so it reads as a focused panel. */
-.card-solo { max-width: 900px; margin-inline: auto; }
+   whole content width — cap it and centre it so it reads as a focused panel.
+
+   `width: 100%` is load-bearing, not decoration. Auto inline margins turn a grid
+   item into a shrink-to-fit box, and .card is a query container
+   (container-type: inline-size), which means its width is resolved *without
+   consulting its contents*. Shrink-to-fit with nothing to shrink to is zero: the
+   card collapsed to its 2px of border and every line of text inside it stacked
+   one character per row. Stating an explicit width gives containment a size to
+   work from, and max-width + auto margins still cap and centre it. */
+.card-solo { width: 100%; max-width: 900px; margin-inline: auto; }
+
+/* ── In-card filters ───────────────────────────────────────────────────────
+   Controls that belong to one card sit inside it, directly above the mark they
+   scope. A reader never has to look elsewhere to know what the chart is showing.
+
+   The fields wrap rather than shrink: a dropdown narrow enough to fit three
+   across a phone truncates "Ethnic Wear" to "Ethni…", which makes the control
+   useless at exactly the width where its label matters most. */
+.card-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  align-items: flex-end;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--card-line);
+}
+
+.filter-field { flex: 1 1 170px; min-width: 150px; }
+.filter-field > label { display: block; margin-bottom: 6px; }
+
+/* An open dropdown overflows its card. Cards are position:relative and paint
+   in DOM order, so without this the *next* card down covers the menu — which
+   is exactly what it looked like: a filter you could open but not read.
+   Raising the hosting card lifts it above its later siblings.
+
+   Only the hosting card is raised. Giving every card an explicit z-index would
+   turn each one into a stacking context and trap its info tooltip inside,
+   which is the same bug one layer down. */
+.card.has-filters { z-index: 25; }

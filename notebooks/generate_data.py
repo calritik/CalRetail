@@ -22,38 +22,69 @@ np.random.seed(42)
 fake = Faker("en_IN")
 Faker.seed(42)
 
-# ── Output directory ──────────────────────────────────────────────────────────
-RAW_DIR = Path(__file__).parent.parent / "data" / "raw"
-RAW_DIR.mkdir(parents=True, exist_ok=True)
+from notebooks.pipeline_io import RAW_DB, save_raw
+
+# ── Scale ─────────────────────────────────────────────────────────────────────
+# Event-log tables are multiplied by CALRETAIL_SCALE; dimension tables are not.
+#
+# Keeping customers, products, stores, and inventory at full size is what makes
+# the demo-scale build still look like a real retailer in the console — the
+# catalogue and customer base are untouched, only the volume of behavioural
+# events behind them shrinks. Scaling dimensions too would visibly thin out
+# every dropdown and product grid in the UI.
+SCALE = float(os.environ.get("CALRETAIL_SCALE", "1.0"))
+
+
+def _n(full: int) -> int:
+    """Scale an event-table row count, never below a floor that keeps stats sane."""
+    return max(1_000, int(full * SCALE)) if SCALE < 1.0 else int(full * SCALE)
+
+
+def _q(full: int, floor: int = 1) -> int:
+    """
+    Scale a *quantity*, as opposed to a row count.
+
+    Stock levels have to move with demand. The inventory table keeps all 25,000
+    rows at demo scale, but if the quantities in them stayed at full-scale size
+    while transactions shrank, cover would inflate by exactly the scale factor —
+    every SKU would read as massively overstocked and the markdown card would
+    flag almost the whole catalogue. Scaling stock alongside demand keeps the
+    stock-to-demand ratio, which is what every inventory metric is derived from.
+    """
+    return max(floor, int(round(full * SCALE))) if SCALE < 1.0 else int(full * SCALE)
+
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 START_DATE = date(2022, 1, 1)
 END_DATE   = date(2024, 12, 31)
 DATE_RANGE = pd.date_range(START_DATE, END_DATE, freq="D")
 
+# Dimensions — always full size.
 N_CUSTOMERS   = 10_000
 N_PRODUCTS    = 5_000
 N_STORES      = 150
 N_WAREHOUSES  = 30
 N_SUPPLIERS   = 400
 N_EMPLOYEES   = 2_500
-N_TRANSACTIONS = 300_000
-N_BROWSING    = 900_000
-N_WISHLIST    = 100_000
-N_CART        = 100_000
-N_SEARCH      = 200_000
-N_SESSIONS    = 150_000
-N_PRICING_HIST = 150_000
-N_COMPETITOR  = 100_000
-N_PROMOTIONS  = 20_000
-N_CAMPAIGNS   = 10_000
 N_INVENTORY   = 25_000
-N_INV_MOVES   = 50_000
-N_ORDERS      = 200_000
-N_SHIPMENTS   = 80_000
-N_TICKETS     = 50_000
-N_RETURNS     = 40_000
-N_REVIEWS     = 100_000
+
+# Event logs — scaled.
+N_TRANSACTIONS = _n(300_000)
+N_BROWSING    = _n(900_000)
+N_WISHLIST    = _n(100_000)
+N_CART        = _n(100_000)
+N_SEARCH      = _n(200_000)
+N_SESSIONS    = _n(150_000)
+N_PRICING_HIST = _n(150_000)
+N_COMPETITOR  = _n(100_000)
+N_PROMOTIONS  = _n(20_000)
+N_CAMPAIGNS   = _n(10_000)
+N_INV_MOVES   = _n(50_000)
+N_ORDERS      = _n(200_000)
+N_SHIPMENTS   = _n(80_000)
+N_TICKETS     = _n(50_000)
+N_RETURNS     = _n(40_000)
+N_REVIEWS     = _n(100_000)
 
 CITIES = [
     "Mumbai","Delhi","Bengaluru","Hyderabad","Chennai","Kolkata","Pune","Ahmedabad",
@@ -117,10 +148,28 @@ def rand_dates(n, start=START_DATE, end=END_DATE):
     end_ord   = end.toordinal()
     return [date.fromordinal(random.randint(start_ord, end_ord)) for _ in range(n)]
 
+
+def covering_customers(cust_ids, n):
+    """
+    Return ``n`` customer ids in which every customer appears at least once.
+
+    Picking independently at random leaves a Poisson tail with no rows at all —
+    at demo scale that is roughly 9% of the customer base, and a customer with
+    no history makes the recommendation, chatbot and next-best-offer cards look
+    broken rather than sparse. Seeding the sequence with one row per customer
+    removes that tail; the remainder stays independently random, so the
+    distribution above the floor is unchanged.
+    """
+    ids = list(cust_ids)
+    if n <= len(ids):
+        return random.sample(ids, n)
+    seq = ids + [random.choice(ids) for _ in range(n - len(ids))]
+    random.shuffle(seq)
+    return seq
+
 def save(df: pd.DataFrame, name: str):
-    path = RAW_DIR / f"{name}.csv"
-    df.to_csv(path, index=False)
-    print(f"  ✓  {name}.csv  ({len(df):,} rows)")
+    save_raw(df, name)
+    print(f"  ✓  {name}  ({len(df):,} rows)")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. REFERENCE TABLES
@@ -405,8 +454,9 @@ def generate_transactions(customers_df, products_df, stores_df):
     cat_lookup   = products_df.set_index("product_id")["category"].to_dict()
 
     rows = []
+    txn_customers = covering_customers(cust_ids, N_TRANSACTIONS)
     for i in range(1, N_TRANSACTIONS + 1):
-        cid = random.choice(cust_ids)
+        cid = txn_customers[i - 1]
         seg = seg_lookup.get(cid, "Frequent Buyer")
         pref_cat = pref_lookup.get(cid, random.choice(ALL_CATEGORIES))
 
@@ -607,8 +657,10 @@ def generate_inventory(products_df, stores_df, warehouses_df):
     for i in range(1, N_INVENTORY + 1):
         loc_type = random.choices(["store","warehouse"], weights=[0.60, 0.40])[0]
         pid = random.choice(prod_ids)
-        stock = random.randint(0, 500)
-        reorder = random.randint(20, 100)
+        # Quantities scale with demand; the reorder point scales with them so
+        # the stock:reorder ratio the health metrics key off stays constant.
+        stock = random.randint(0, _q(500, 20))
+        reorder = random.randint(_q(20, 2), _q(100, 8))
         rows.append({
             "inventory_id":    f"INV{i:06d}",
             "product_id":      pid,
@@ -765,6 +817,7 @@ def generate_orders(customers_df, products_df, stores_df):
     statuses = ["Placed","Confirmed","Shipped","Delivered","Cancelled","Returned"]
     weights  = [0.03, 0.05, 0.10, 0.72, 0.05, 0.05]
     rows = []
+    order_customers = covering_customers(cust_ids, N_ORDERS)
     for i in range(1, N_ORDERS + 1):
         pid = random.choice(prod_ids)
         qty = random.randint(1, 3)
@@ -773,7 +826,7 @@ def generate_orders(customers_df, products_df, stores_df):
         est_delivery = order_date + timedelta(days=random.randint(2, 10))
         rows.append({
             "order_id":             f"ORD{i:07d}",
-            "customer_id":          random.choice(cust_ids),
+            "customer_id":          order_customers[i - 1],
             "product_id":           pid,
             "store_id":             random.choice(store_ids + [None]),
             "quantity":             qty,
@@ -954,7 +1007,7 @@ def main():
     print("=" * 60)
     print("  Nexalyze — Synthetic Data Generation")
     print("=" * 60)
-    print(f"  Output → {RAW_DIR}\n")
+    print(f"  Output → {RAW_DB}   (scale {SCALE:g})\n")
 
     # Reference tables
     stores_df     = generate_stores()
@@ -999,7 +1052,7 @@ def main():
 
     print("\n" + "=" * 60)
     print("  All datasets generated successfully!")
-    print(f"  Files saved to: {RAW_DIR}")
+    print(f"  Tables written to: {RAW_DB}")
     print("=" * 60)
 
 

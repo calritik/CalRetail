@@ -1,17 +1,25 @@
 """
-AI Portfolio Overview — the whole capability map from the Calsoft deck
-(slides 4-8) on one screen, with each domain linking through to its console.
+Executive dashboard — the console's landing page.
+
+Every figure here is aggregated from the transaction log at request time by
+/api/v1/overview/*. Nothing is a constant: the quadrant's split lines are the
+medians of the categories actually present, the trend's peak callout is read off
+the series, and the heatmap's scale is keyed to the range in the data. A build at
+a different scale re-renders with different numbers and stays correct.
+
+The page shell returns immediately and every panel fills from its own callback,
+so the landing page never blocks on a rollup — same pattern as the domain pages.
 """
 from __future__ import annotations
 
 import dash
-from dash import dcc, html
+from dash import Input, Output, callback, dcc, html
 
 from frontend_dash.components import cards as C
 from frontend_dash.components.cards import NAV_ICONS
 from frontend_dash.components.layout import module_page
-from frontend_dash.services.api import backend_is_up
-from frontend_dash.services.capabilities import DOMAINS, totals
+from frontend_dash.services.api import api_get, backend_is_up
+from frontend_dash.services.capabilities import DOMAINS
 from frontend_dash.theme import chart_theme as T
 from frontend_dash.theme import colors
 
@@ -19,124 +27,465 @@ dash.register_page(__name__, path="/", name="AI Portfolio")
 
 _DOMAIN_ICON = {"cx": "cx", "merch": "merch", "ops": "ops", "support": "support"}
 
+MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+# SQLite's strftime('%w') is 0=Sunday. Reordered to a Mon-first trading week,
+# which is how a retail calendar is read.
+WEEKDAYS = [(1, "Mon"), (2, "Tue"), (3, "Wed"), (4, "Thu"),
+            (5, "Fri"), (6, "Sat"), (0, "Sun")]
 
-def _wave_chart():
-    """
-    A real Plotly chart, not static CSS bars — so it carries an actual hover
-    tooltip like every other chart in the console, rather than a dead end.
-    """
-    t = totals()
-    scheduled = t["wave1"] + t["wave2"] + t["wave3"]
-    rows = [
-        ("Wave 1", t["wave1"], colors.OK, "Highest data readiness — ships first"),
-        ("Wave 2", t["wave2"], colors.WARN, "Ships once Wave 1 is live"),
-        ("Wave 3", t["wave3"], colors.ACCENT, "Longer build, highest long-run payoff"),
-        ("Unscheduled", t["capabilities"] - scheduled, colors.CARD_LINE, "No wave assigned yet"),
+# Sequential ramp -> Plotly colorscale (one hue, light->dark). Used wherever a
+# mark encodes magnitude, so those marks never need a categorical hue.
+SEQ = [[i / (len(colors.SEQUENTIAL_BLUE) - 1), c]
+       for i, c in enumerate(colors.SEQUENTIAL_BLUE)]
+
+# Two-series charts take slots 1 and 2 of the categorical theme in fixed order.
+# The pair is separation-checked against the card surface: ΔE 18.5 normal,
+# 12.2 under protanopia. Amber sits under 3:1 contrast on white, so every chart
+# using it carries a legend and a direct end-label rather than relying on hue.
+S_REVENUE, S_MARGIN = colors.CATEGORICAL[0], colors.CATEGORICAL[1]
+
+
+ALL = "All"
+
+# Filters belong to the momentum chart alone, not to the page. It is the only
+# panel where slicing changes the reading rather than just shrinking it — the
+# other cards state the whole position, which is what makes them a headline.
+#
+# Year is deliberately absent: growth here *is* a year-on-year comparison, so
+# restricting the rows to a single year would leave nothing to compare against.
+QUAD_FILTERS = [
+    ("hm-f-cat", "Category", "categories"),
+    ("hm-f-channel", "Channel", "channels"),
+    ("hm-f-region", "Region", "regions"),
+]
+
+
+def _params(cat, channel, region):
+    """Filter values as query params, dropping the ones left on All."""
+    p = {"category": cat, "channel": channel, "region": region}
+    return {k: v for k, v in p.items() if v and v != ALL}
+
+
+def _inr(v) -> str:
+    v = float(v or 0)
+    if abs(v) >= 1_00_00_000:
+        return f"₹{v / 10000000:.2f}Cr"
+    if abs(v) >= 1_00_000:
+        return f"₹{v / 100000:.1f}L"
+    return f"₹{v:,.0f}"
+
+
+def _compact(n) -> str:
+    n = float(n or 0)
+    if abs(n) >= 1_000_000:
+        return f"{n / 1_000_000:.1f}M"
+    if abs(n) >= 1_000:
+        return f"{n / 1_000:.1f}K"
+    return f"{n:,.0f}"
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 1 — Estate headline
+# ══════════════════════════════════════════════════════════════════════════════
+
+@callback(Output("hm-estate", "children"), Input("hm-load", "data"))
+def _estate(_):
+    d = api_get("/api/v1/overview/estate")
+    if not d:
+        return C.empty("Estate figures unavailable — is the backend running?")
+    if not d.get("transactions"):
+        return C.empty("No transactions recorded.")
+
+    return [
+        C.kpi_grid([
+            C.kpi("Revenue", _inr(d["revenue"]),
+                  f"{d['period_start'][:4]}–{d['period_end'][:4]}"),
+            C.kpi("Gross margin", _inr(d["margin"]),
+                  f"{d['margin_pct']:.1f}% of revenue", "up"),
+            C.kpi("Units sold", _compact(d["units"]),
+                  f"{_compact(d['transactions'])} transactions"),
+            C.kpi("Buyers", _compact(d["buyers"]),
+                  f"of {_compact(d['customers'])} registered"),
+            C.kpi("Avg basket", _inr(d["avg_basket"]),
+                  f"{d['avg_discount_pct']:.1f}% avg discount"),
+            C.kpi("Returns", f"{d['return_rate_pct']:.1f}%",
+                  "of revenue returned", "down"),
+        ]),
+        html.Div(
+            f"{d['skus_sold']:,} of {d['products']:,} SKUs sold across "
+            f"{d['stores']:,} stores and {d['warehouses']} distribution centres, "
+            f"supplied by {d['suppliers']:,} vendors.",
+            className="small muted mt-14",
+        ),
     ]
-    labels, counts, bar_colors, descs = zip(*rows)
 
-    fig = T.figure(height=210, margin=dict(l=8, r=8, t=6, b=6))
-    fig.add_bar(
-        x=counts, y=labels, orientation="h",
-        marker=dict(color=bar_colors, cornerradius=8),
-        text=[str(n) for n in counts], textposition="outside", cliponaxis=False,
-        customdata=descs,
-        hovertemplate="<b>%{y}</b> · %{x} capabilities<br>%{customdata}<extra></extra>",
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 2 — Revenue and margin over time
+# ══════════════════════════════════════════════════════════════════════════════
+
+@callback(Output("hm-trend", "children"), Input("hm-load", "data"))
+def _trend(_):
+    d = api_get("/api/v1/overview/revenue-trend", {"months": 36})
+    series = (d or {}).get("series") or []
+    if not series:
+        return C.empty("No transaction history to chart.")
+
+    months = [s["month"] for s in series]
+    revenue = [s["revenue"] for s in series]
+    margin = [s["margin"] for s in series]
+
+    # Revenue and margin are both rupees, so they share one axis. Margin is a
+    # component of revenue, which is exactly what the filled band under the line
+    # shows — the gap between the two marks is cost of goods.
+    fig = T.figure(height=260, showlegend=True, margin=dict(l=8, r=8, t=8, b=8))
+    fig.add_scatter(
+        x=months, y=revenue, name="Revenue", mode="lines",
+        line=dict(color=S_REVENUE, width=2), fill="tozeroy",
+        fillcolor="rgba(92,143,110,.13)",
+        hovertemplate="Revenue %{customdata}<extra></extra>",
+        customdata=[_inr(v) for v in revenue],
     )
+    fig.add_scatter(
+        x=months, y=margin, name="Gross margin", mode="lines",
+        line=dict(color=S_MARGIN, width=2),
+        hovertemplate="Margin %{customdata}<extra></extra>",
+        customdata=[_inr(v) for v in margin],
+    )
+    # Direct end-labels: amber falls below 3:1 on this surface, so identity is
+    # never left to hue alone.
+    for name, vals, tone in (("Revenue", revenue, S_REVENUE),
+                             ("Margin", margin, S_MARGIN)):
+        fig.add_annotation(x=months[-1], y=vals[-1], text=f"  {name}",
+                           showarrow=False, xanchor="left", font=dict(color=tone, size=11))
+
     fig.update_layout(
-        hovermode="closest",
-        bargap=.4,
-        yaxis=dict(autorange="reversed"),
-        xaxis=dict(showgrid=True, gridcolor=colors.LIGHT["grid"],
-                   range=[0, max(counts) * 1.35], dtick=5),
+        hovermode="x unified",
+        legend=dict(orientation="h", y=1.14, x=0),
+        xaxis=dict(showgrid=False, tickformat="%b<br>%Y"),
+        yaxis=dict(showgrid=True, gridcolor=colors.LIGHT["grid"],
+                   tickprefix="₹", title="per month"),
     )
-    return fig
 
+    peak = d.get("peak_month")
+    chans = d.get("channels") or []
+    total = sum(c["revenue"] for c in chans) or 1
+    chan_rows = [
+        C.bar_row(c["channel"], f"{c['revenue'] / total * 100:.0f}%",
+                  c["revenue"] / total * 100)
+        for c in chans
+    ]
+
+    return C.split(
+        [html.Div(C.graph(fig, 260))],
+        [
+            C.subhead("Where the revenue comes from"),
+            html.Div(chan_rows),
+            html.Div(
+                f"Strongest month on record is {peak}, at {_inr(d.get('peak_revenue'))}."
+                if peak else "",
+                className="small muted mt-14"),
+        ],
+        weight="wide-left",
+    )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 3 — Category growth / share quadrant
+# ══════════════════════════════════════════════════════════════════════════════
+
+@callback(Output("hm-quadrant", "children"),
+          Input("hm-f-cat", "value"),
+          Input("hm-f-channel", "value"),
+          Input("hm-f-region", "value"))
+def _quadrant(cat, channel, region):
+    d = api_get("/api/v1/overview/category-performance", _params(cat, channel, region))
+    cats = (d or {}).get("categories") or []
+    if not cats:
+        return C.empty("Nothing to plot for this combination.")
+
+    mid_rev = d.get("median_revenue") or 0
+    mid_growth = d.get("median_growth_pct") or 0
+    units = [c["units"] for c in cats]
+    top_units = max(units) or 1
+
+    # Four encodings, no redundancy: position carries revenue and growth, area
+    # carries volume, and colour carries margin on a single-hue ramp. Identity
+    # is on the label beside each bubble, so no categorical hue is needed and
+    # nine categories never become nine competing colours.
+    fig = T.figure(height=380, margin=dict(l=8, r=8, t=10, b=8))
+    fig.add_scatter(
+        x=[c["revenue"] for c in cats],
+        y=[c["growth_pct"] for c in cats],
+        mode="markers+text",
+        text=[c["category"] for c in cats],
+        textposition="top center",
+        textfont=dict(size=11, color=colors.LIGHT["ink"]),
+        marker=dict(
+            size=units, sizemode="area",
+            sizeref=2.0 * top_units / (58 ** 2), sizemin=10,
+            color=[c["margin_pct"] for c in cats],
+            colorscale=SEQ, cmin=min(c["margin_pct"] for c in cats),
+            cmax=max(c["margin_pct"] for c in cats),
+            line=dict(color=colors.SURFACE, width=2),
+            colorbar=dict(title=dict(text="Margin %", side="right"),
+                          thickness=10, len=.7, outlinewidth=0,
+                          tickfont=dict(size=10)),
+        ),
+        customdata=[[_inr(c["revenue"]), c["units"], c["margin_pct"],
+                     c["growth_pct"], c["skus"], c["revenue_share_pct"]] for c in cats],
+        hovertemplate=("<b>%{text}</b><br>Revenue %{customdata[0]} "
+                       "(%{customdata[5]}% of total)<br>"
+                       "Growth %{customdata[3]:+.1f}%<br>"
+                       "Margin %{customdata[2]:.1f}%<br>"
+                       "%{customdata[1]:,} units · %{customdata[4]} SKUs<extra></extra>"),
+    )
+
+    # Split on the medians of what is actually present, so the four quadrants
+    # always carry categories rather than collapsing into one corner.
+    fig.add_hline(y=mid_growth, line=dict(color=colors.LIGHT["axis"], width=1, dash="dot"))
+    fig.add_vline(x=mid_rev, line=dict(color=colors.LIGHT["axis"], width=1, dash="dot"))
+
+    for xa, ya, xs, ys, label in (
+        (1, 1, "right", "top", "Scale &amp; defend"),
+        (0, 1, "left", "top", "Invest to scale"),
+        (1, 0, "right", "bottom", "Protect the margin"),
+        (0, 0, "left", "bottom", "Review or exit"),
+    ):
+        fig.add_annotation(xref="paper", yref="paper", x=xa, y=ya,
+                           xanchor=xs, yanchor=ys, text=label, showarrow=False,
+                           font=dict(size=10, color=colors.LIGHT["ink_muted"]))
+
+    fig.update_layout(
+        xaxis=dict(title=f"Revenue, {d.get('prior_year')}–{d.get('latest_year')}",
+                   showgrid=True, gridcolor=colors.LIGHT["grid"], tickprefix="₹"),
+        yaxis=dict(title=f"Growth, {d.get('latest_year')} vs {d.get('prior_year')} (%)",
+                   showgrid=True, gridcolor=colors.LIGHT["grid"], ticksuffix="%",
+                   zeroline=True, zerolinecolor=colors.LIGHT["axis"]),
+    )
+
+    best = max(cats, key=lambda c: c["growth_pct"])
+    biggest = max(cats, key=lambda c: c["revenue"])
+    dim = d.get("dimension", "category")
+    scope = (f"Sub-categories within {d['drilled_into']}. "
+             if d.get("drilled_into") else "")
+    return [
+        C.graph(fig, 380),
+        html.Div(
+            f"{scope}{biggest['category']} carries the most revenue at "
+            f"{biggest['revenue_share_pct']}% of this slice; {best['category']} is "
+            f"growing fastest at {best['growth_pct']:+.1f}%. Bubble area is units "
+            f"sold, fill is gross margin. Split lines are the {dim} medians.",
+            className="small muted mt-8"),
+    ]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 4 — Trading seasonality
+# ══════════════════════════════════════════════════════════════════════════════
+
+@callback(Output("hm-season", "children"), Input("hm-load", "data"))
+def _season(_):
+    d = api_get("/api/v1/overview/seasonality")
+    cells = (d or {}).get("cells") or []
+    if not cells:
+        return C.empty("Not enough history to show a seasonal pattern.")
+
+    lookup = {(c["month"], c["weekday"]): c for c in cells}
+    z, hover = [], []
+    for wd, wd_label in WEEKDAYS:
+        row, hrow = [], []
+        for m in range(1, 13):
+            cell = lookup.get((m, wd))
+            val = cell["revenue_per_day"] if cell else 0
+            row.append(val)
+            hrow.append(f"{MONTHS[m - 1]} · {wd_label}<br>{_inr(val)} per trading day"
+                        f"<br>{cell['days'] if cell else 0} days observed")
+        z.append(row)
+        hover.append(hrow)
+
+    # Magnitude on a single hue, light to dark — the scale is keyed to the range
+    # present, so a smaller build still reads across the full ramp.
+    fig = T.figure(height=250, margin=dict(l=8, r=8, t=8, b=8))
+    fig.add_heatmap(
+        z=z, x=MONTHS, y=[w[1] for w in WEEKDAYS],
+        colorscale=SEQ, xgap=2, ygap=2,
+        text=hover, hovertemplate="%{text}<extra></extra>",
+        colorbar=dict(title=dict(text="₹/day", side="right"), thickness=10,
+                      len=.85, outlinewidth=0, tickfont=dict(size=10)),
+    )
+    fig.update_layout(xaxis=dict(showgrid=False, side="top"),
+                      yaxis=dict(showgrid=False, autorange="reversed"))
+
+    peak_m = d.get("peak_month")
+    peak_w = d.get("peak_weekday")
+    wd_name = dict(WEEKDAYS).get(peak_w, "—")
+    return [
+        C.graph(fig, 250),
+        html.Div(
+            f"Trade peaks on {wd_name}s in {MONTHS[peak_m - 1]}, averaging "
+            f"{_inr(d.get('peak_revenue_per_day'))} a day. Each cell is revenue "
+            f"per trading day, so months with more selling days don't read as "
+            f"busier than they were."
+            if peak_m else "",
+            className="small muted mt-8"),
+    ]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# 5 — Top movers and the data foundation
+# ══════════════════════════════════════════════════════════════════════════════
+
+@callback(Output("hm-movers", "children"), Input("hm-load", "data"))
+def _movers(_):
+    d = api_get("/api/v1/overview/top-movers", {"limit": 8})
+    rows = (d or {}).get("products") or []
+    if not rows:
+        return C.empty("No product revenue to rank.")
+
+    return [
+        C.table(
+            ["Product", "Units", "Revenue", "Margin"],
+            [[html.Div([html.Div(r["product_name"], style={"fontWeight": 600}),
+                        html.Div(f"{r['brand']} · {r['category']}", className="small muted")]),
+              f"{r['units']:,}", _inr(r["revenue"]), f"{r['margin_pct']:.0f}%"]
+             for r in rows],
+            numeric={1, 2, 3}, wide={0},
+        ),
+        html.Div(f"Ranked on revenue across {d.get('year')}.",
+                 className="small muted mt-8"),
+    ]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Domain navigation
+# ══════════════════════════════════════════════════════════════════════════════
 
 def _domain_card(d):
-    live = sum(c.source == "api" for c in d.capabilities)
     caps = [
         html.Div(
             [
                 html.Span(className="pdot", style={
-                    "width": "6px", "height": "6px", "borderRadius": "999px", "flex": "none",
-                    "background": "var(--brand)",
+                    "width": "6px", "height": "6px", "borderRadius": "999px",
+                    "flex": "none", "background": "var(--brand)",
                 }),
                 html.Span(c.title, className="grow", style={"fontSize": "12.5px"}),
-                html.Span(f"W{c.wave}", className=f"wave w{c.wave}") if c.wave else None,
             ],
-            className="row center",
-            style={"gap": "9px", "padding": "6px 0"},
+            className="row center", style={"gap": "9px", "padding": "5px 0"},
         )
         for c in d.capabilities
     ]
     title = html.Span(
         [html.Span(NAV_ICONS.get(_DOMAIN_ICON[d.key]), className="nav-ic",
-                   style={"marginRight": "10px"}),
-         d.title],
+                   style={"marginRight": "10px"}), d.title],
         className="row center",
     )
     return dcc.Link(
-        C.card(
-            title,
-            [
-                html.Div(d.tagline, className="card-sub"),
-                html.Div(caps),
-                html.Div(
-                    [C.pill(f"{live}/{len(d.capabilities)} live", "low"), C.pill(d.index, "info")],
-                    className="row-wrap", style={"marginTop": "12px"},
-                ),
-            ],
-            caption=d.summary,
-        ),
+        C.card(title, [
+            html.Div(d.tagline, className="card-sub"),
+            html.Div(caps),
+            html.Div([C.pill(f"{len(d.capabilities)} live", "low"),
+                      C.pill(d.index, "info")],
+                     className="row-wrap", style={"marginTop": "10px"}),
+        ]),
         href=d.path,
         style={"textDecoration": "none", "color": "inherit", "display": "block"},
     )
 
 
+def _quadrant_filters():
+    """
+    The momentum card's own controls, rendered inside the card.
+
+    Options come from /overview/filters, so a control can only ever offer a
+    value the data actually contains — no combination here can empty the chart.
+    """
+    opts = api_get("/api/v1/overview/filters") or {}
+    controls = []
+    for fid, label, key in QUAD_FILTERS:
+        values = opts.get(key) or []
+        controls.append(
+            html.Div(
+                [
+                    html.Label(label, className="kpi-k", htmlFor=fid),
+                    dcc.Dropdown(
+                        id=fid, value=ALL, clearable=False,
+                        className="dash-dropdown",
+                        options=[{"label": ALL, "value": ALL}]
+                                + [{"label": str(v), "value": str(v)} for v in values],
+                    ),
+                ],
+                className="filter-field",
+            )
+        )
+    return html.Div(controls, className="card-filters")
+
+
 def layout():
-    t = totals()
     up = backend_is_up()
     banner = [] if up else [C.offline_banner()]
 
-    backend_value = [
-        html.Span(className="status-dot" + ("" if up else " down"),
-                  style={"marginRight": "7px"}),
-        "Online" if up else "Offline",
-    ]
-
     return module_page(
-        "AI Portfolio",
+        "Executive Overview",
         "Retail AI Capability Console",
-        f"{t['capabilities']} AI capabilities across {t['domains']} domains — from "
-        "hyper-personalised discovery through to intelligent customer support, "
-        "built on live retail data.",
+        "The trading position the sixteen AI capabilities operate on — revenue, "
+        "margin, category momentum and seasonality, aggregated live from the "
+        "transaction log.",
         banner + [
+            # Fires once on mount; the unfiltered panels load from it in
+            # parallel so the page paints before any rollup has finished.
+            dcc.Store(id="hm-load", data=1),
+
+            # Reading order: what the position is, how it is trending, where to
+            # put money next, then when and what sells. Each row answers the
+            # question the row above it raises.
+            C.card("Trading position",
+                   dcc.Loading(html.Div(id="hm-estate"), type="dot", color=colors.BRAND),
+                   caption="Aggregated from the transaction log, not a sample.",
+                   span=2),
+
+            html.Div(
+                C.card("Revenue and gross margin by month",
+                       dcc.Loading(html.Div(id="hm-trend"), type="dot", color=colors.BRAND),
+                       caption="Both series are rupees on one scale — the gap between "
+                               "them is cost of goods sold.",
+                       info="Margin is revenue less <b>quantity × cost price</b> per line, "
+                            "joined from the product catalogue.",
+                       span=2),
+                style={"marginTop": "18px"}),
+
+            html.Div(
+                C.card("Category momentum",
+                       [
+                           _quadrant_filters(),
+                           dcc.Loading(html.Div(id="hm-quadrant"), type="dot",
+                                       color=colors.BRAND),
+                       ],
+                       info="Split lines are the <b>medians</b> of what is on screen, not "
+                            "fixed thresholds, so the quadrants stay meaningful at any "
+                            "scale. Choosing a category drills into its sub-categories. "
+                            "There is no year control because growth is itself a "
+                            "year-on-year comparison.",
+                       cls="has-filters",
+                       span=2),
+                style={"marginTop": "18px"}),
+
             html.Div(
                 [
-                    C.card(
-                        "Portfolio at a glance",
-                        C.kpi_grid([
-                            C.kpi("Domains", t["domains"]),
-                            C.kpi("Capabilities", t["capabilities"]),
-                            C.kpi("Live on API", f"{t['live']}/{t['capabilities']}",
-                                  "all served from real data"),
-                            C.kpi("Backend", backend_value, "FastAPI :8000"),
-                        ]),
-                        caption="Every capability on slides 4-7 of the Calsoft Retail AI deck, "
-                                "mapped to what the platform serves today.",
-                    ),
-                    C.card(
-                        "Deployment waves",
-                        C.graph(_wave_chart(), 210),
-                        caption="Wave 1 ships first — highest data readiness and fastest time to value.",
-                        info="Waves are taken straight from the deck's per-capability "
-                             "<b>Speed</b> marker. Unscheduled capabilities carry no wave label.",
-                    ),
+                    C.card("Trading seasonality",
+                           dcc.Loading(html.Div(id="hm-season"), type="dot", color=colors.BRAND),
+                           info="Each cell is revenue per <b>trading day</b>. Months with "
+                                "more selling days would otherwise read as busier than "
+                                "they were."),
+                    C.card("Top movers",
+                           dcc.Loading(html.Div(id="hm-movers"), type="dot", color=colors.BRAND),
+                           caption="The SKUs carrying the most revenue in this slice."),
                 ],
-                className="grid-2",
-            ),
-            html.Div([_domain_card(d) for d in DOMAINS], className="grid-2",
-                     style={"marginTop": "18px"}),
+                className="grid-2", style={"marginTop": "18px"}),
+
+            html.Div(C.subhead("Explore the capabilities"),
+                     style={"marginTop": "24px"}),
+            html.Div([_domain_card(d) for d in DOMAINS], className="grid-2"),
         ],
     )

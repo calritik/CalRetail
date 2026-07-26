@@ -18,7 +18,7 @@ from dash import Input, Output, State, callback, dcc, html
 
 from frontend_dash.components import cards as C
 from frontend_dash.components.layout import module_page
-from frontend_dash.services.api import api_get, api_post
+from frontend_dash.services.api import api_get, api_post, last_failure
 from frontend_dash.services.capabilities import OPERATIONS as D
 from frontend_dash.services.capabilities import cap
 from frontend_dash.theme import chart_theme as T
@@ -49,6 +49,22 @@ def _inr(v: float) -> str:
     if abs(v) >= 1_00_000:
         return f"₹{v / 100000:.1f}L"
     return f"₹{v:,.0f}"
+
+
+def _unavailable(path: str, no_data: str):
+    """
+    Empty state that distinguishes "this endpoint isn't there" from "this
+    endpoint returned nothing".
+
+    Both look identical to api_get (it returns None either way), and saying
+    "no sales history for this product" when the route actually 404s sends the
+    reader off to check the data for a problem that is in the API surface.
+    """
+    if last_failure(path) == "missing":
+        return C.empty(f"This view needs {path}, which the backend does not serve yet.")
+    if last_failure(path):
+        return C.empty("Backend did not respond to this request.")
+    return C.empty(no_data)
 
 
 def _product_options(limit: int = 60):
@@ -116,25 +132,40 @@ def _card_inventory(prods):
 
     worst = sorted(rows, key=lambda r: (float(r.get("health_score") or 0),
                                         -float(r.get("stockout_risk") or 0)))[:8]
+    # Five columns, not seven. Seven each demanded their header's longest word
+    # ("LOCATION", "STOCKOUT", "HEALTH"…) and together they outgrew the half-card
+    # this table sits in, forcing a sideways scroll to read a row. Two pairs
+    # collapse without losing anything: where a SKU sits belongs with the SKU,
+    # and a health score and its risk label are one judgement, not two.
     tbl = []
     for r in worst:
         where = r.get("location_name") or r.get("store_id") or r.get("warehouse_id") or "—"
+        loc_type = r.get("location_type", "")
         tbl.append([
-            html.Div([html.Div(r.get("product_name", "—"), style={"fontWeight": 600}),
-                      html.Div(r.get("category", ""), className="small muted")]),
-            html.Div([html.Div(where), html.Div(r.get("location_type", ""),
-                                                className="small muted")]),
+            html.Div([
+                html.Div(r.get("product_name", "—"), style={"fontWeight": 600}),
+                html.Div(f"{r.get('category', '')} · {where}".strip(" ·"),
+                         className="small muted"),
+                html.Div(loc_type, className="small muted") if loc_type else None,
+            ]),
             f"{r.get('stock_qty', 0):,}",
             f"{float(r.get('days_cover') or 0):,.0f}",
             f"{float(r.get('stockout_risk') or 0) * 100:.0f}%",
-            f"{float(r.get('health_score') or 0):.2f}",
-            C.pill(r.get("risk_label", "—"), r.get("risk_label", "")),
+            html.Div([
+                html.Div(f"{float(r.get('health_score') or 0):.2f}",
+                         className="tabular", style={"fontWeight": 700}),
+                C.pill(r.get("risk_label", "—"), r.get("risk_label", "")),
+            ], className="cell-stack"),
         ])
 
     # Markdown buy-list: the opposite failure to stockout — SKUs with negligible
     # stockout risk and cover far past the replenishment cycle, where a markdown
     # frees capital. Server-computed and ranked by the value tied up.
     md = api_get("/api/v1/operations/markdown-candidates", {"top_n": 8}) or {}
+    # Five columns for the same reason as the buy-list above: six made this
+    # table wider than the half-card it lives in. The capital tied up in a SKU
+    # and the markdown suggested against it are one recommendation — "this much
+    # money is stuck, cut this much off" — so they share a cell.
     md_rows = []
     for c in md.get("candidates") or []:
         md_rows.append([
@@ -143,42 +174,62 @@ def _card_inventory(prods):
             f"{c['stock']:,}",
             f"{c['days_cover']:,.0f}",
             f"{c['stockout_risk_pct']:.0f}%",
-            _inr(c["stock_value"]),
-            C.pill(f"−{c['suggested_markdown_pct']}%", "medium"),
+            html.Div([
+                html.Div(_inr(c["stock_value"]), className="tabular",
+                         style={"fontWeight": 700}),
+                C.pill(f"−{c['suggested_markdown_pct']}%", "medium"),
+            ], className="cell-stack"),
         ])
 
     return C.card(
         cap("ops", "inventory").title,
         [
-            C.kpi_grid([
-                C.kpi("SKUs monitored", f"{len(rows):,}", "stores + DCs"),
-                C.kpi("At risk", f"{len(at_risk):,}", "stockout exposure", "down"),
-                C.kpi("Overstocked", f"{md.get('overstocked_skus', len(overstocked)):,}",
-                      "capital tied up", "down"),
-                C.kpi("Avg health score", f"{avg_health:.2f}", "0 = critical · 1 = healthy"),
-            ]),
-            html.Div(C.graph(fig, 190), className="mt-14"),
-            html.Div("Weakest positions — the replenishment buy-list", className="card-sub mt-14"),
-            C.table(["Product", "Location", "Stock", "Days cover", "Stockout risk", "Health", "Risk"],
-                    tbl, numeric={2, 3, 4, 5}),
-            html.Div("Markdown candidates — overstocked / idle capital to discount",
-                     className="card-sub mt-14"),
-            C.table(["Product", "Stock", "Days cover", "Stockout risk", "Capital tied up",
-                     "Suggested markdown"], md_rows, numeric={1, 2, 3, 4})
-            if md_rows else C.empty("No markdown candidates."),
-            html.Div(
-                f"Discounting these frees ~{_inr(md.get('freed_at_markdown', 0))} of "
-                f"working capital at the suggested markdowns.",
-                className="small muted mt-8") if md_rows else None,
-            html.Div("Datewise demand for one SKU", className="card-sub mt-14"),
-            html.Div(
-                dcc.Dropdown(id="op-inv-prod", options=prods,
-                             value=prods[0]["value"] if prods else None,
-                             clearable=False, className="dash-dropdown grow",
-                             placeholder="Select a product"),
-                className="cp-row",
+            # Two opposite failures, one per column: too little stock on the
+            # left, too much on the right. Stacked they read as one long list
+            # and the contrast — which is the whole point of the card — is lost.
+            C.split(
+                [
+                    C.kpi_grid([
+                        C.kpi("SKUs monitored", f"{len(rows):,}", "stores + DCs"),
+                        C.kpi("At risk", f"{len(at_risk):,}", "stockout exposure", "down"),
+                        # Sample-scoped, like the three KPIs beside it. The
+                        # estate-wide overstock count lives under the markdown
+                        # table instead — mixing the two scopes in one grid read
+                        # as "50 SKUs monitored, 10,411 overstocked".
+                        C.kpi("Overstocked", f"{len(overstocked):,}",
+                              "capital tied up", "down"),
+                        C.kpi("Avg health score", f"{avg_health:.2f}", "0 = critical · 1 = healthy"),
+                    ]),
+                    html.Div(C.graph(fig, 190), className="mt-14"),
+                    C.subhead("Weakest positions — the replenishment buy-list"),
+                    C.table(["Product", "Stock", "Days cover", "Stockout", "Health"],
+                            tbl, numeric={1, 2, 3}, wide={0}),
+                ],
+                [
+                    C.subhead("Markdown candidates — overstocked / idle capital"),
+                    C.table(["Product", "Stock", "Days cover", "Stockout",
+                             "Tied up · markdown"],
+                            md_rows, numeric={1, 2, 3, 4}, wide={0})
+                    if md_rows else _unavailable(
+                        "/api/v1/operations/markdown-candidates",
+                        "No SKU currently carries enough idle cover to mark down."),
+                    html.Div(
+                        f"{md.get('overstocked_skus', 0):,} positions across the estate hold "
+                        f"{_inr(md.get('capital_tied_up', 0))} above their planned level. "
+                        f"Clearing the SKUs above at the suggested markdowns recovers "
+                        f"~{_inr(md.get('freed_at_markdown', 0))}.",
+                        className="small muted mt-8") if md_rows else None,
+                    C.subhead("Datewise demand for one SKU"),
+                    html.Div(
+                        dcc.Dropdown(id="op-inv-prod", options=prods,
+                                     value=prods[0]["value"] if prods else None,
+                                     clearable=False, className="dash-dropdown grow",
+                                     placeholder="Select a product"),
+                        className="cp-row",
+                    ),
+                    html.Div(id="op-inv-datewise"),
+                ],
             ),
-            html.Div(id="op-inv-datewise"),
         ],
         caption="Where stock is thin (buy-list) and where it is idle (markdown list) — plus the "
                 "real daily-demand history behind any single SKU.",
@@ -198,7 +249,8 @@ def _inventory_datewise(product_id):
     d = api_get("/api/v1/operations/inventory-timeseries", {"product_id": product_id, "days": 120})
     series = (d or {}).get("series") or []
     if not series:
-        return C.empty("No daily sales history for this product.")
+        return _unavailable("/api/v1/operations/inventory-timeseries",
+                            "No daily sales history for this product.")
 
     fig = T.figure(height=200, margin=dict(l=8, r=8, t=6, b=6))
     fig.add_bar(x=[p["date"] for p in series], y=[p["qty"] for p in series],
@@ -252,6 +304,11 @@ def _card_replenishment(opts):
         info="<b>Policy:</b> a min/max rule — when stock falls to the <b>reorder point</b> "
              "(demand over lead time plus safety stock), order back up to max. Supplier "
              "reliability widens the safety buffer.",
+        # Full width, like the other three cards on this page. Half-width, this
+        # card and Warehouse Optimization differed by ~430px of height and the
+        # row read as broken; full width both of them split into two columns and
+        # the page becomes four even bands instead.
+        span=2,
     )
 
 
@@ -281,25 +338,34 @@ def _replenishment(_n, product_id):
     fig.update_layout(hovermode="closest",
                       xaxis=dict(showgrid=True, gridcolor=colors.LIGHT["grid"], title="Units"))
 
+    # Left: the order to place. Right: the policy thresholds it came from.
     return [
-        C.kpi_grid([
-            C.kpi("Reorder qty", f"{d.get('reorder_qty', 0):,} units"),
-            C.kpi("Lead time", f"{float(d.get('lead_time_days') or 0):.0f} days",
-                  d.get("supplier_name", "")),
-            C.kpi("Estimated cost", _inr(d.get("estimated_cost")), "at last landed price"),
-        ]),
-        html.Div(C.graph(fig, 170), className="mt-14"),
-        html.Div(C.stat_list([
-            ("Supplier", d.get("supplier_name", "—")),
-            ("Safety stock", f"{d.get('safety_stock', 0):,} units"),
-            ("Reorder point", f"{d.get('reorder_point', 0):,} units"),
-            ("Max stock", f"{d.get('max_stock', 0):,} units"),
-        ]), className="mt-14"),
-        html.Div(C.bar_row("Supplier reliability", f"{rel * 100:.0f}%", rel * 100,
-                           "ok" if rel >= .8 else "warn" if rel >= .6 else "danger"),
-                 className="mt-14"),
-        html.Div(C.pill("Urgent — order today" if urgent else "Within tolerance",
-                        "high" if urgent else "low"), className="mt-8"),
+        C.split(
+            [
+                C.kpi_grid([
+                    C.kpi("Reorder qty", f"{d.get('reorder_qty', 0):,} units"),
+                    C.kpi("Lead time", f"{float(d.get('lead_time_days') or 0):.0f} days",
+                          d.get("supplier_name", "")),
+                    C.kpi("Estimated cost", _inr(d.get("estimated_cost")),
+                          "at last landed price"),
+                ]),
+                html.Div(C.pill("Urgent — order today" if urgent else "Within tolerance",
+                                "high" if urgent else "low"), className="mt-14"),
+                html.Div(C.graph(fig, 190), className="mt-14"),
+            ],
+            [
+                C.subhead("Policy thresholds"),
+                C.stat_list([
+                    ("Supplier", d.get("supplier_name", "—")),
+                    ("Safety stock", f"{d.get('safety_stock', 0):,} units"),
+                    ("Reorder point", f"{d.get('reorder_point', 0):,} units"),
+                    ("Max stock", f"{d.get('max_stock', 0):,} units"),
+                ]),
+                html.Div(C.bar_row("Supplier reliability", f"{rel * 100:.0f}%", rel * 100,
+                                   "ok" if rel >= .8 else "warn" if rel >= .6 else "danger"),
+                         className="mt-14"),
+            ],
+        ),
     ]
 
 
@@ -327,6 +393,10 @@ def _card_warehouse(opts):
         info="<b>Method:</b> SKUs ranked by movement, cut at the 80/95% cumulative "
              "thresholds into <b>A/B/C</b> classes, then mapped onto pick zones by "
              "walking distance. Savings are modelled travel time, not headcount.",
+        # The densest card on the page: KPIs, a donut, a three-row legend and
+        # two tables. At half width it ran ~850px; split across the full grid it
+        # halves, and the six-column movers table stops being cramped.
+        span=2,
     )
 
 
@@ -358,14 +428,20 @@ def _warehouse(_n, warehouse_id):
                 hovertemplate="%{label}<br>%{value} SKUs (%{percent})<extra></extra>")
     fig.update_layout(hovermode="closest")
 
+    # The ABC pill moves into the product cell and "Recommended zone" becomes
+    # "Target zone": six columns in a half-card could not fit, and "RECOMMENDED"
+    # was on its own the widest header in the console — a single word no column
+    # could be narrower than.
     top = sorted(plan, key=lambda r: -float(r.get("total_movements") or 0))[:6]
     tbl = []
     for r in top:
         moved = (r.get("assigned_zone") or "") != (r.get("recommended_zone") or "")
         tbl.append([
-            html.Div([html.Div(r.get("product_name", "—"), style={"fontWeight": 600}),
-                      html.Div(r.get("category", ""), className="small muted")]),
-            C.pill(f"Class {r.get('abc_class', '—')}", "info"),
+            html.Div([
+                html.Div(r.get("product_name", "—"), style={"fontWeight": 600}),
+                html.Div(r.get("category", ""), className="small muted"),
+                C.pill(f"Class {r.get('abc_class', '—')}", "info"),
+            ], className="cell-stack"),
             f"{float(r.get('total_movements') or 0):,.0f}",
             f"{float(r.get('avg_daily_demand') or 0):,.1f}",
             html.Div([html.Div(r.get("recommended_zone", "—")),
@@ -397,28 +473,35 @@ def _warehouse(_n, warehouse_id):
 
     class_opts = [{"label": f"Class {k} · {summary.get(k, 0)} SKUs", "value": k} for k in order]
 
+    # Left: the class mix and what the classes mean. Right: the SKUs themselves.
     return [
-        C.kpi_grid([
-            C.kpi("Pick time reduction",
-                  f"{float(d.get('estimated_pick_time_reduction_pct') or 0):.1f}%",
-                  "vs. current slotting", "up"),
-            C.kpi("SKUs slotted", f"{len(plan):,}"),
-            C.kpi("Class A share", f"{counts[0] / total * 100:.0f}%" if counts else "—",
-                  "of the golden zone"),
-        ]),
-        html.Div(C.graph(fig, 200), className="mt-14"),
-        legend,
-        html.Div("Top movers — biggest pick-travel wins", className="card-sub mt-14"),
-        C.table(["Product", "ABC", "Movements", "Daily demand", "Recommended zone", "Pick saving"],
-                tbl, numeric={2, 3, 5}),
-        html.Div("Which products sit in each class", className="card-sub mt-14"),
-        html.Div(
-            dcc.Dropdown(id="op-wh-class", options=class_opts,
-                         value=order[0] if order else None,
-                         clearable=False, className="dash-dropdown grow"),
-            className="cp-row",
+        C.split(
+            [
+                C.kpi_grid([
+                    C.kpi("Pick time reduction",
+                          f"{float(d.get('estimated_pick_time_reduction_pct') or 0):.1f}%",
+                          "vs. current slotting", "up"),
+                    C.kpi("SKUs slotted", f"{len(plan):,}"),
+                    C.kpi("Class A share", f"{counts[0] / total * 100:.0f}%" if counts else "—",
+                          "of the golden zone"),
+                ]),
+                html.Div(C.graph(fig, 200), className="mt-14"),
+                legend,
+            ],
+            [
+                C.subhead("Top movers — biggest pick-travel wins"),
+                C.table(["Product", "Movements", "Daily demand", "Target zone", "Pick saving"],
+                        tbl, numeric={1, 2, 4}, wide={0}),
+                C.subhead("Which products sit in each class"),
+                html.Div(
+                    dcc.Dropdown(id="op-wh-class", options=class_opts,
+                                 value=order[0] if order else None,
+                                 clearable=False, className="dash-dropdown grow"),
+                    className="cp-row",
+                ),
+                html.Div(id="op-wh-class-out"),
+            ],
         ),
-        html.Div(id="op-wh-class-out"),
     ]
 
 
@@ -444,7 +527,8 @@ def _warehouse_class(abc_class, warehouse_id):
     ]
     return [
         html.Div(f"{len(members):,} SKUs in Class {abc_class}", className="small muted mb-10"),
-        C.table(["Product", "Movements", "Daily demand", "Recommended zone"], rows, numeric={1, 2}),
+        C.table(["Product", "Movements", "Daily demand", "Target zone"], rows,
+                numeric={1, 2}, wide={0}),
     ]
 
 
@@ -650,25 +734,36 @@ def _route(_n, warehouse_id):
             crumbs.append(html.Span("›", className="small muted"))
         crumbs.append(html.Span(label, className="chip"))
 
+    # The map is the card. Everything numeric about the tour moves into a
+    # narrower left column so the map keeps roughly 60% of the width instead of
+    # being a 440px band with four separate blocks stacked underneath it.
     return [
-        C.kpi_grid([
-            C.kpi("Optimised distance", f"{float(d.get('optimised_distance_km') or 0):,.0f} km"),
-            C.kpi("Baseline distance", f"{float(d.get('baseline_distance_km') or 0):,.0f} km",
-                  "unoptimised round trips"),
-            C.kpi("Distance saved", f"{float(d.get('distance_saved_km') or 0):,.0f} km",
-                  f"{saving:.1f}% shorter", "up"),
-            C.kpi("Drive time", f"{float(d.get('estimated_time_hrs') or 0):,.1f} hrs",
-                  "single vehicle"),
-            C.kpi("Orders on board", f"{d.get('total_orders', 0):,}",
-                  f"{len(pts)} drops"),
-        ]),
-        html.Div(dcc.Graph(figure=fig, config=MAP_CONFIG,
-                           className="route-map", style={"height": "440px"}),
-                 className="mt-14"),
-        html.Div(crumbs, className="row-wrap mt-14"),
-        html.Div(C.bar_row("Distance saved vs. baseline", f"{saving:.1f}%", saving,
-                           "ok" if saving >= 20 else "warn" if saving >= 8 else "danger"),
-                 className="mt-14"),
+        C.split(
+            [
+                C.kpi_grid([
+                    C.kpi("Optimised distance",
+                          f"{float(d.get('optimised_distance_km') or 0):,.0f} km"),
+                    C.kpi("Baseline distance",
+                          f"{float(d.get('baseline_distance_km') or 0):,.0f} km",
+                          "unoptimised round trips"),
+                    C.kpi("Distance saved", f"{float(d.get('distance_saved_km') or 0):,.0f} km",
+                          f"{saving:.1f}% shorter", "up"),
+                    C.kpi("Drive time", f"{float(d.get('estimated_time_hrs') or 0):,.1f} hrs",
+                          "single vehicle"),
+                    C.kpi("Orders on board", f"{d.get('total_orders', 0):,}",
+                          f"{len(pts)} drops"),
+                ]),
+                html.Div(C.bar_row("Distance saved vs. baseline", f"{saving:.1f}%", saving,
+                                   "ok" if saving >= 20 else "warn" if saving >= 8
+                                   else "danger"),
+                         className="mt-14"),
+                C.subhead("Visiting order"),
+                html.Div(crumbs, className="row-wrap"),
+            ],
+            dcc.Graph(figure=fig, config=MAP_CONFIG,
+                      className="route-map", style={"height": "460px"}),
+            weight="wide-right",
+        ),
     ]
 
 

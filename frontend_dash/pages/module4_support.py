@@ -213,12 +213,18 @@ def _card_agent_assist(opts):
                       for i, q in enumerate(AGENT_QUERIES)], className="mb-10"),
             html.Div(id="su-aa-out"),
         ],
-        caption="Real-time resolution suggestion and relevant SOP retrieval for the live agent — all from the knowledge base.",
+        caption="The step to take now, and the resolved tickets it was drawn from.",
         info=(
-            "<b>Source:</b> notebook 15 encodes the support knowledge base and retrieves "
-            "relevant SOPs + resolution steps from real ticket history. "
-            "Customer context is pulled live from the backend."
+            "<b>Source:</b> notebook 15 encodes the support knowledge base and retrieves the "
+            "closest resolved tickets from real ticket history. The <b>recommended next step</b> "
+            "is the reply that worked on the nearest of them, and <b>match confidence</b> is that "
+            "ticket's similarity score — so a low number means the suggestion is a weak analogy, "
+            "not a verified answer."
         ),
+        # An SOP, a suggested reply and a similar-case table are three long
+        # blocks; at half width they stack into the tallest card on the page and
+        # leave the column beside it empty. Full width lets them sit in two.
+        span=2,
     )
 
 
@@ -243,46 +249,72 @@ def _agent_assist(_n, query_text, customer_id):
     if not data:
         return C.empty("Agent assist unavailable — is the backend running?")
 
-    # The notebook returns: suggested_response, matched_sop, confidence, similar_cases
-    sop         = data.get("matched_sop") or data.get("sop", "")
-    confidence  = float(data.get("confidence", 0) or 0)
-    response    = data.get("suggested_response") or data.get("resolution", "—")
-    cases       = data.get("similar_cases") or []
+    # Read against what /support/agent-assist actually returns:
+    #   recommended_sop     — the step to take, lifted from the closest ticket
+    #   matched_tickets     — the retrieved neighbours, with their similarity
+    #   knowledge_articles  — {title, url} links into the knowledge base
+    # The card previously read matched_sop / suggested_response / similar_cases /
+    # confidence / category, none of which this endpoint has ever sent, so every
+    # block resolved to its fallback and the card rendered essentially blank.
+    cases = data.get("matched_tickets") or data.get("suggested_responses") or []
+    sop = data.get("recommended_sop") or ""
+    articles = data.get("knowledge_articles") or []
+
+    # Retrieval confidence isn't sent as its own field — the closest neighbour's
+    # similarity is exactly that number, so it's read off the top match rather
+    # than invented or hidden.
+    confidence = max((float(c.get("similarity", 0) or 0) for c in cases), default=0.0)
+    category = cases[0].get("category") if cases else None
 
     pills = []
-    category = data.get("category") or data.get("ticket_category")
     if category:
-        pills.append(C.pill(f"category · {category}", "info"))
+        pills.append(C.pill(f"closest category · {category}", "info"))
     if confidence:
         tone = "ok" if confidence >= 0.7 else "warn" if confidence >= 0.4 else "danger"
-        pills.append(C.pill(f"confidence · {confidence:.0%}", tone))
+        pills.append(C.pill(f"match confidence · {confidence:.0%}", tone))
 
-    parts = [html.Div(pills, className="row-wrap mb-10")] if pills else []
+    # Left: what to say to this customer, right now. Right: the history that
+    # backs it. The agent acts on the left column and audits the right one, so
+    # neither should have to be scrolled past to reach the other.
+    left = [html.Div(pills, className="row-wrap mb-10")] if pills else []
 
-    if sop:
-        parts.append(html.Div([
-            html.Div("Matched SOP", className="card-sub"),
-            html.Div(sop, className="chat-bubble-ai copilot-in mt-6"),
-        ], className="mb-10"))
+    left.append(html.Div([
+        html.Div("Recommended next step", className="card-sub"),
+        html.Div(sop or "No SOP matched this query closely enough to recommend one.",
+                 className="chat-bubble-ai bubble-block copilot-in mt-6"),
+    ], className="mb-14"))
 
-    parts.append(html.Div([
-        html.Div("Suggested response", className="card-sub"),
-        html.Div(response, className="chat-bubble-ai copilot-in mt-6"),
-    ], className="mb-10"))
+    if articles:
+        left.append(html.Div([
+            html.Div("Knowledge base", className="card-sub"),
+            html.Div([html.A(a.get("title", "Untitled article"),
+                             href=a.get("url", "#"), target="_blank",
+                             rel="noopener noreferrer", className="chip")
+                      for a in articles], className="row-wrap"),
+        ]))
 
+    right = []
     if cases:
-        rows = [[c.get("ticket_id", "—"), c.get("issue_summary", "—"),
-                 c.get("resolution_summary", "—"),
-                 f"{float(c.get('similarity', 0)):.2f}"] for c in cases[:5]]
-        parts.append(C.table(
-            ["Ticket", "Issue", "Resolution", "Similarity"],
-            rows, numeric={3},
+        # The ticket reference is deliberately not shown: it means nothing to
+        # the agent reading this, while the category tells them what kind of
+        # case they are being pointed at.
+        rows = [[c.get("category", "—"),
+                 c.get("description", "—"),
+                 c.get("suggested_reply", "—"),
+                 f"{float(c.get('similarity', 0) or 0):.2f}"] for c in cases[:5]]
+        right.append(html.Div("Closest resolved tickets", className="card-sub"))
+        right.append(C.table(
+            ["Case type", "Issue", "How it was resolved", "Match"],
+            rows, numeric={3}, wide={2}, narrow={0},
         ))
+        right.append(html.Div(
+            C.bar_row("Top match confidence", f"{confidence:.0%}",
+                      confidence * 100, _conf_tone(confidence)),
+            className="mt-14"))
+    else:
+        right = [C.empty("No comparable tickets in the knowledge base yet.")]
 
-    if confidence:
-        parts.append(C.bar_row("Retrieval confidence", f"{confidence:.0%}",
-                                confidence * 100, _conf_tone(confidence)))
-    return parts
+    return [C.split(left, right)]
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -374,7 +406,7 @@ def _voc(_n, product_id, date_from, date_to):
                        range=[1, 5.2]),
         )
         chart_block = [html.Div("Monthly rating trend", className="card-sub mt-14"),
-                       C.graph(fig, 190)]
+                       C.graph(fig, 200)]
 
     # ── Aspect analysis ────────────────────────────────────────────────────────
     aspect_block = []
@@ -391,9 +423,13 @@ def _voc(_n, product_id, date_from, date_to):
         ]
         aspect_block = [html.Div("Aspect analysis", className="card-sub mt-14"),
                         C.table(["Aspect", "Mentions", "Avg rating", "% Positive"],
-                                aspect_rows, numeric={1, 2})]
+                                aspect_rows, numeric={1, 2}, wide={3})]
+    else:
+        aspect_block = [C.empty("No aspect-level signal in this slice of reviews.")]
 
-    return [kpis, *chart_block, *aspect_block]
+    # Volume and trend on the left, what reviewers actually talk about on the
+    # right — the two questions this card answers, answered in parallel.
+    return [C.split([kpis, *chart_block], aspect_block)]
 
 
 # ══════════════════════════════════════════════════════════════════════════════

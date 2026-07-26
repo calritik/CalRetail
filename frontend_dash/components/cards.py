@@ -79,6 +79,37 @@ def card(title, body, caption: str = "", info: str = "", span: int = 1,
     return html.Article(children, className=classes, **kw)
 
 
+def split(left, right, weight: str = "", ruled: bool = True):
+    """
+    Lays a card's body out as two columns side by side.
+
+    A card carrying KPIs, a chart and two tables is several screens tall when
+    everything is stacked, and by the time the reader reaches the bottom the
+    heading that framed it is long gone. Splitting turns that tall card into a
+    wide one.
+
+    The split is driven by a container query on the card, not by the viewport
+    (see .card-split in style.css), so this is safe to use anywhere: a card in a
+    half-width grid column keeps both halves stacked, and the same call splits
+    once the card spans the full grid. Pages don't have to reason about width.
+
+    left / right — the two columns; either may be a list of components.
+    weight       — "" for equal halves, "wide-left" or "wide-right" for ~60/40.
+    ruled        — draw the hairline between the columns.
+    """
+    cls = "card-split"
+    if weight:
+        cls += f" split-{weight}"
+    if ruled:
+        cls += " split-ruled"
+    return html.Div([html.Div(left), html.Div(right)], className=cls)
+
+
+def subhead(text):
+    """A small uppercase label introducing a block inside a card."""
+    return html.Div(text, className="card-sub mt-14")
+
+
 # ── Small primitives ─────────────────────────────────────────────────────────
 
 def money(v, exact_below: float = 100000) -> str:
@@ -120,7 +151,13 @@ def kpi_grid(items):
 
 
 def bar_row(label, value_text, pct: float, tone: str = ""):
-    """Labelled progress bar. pct is 0-100; tone: '' | ok | warn | danger."""
+    """
+    Labelled progress bar. pct is 0-100; tone: '' | ok | warn | danger.
+
+    Passing an empty label drops the label column entirely rather than leaving
+    a blank track — the aspect-analysis table puts these inside a narrow cell,
+    where reserving space for a label that isn't there squeezed the bar.
+    """
     pct = max(0.0, min(100.0, float(pct or 0)))
     return html.Div(
         [
@@ -131,7 +168,7 @@ def bar_row(label, value_text, pct: float, tone: str = ""):
             ),
             html.Span(value_text, className="bar-row-v tabular"),
         ],
-        className="bar-row",
+        className="bar-row" if label else "bar-row nolabel",
     )
 
 
@@ -153,23 +190,47 @@ def stat_list(pairs):
     return html.Div([stat_row(k, v) for k, v in pairs], className=cls)
 
 
-def table(headers, rows, numeric: set[int] | None = None):
+def table(headers, rows, numeric: set[int] | None = None,
+          wide: set[int] | None = None, narrow: set[int] | None = None,
+          full: bool = False):
     """
     Compact data table.
+
     headers — list of column labels
     rows    — list of row lists (cells may be strings or components)
-    numeric — indexes to right-align + tabular-align
+    numeric — indexes to right-align, tabular-align and keep on one line
+    wide    — indexes that carry the substance (a product name, an issue
+              summary) and should be given a generous share of the width
+    narrow  — indexes holding a short code or pill, shrunk to their content
+    full    — the table is the card's whole point, so it gets the card's height
+              instead of the 232px scroll well
+
+    The columns size themselves (table-layout: auto), so `wide`/`narrow` are
+    hints for the cases where the browser can't tell that a column of 4-letter
+    status pills doesn't deserve the same width as a column of product names.
     """
     numeric = numeric or set()
-    head = html.Tr([html.Th(h, className="num" if i in numeric else "")
-                    for i, h in enumerate(headers)])
+    wide = wide or set()
+    narrow = narrow or set()
+
+    def _cls(i: int, extra: str = "") -> str:
+        parts = [extra] if extra else []
+        if i in numeric:
+            parts.append("num")
+        if i in wide:
+            parts.append("col-wide")
+        if i in narrow:
+            parts.append("col-narrow")
+        return " ".join(parts)
+
+    head = html.Tr([html.Th(h, className=_cls(i)) for i, h in enumerate(headers)])
     body = [
-        html.Tr([html.Td(c, className="num tabular" if i in numeric else "")
+        html.Tr([html.Td(c, className=_cls(i, "tabular" if i in numeric else ""))
                  for i, c in enumerate(r)])
         for r in rows
     ]
     return html.Div(html.Table([html.Thead(head), html.Tbody(body)], className="tbl"),
-                    className="tbl-wrap")
+                    className="tbl-wrap tbl-full" if full else "tbl-wrap")
 
 
 def graph(figure, height: int = 240, **kw):

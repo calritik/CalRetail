@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from backend.services.operations import (
     get_inventory_health, get_replenishment_order,
     optimise_warehouse, optimise_routes,
+    get_markdown_candidates, get_inventory_timeseries,
 )
 
 ops_router = APIRouter(prefix="/api/v1/operations", tags=["Operational Excellence"])
@@ -40,6 +41,19 @@ def replenishment(req: ReplenishRequest):
     if "error" in result:
         raise HTTPException(status_code=404, detail=result["error"])
     return result
+
+
+@ops_router.get("/markdown-candidates")
+def markdown_candidates(top_n: int = Query(8, ge=1, le=100)):
+    """Overstocked SKUs ranked by the capital they are holding idle."""
+    return get_markdown_candidates(top_n)
+
+
+@ops_router.get("/inventory-timeseries")
+def inventory_timeseries(product_id: str = Query(...),
+                         days: int = Query(120, ge=7, le=1095)):
+    """Daily units sold for one SKU, with the cover that pace implies."""
+    return get_inventory_timeseries(product_id, days)
 
 
 @ops_router.get("/warehouse-optimization")

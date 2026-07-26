@@ -28,6 +28,10 @@ httpx>=0.26.0
 plotly>=5.18.0
 dash>=3.3.0
 
+# Data pipeline (only needed to rebuild data/calretail.db, not to run the app)
+faker>=25.0.0
+nbformat>=5.9.0
+
 # Utilities
 loguru>=0.7.0
 tqdm>=4.66.0

@@ -4,18 +4,37 @@ CalRetail Dash — shared FastAPI client.
 Mirrors the old frontend/components/utils.py api_get/api_post, with a short
 TTL cache standing in for Streamlit's st.cache_data(ttl=300).
 """
+import os
 import time
 
 import requests
 
-API_BASE = "http://127.0.0.1:8000"
+# The backend is same-host by default (the container runs both processes and
+# keeps FastAPI internal). CALRETAIL_API_BASE overrides it, which is what you
+# need to run a second instance on another port alongside the first.
+API_BASE = os.getenv("CALRETAIL_API_BASE", "http://127.0.0.1:8000").rstrip("/")
 DEFAULT_TTL = 300  # seconds
 
 _cache: dict = {}  # key -> (expires_at, value)
 
+# path -> why the last call to it failed. Both helpers swallow every exception
+# and hand back None, which keeps callers simple but also makes "the route
+# doesn't exist", "the backend is down" and "there genuinely is no data" look
+# identical at the call site. A card that can't tell those apart ends up telling
+# the reader "no sales history for this product" when the truth is that the
+# endpoint 404s — so the reason is recorded here for empty states to consult.
+_failures: dict[str, str] = {}
+
 
 def _cache_key(method: str, path: str, payload: dict | None) -> str:
     return f"{method}:{path}:{sorted((payload or {}).items())}"
+
+
+def _reason(exc: Exception) -> str:
+    resp = getattr(exc, "response", None)
+    if resp is not None:
+        return "missing" if resp.status_code == 404 else f"http-{resp.status_code}"
+    return "unreachable"
 
 
 def api_get(path: str, params: dict | None = None, ttl: int = DEFAULT_TTL):
@@ -31,8 +50,10 @@ def api_get(path: str, params: dict | None = None, ttl: int = DEFAULT_TTL):
         data = r.json()
         if ttl:
             _cache[key] = (time.time() + ttl, data)
+        _failures.pop(path, None)
         return data
-    except Exception:
+    except Exception as exc:
+        _failures[path] = _reason(exc)
         return None
 
 
@@ -42,13 +63,24 @@ def api_post(path: str, payload: dict | None = None):
         r = requests.post(f"{API_BASE}{path}", json=payload, timeout=30,
                           proxies={"http": None, "https": None})
         r.raise_for_status()
+        _failures.pop(path, None)
         return r.json()
-    except Exception:
+    except Exception as exc:
+        _failures[path] = _reason(exc)
         return None
+
+
+def last_failure(path: str) -> str | None:
+    """
+    Why the last call to `path` failed: "missing" (404 — the endpoint isn't
+    implemented), "http-<code>", "unreachable", or None if it last succeeded.
+    """
+    return _failures.get(path)
 
 
 def clear_cache():
     _cache.clear()
+    _failures.clear()
 
 
 def backend_is_up() -> bool:

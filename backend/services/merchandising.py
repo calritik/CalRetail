@@ -49,8 +49,15 @@ def forecast_demand(product_id: str, days: int = 7) -> dict:
         mape = mape.item()
     mape = float(mape)
 
+    from backend.utils import naming
+    from backend.utils.data_loader import product as product_row
+    prod = product_row(product_id) or {}
+
     return {
         "product_id": product_id,
+        "product_name": prod.get("product_name") or naming.product(product_id),
+        "category": prod.get("category", ""),
+        "brand": prod.get("brand", ""),
         "total_forecast": round(total_forecast, 1),
         "avg_daily_demand": round(total_forecast / max(1, days), 2),
         "mape_estimate": round(mape, 2),
@@ -130,9 +137,28 @@ def optimise_promotion(promo_id: str) -> dict:
     
     confidence = float(res.get("confidence_level", 0.92))
     
+    # A promotion has no name column of its own, so its readable label is built
+    # from what a merchandiser actually recognises it by: type, depth, audience.
+    from backend.utils import db, naming
+    pid = res.get("product_id", "")
+    promo = db.read_table("promotions", where="promo_id = ?", params=(promo_id,), limit=1)
+    if promo.empty:
+        promo_label = promo_id
+        promo_row = {}
+    else:
+        promo_row = promo.iloc[0].to_dict()
+        promo_label = (f"{promo_row.get('promo_type', 'Promotion')} · "
+                       f"{float(promo_row.get('discount_pct', 0) or 0) * 100:.0f}% off · "
+                       f"{promo_row.get('target_segment', 'All shoppers')}")
+
     return {
         "promo_id": promo_id,
-        "product_id": res.get("product_id", ""),
+        "promo_name": promo_label,
+        "promo_type": promo_row.get("promo_type", ""),
+        "discount_pct": promo_row.get("discount_pct", 0),
+        "target_segment": promo_row.get("target_segment", ""),
+        "product_id": pid,
+        "product_name": naming.product(pid, default="") if pid else "",
         "control_revenue": round(control_revenue, 2),
         "treated_revenue": round(treated_revenue, 2),
         "incremental_revenue": round(incremental_revenue, 2),
