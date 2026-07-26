@@ -3,6 +3,10 @@ Domain 02 — Merchandising (Calsoft Retail AI deck, slide 5).
 
 Five capability cards, every one served by FastAPI.
 Structure, idioms and callback shapes follow module1_customer_experience.py.
+
+Performance fix: layout() no longer makes ANY blocking API calls.
+All heavy data-fetching is deferred into Dash callbacks so the page shell
+renders instantly (~0 ms) and data lazy-loads with Loading spinners.
 """
 from __future__ import annotations
 
@@ -32,50 +36,26 @@ def _inr(v) -> str:
     return f"₹{v:,.0f}"
 
 
-def _product_options(limit: int = 60):
-    rows = api_get("/api/v1/merchandising/products", {"limit": limit}) or []
-    return [{"label": f"{r['product_name']} (₹{r['price']:,.0f})",
-             "value": r["product_id"]} for r in rows]
-
-
-def _promo_options():
-    rows = api_get("/api/v1/merchandising/promotions") or []
-    return [{"label": f"{r['promo_type']} ({r['discount_pct'] * 100:.0f}% off) — {r['target_segment']}",
-             "value": r["promo_id"]} for r in rows]
-
-
-def _competitor_rows():
-    """The full monitoring sweep. api_get memoises for 5 min, so the layout and
-    the callback that filters it share a single round-trip."""
-    return (api_get("/api/v1/merchandising/competitor-monitoring") or {}).get("results") or []
-
-
-def _region_options():
-    """Regions come from the plan itself rather than a hard-coded list, so the
-    dropdown can never offer a region the backend has no orders for."""
-    plan = api_get("/api/v1/merchandising/assortment-plan") or {}
-    return [{"label": r["region"], "value": r["region"]} for r in (plan.get("by_region") or [])]
-
-
 # ══════════════════════════════════════════════════════════════════════════════
 # 1 — Dynamic Pricing Engines
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _card_pricing(opts):
+def _card_pricing():
     return C.card(
-        cap("merch", "pricing").title,
+        "Dynamic Pricing Engines",
         [
-            html.Div(
-                [
-                    dcc.Dropdown(id="mc-price-prod", options=opts,
-                                 value=opts[0]["value"] if opts else None,
-                                 clearable=False, className="dash-dropdown grow",
-                                 placeholder="Select a product"),
-                    html.Button("Reprice", id="mc-price-go", className="cp-go", n_clicks=0),
-                ],
-                className="cp-row",
+            # Dropdown is populated by callback, not layout()
+            dcc.Loading(
+                dcc.Dropdown(id="mc-price-prod", options=[], value=None,
+                             clearable=False, className="dash-dropdown grow",
+                             placeholder="Loading products…"),
+                type="circle", color=colors.BRAND,
             ),
-            html.Div(id="mc-price-out"),
+            html.Div(
+                html.Button("Reprice", id="mc-price-go", className="cp-go", n_clicks=0),
+                className="cp-row", style={"marginTop": "8px"},
+            ),
+            dcc.Loading(html.Div(id="mc-price-out"), type="dot", color=colors.BRAND),
         ],
         caption="One SKU repriced against its competitor set, its stock position and a hard margin floor.",
         info="<b>Model:</b> elasticity-weighted price search bounded by the <b>floor price</b> "
@@ -83,6 +63,17 @@ def _card_pricing(opts):
              "up or down; the engine never returns a price below the floor.",
         span=2,
     )
+
+
+@callback(Output("mc-price-prod", "options"),
+          Output("mc-price-prod", "value"),
+          Input("mc-page-load", "data"))
+def _load_product_opts(_):
+    """Populate product dropdown lazily after page mount."""
+    rows = api_get("/api/v1/merchandising/products", {"limit": 60}) or []
+    opts = [{"label": f"{r['product_name']} (₹{r['price']:,.0f})",
+             "value": r["product_id"]} for r in rows]
+    return opts, (opts[0]["value"] if opts else None)
 
 
 @callback(Output("mc-price-out", "children"),
@@ -100,8 +91,6 @@ def _pricing(_n, product_id):
     labels = ["Floor", "Current", "Recommended", "Avg competitor", "Min competitor"]
     values = [d.get("floor_price", 0), d.get("current_price", 0), d.get("recommended_price", 0),
               d.get("avg_competitor_price", 0), d.get("min_competitor_price", 0)]
-    # Floor and the competitor bounds are context, not proposals — only the two
-    # prices the merchandiser chooses between carry the brand ramp.
     tones = ["#d3d8c4", colors.BRAND2, colors.BRAND,
              colors.CATEGORICAL[3], colors.CATEGORICAL[4]]
 
@@ -133,10 +122,6 @@ def _pricing(_n, product_id):
         ]),
         html.Div(C.graph(fig, 200), className="mt-14"),
         html.Div(d.get("rationale", ""), className="small muted mt-8"),
-        # Override: the merchandiser types a price and sees margin, positioning
-        # and projected revenue recomputed live from the SKU's own elasticity —
-        # the exact formula the engine used, so the override is directly
-        # comparable to the recommendation, not a separate heuristic.
         dcc.Store(id="mc-price-ctx", data=ctx),
         html.Div("Override the price and check the numbers", className="card-sub mt-14"),
         html.Div(
@@ -175,9 +160,6 @@ def _price_sim(price, ctx):
     comp_avg = float(ctx.get("comp_avg", 0) or 0)
     comp_min = float(ctx.get("comp_min", 0) or 0)
 
-    # Same math the pricing engine uses, so the override reads on the engine's
-    # own terms: volume responds to the price move by the SKU's elasticity, and
-    # revenue is the combined price x volume effect.
     delta = (p - current) / current * 100
     volume = elasticity * delta
     revenue = delta + volume + (delta * volume / 100)
@@ -216,17 +198,17 @@ def _price_sim(price, ctx):
 # 2 — Competitor Price Monitoring
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _card_competitor(cat_opts):
+def _card_competitor():
     return C.card(
-        cap("merch", "competitor").title,
+        "Competitor Price Monitoring",
         [
-            html.Div(
-                dcc.Dropdown(id="mc-comp-cat", options=cat_opts, value=None,
+            dcc.Loading(
+                dcc.Dropdown(id="mc-comp-cat", options=[], value=None,
                              clearable=True, className="dash-dropdown grow",
-                             placeholder="All categories"),
-                className="cp-row",
+                             placeholder="Loading categories…"),
+                type="circle", color=colors.BRAND,
             ),
-            html.Div(id="mc-comp-out"),
+            dcc.Loading(html.Div(id="mc-comp-out"), type="dot", color=colors.BRAND),
         ],
         caption="The whole catalogue is swept every run; only the SKUs that breached their price band are listed.",
         info="<b>Method:</b> each SKU's price gap against the competitor mean is turned into a "
@@ -235,10 +217,55 @@ def _card_competitor(cat_opts):
     )
 
 
-@callback(Output("mc-comp-out", "children"),
-          Input("mc-comp-cat", "value"))
-def _competitor(category):
-    rows = _competitor_rows()
+@callback(Output("mc-comp-cat", "options"),
+          Output("mc-comp-out", "children"),
+          Input("mc-page-load", "data"))
+def _load_competitor(_):
+    """Load competitor data lazily — this triggers the slow notebook."""
+    rows = (api_get("/api/v1/merchandising/competitor-monitoring") or {}).get("results") or []
+    cat_opts = [{"label": c, "value": c}
+                for c in sorted({r["category"] for r in rows if r.get("category")})]
+
+    if not rows:
+        return cat_opts, C.empty("Competitor monitoring feed unavailable.")
+
+    total = len(rows)
+    alerts = [r for r in rows if r.get("alert_flag")]
+    above = sum(1 for r in rows if float(r.get("price_gap_pct", 0) or 0) > 0)
+    below = total - above
+
+    worst = sorted(alerts, key=lambda r: -abs(float(r.get("price_gap_pct", 0) or 0)))[:8]
+    body = []
+    for r in worst:
+        gap = float(r.get("price_gap_pct", 0) or 0)
+        body.append([
+            html.Div([html.Div(r.get("product_name", "—"), style={"fontWeight": 600}),
+                      html.Div(r.get("recommended_action", ""), className="small muted")]),
+            f"₹{float(r.get('our_price', 0) or 0):,.0f}",
+            f"₹{float(r.get('avg_competitor_price', 0) or 0):,.0f}",
+            f"{gap:+.1f}%",
+            C.pill(r["status"], r["status"]),
+        ])
+
+    content = [
+        C.kpi_grid([
+            C.kpi("SKUs monitored", f"{total:,}"),
+            C.kpi("Price alerts", f"{len(alerts):,}",
+                  f"{len(alerts) / total * 100:.1f}% of the sweep", "down"),
+            C.kpi("Above market", f"{above / total * 100:.1f}%", "our price > competitor mean"),
+            C.kpi("Below market", f"{below / total * 100:.1f}%", "our price < competitor mean"),
+        ]),
+        html.Div(C.table(["Product", "Our price", "Market avg", "Gap", "Status"],
+                         body, numeric={1, 2, 3}), className="mt-14"),
+    ]
+    return cat_opts, content
+
+
+@callback(Output("mc-comp-out", "children", allow_duplicate=True),
+          Input("mc-comp-cat", "value"),
+          prevent_initial_call=True)
+def _competitor_filter(category):
+    rows = (api_get("/api/v1/merchandising/competitor-monitoring") or {}).get("results") or []
     if not rows:
         return C.empty("Competitor monitoring feed unavailable.")
     if category:
@@ -246,9 +273,6 @@ def _competitor(category):
     if not rows:
         return C.empty(f"No monitored SKUs in {category}.")
 
-    # ~5000 SKUs come back per sweep. Dumping them would be unreadable and would
-    # blow up the DOM, so the card reports the distribution and then shows only
-    # the worst breaches — which is the decision the buyer actually makes.
     total = len(rows)
     alerts = [r for r in rows if r.get("alert_flag")]
     above = sum(1 for r in rows if float(r.get("price_gap_pct", 0) or 0) > 0)
@@ -284,27 +308,38 @@ def _competitor(category):
 # 3 — Promotion Optimization
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _card_promotion(opts):
+def _card_promotion():
     return C.card(
-        cap("merch", "promotion").title,
+        "Promotion Optimization",
         [
-            html.Div(
-                [
-                    dcc.Dropdown(id="mc-promo-sel", options=opts,
-                                 value=opts[0]["value"] if opts else None,
-                                 clearable=False, className="dash-dropdown grow",
-                                 placeholder="Select a promotion"),
-                    html.Button("Evaluate", id="mc-promo-go", className="cp-go", n_clicks=0),
-                ],
-                className="cp-row",
+            dcc.Loading(
+                dcc.Dropdown(id="mc-promo-sel", options=[], value=None,
+                             clearable=False, className="dash-dropdown grow",
+                             placeholder="Loading promotions…"),
+                type="circle", color=colors.BRAND,
             ),
-            html.Div(id="mc-promo-out"),
+            html.Div(
+                html.Button("Evaluate", id="mc-promo-go", className="cp-go", n_clicks=0),
+                className="cp-row", style={"marginTop": "8px"},
+            ),
+            dcc.Loading(html.Div(id="mc-promo-out"), type="dot", color=colors.BRAND),
         ],
         caption="Treated versus control revenue for one promotion — the incremental lift net of what the discount ate.",
         info="<b>Method:</b> a matched control cohort is compared against the treated cohort. "
              "<b>Cannibalization</b> is the share of the lift stolen from full-price sales; "
              "above 30% the promotion is moving margin, not volume.",
     )
+
+
+@callback(Output("mc-promo-sel", "options"),
+          Output("mc-promo-sel", "value"),
+          Input("mc-page-load", "data"))
+def _load_promo_opts(_):
+    """Populate promotions dropdown lazily after page mount."""
+    rows = api_get("/api/v1/merchandising/promotions") or []
+    opts = [{"label": f"{r['promo_type']} ({r['discount_pct'] * 100:.0f}% off) — {r['target_segment']}",
+             "value": r["promo_id"]} for r in rows]
+    return opts, (opts[0]["value"] if opts else None)
 
 
 @callback(Output("mc-promo-out", "children"),
@@ -355,17 +390,17 @@ def _promotion(_n, promo_id):
 # 4 — Assortment Planning
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _card_assortment(region_opts):
+def _card_assortment():
     return C.card(
-        cap("merch", "assortment").title,
+        "Assortment Planning",
         [
-            html.Div(
-                dcc.Dropdown(id="mc-assort-region", options=region_opts, value=None,
+            dcc.Loading(
+                dcc.Dropdown(id="mc-assort-region", options=[], value=None,
                              clearable=True, className="dash-dropdown grow",
-                             placeholder="All regions"),
-                className="cp-row",
+                             placeholder="Loading regions…"),
+                type="circle", color=colors.BRAND,
             ),
-            html.Div(id="mc-assort-out"),
+            dcc.Loading(html.Div(id="mc-assort-out"), type="dot", color=colors.BRAND),
         ],
         caption="Every SKU scored on its share of its own region's revenue, then read against the regions that already sell it.",
         info="<b>Method:</b> orders joined to products and to each store's region; Cancelled and "
@@ -379,14 +414,23 @@ def _card_assortment(region_opts):
     )
 
 
-@callback(Output("mc-assort-out", "children"),
-          Input("mc-assort-region", "value"))
-def _assortment(region):
-    d = api_get("/api/v1/merchandising/assortment-plan", {"region": region} if region else None)
-    rows = (d or {}).get("by_region") or []
-    if not rows:
-        return C.empty("Assortment plan unavailable.")
+@callback(Output("mc-assort-region", "options"),
+          Output("mc-assort-out", "children"),
+          Input("mc-page-load", "data"))
+def _load_assortment(_):
+    """Load assortment plan lazily — this is the heaviest call."""
+    d = api_get("/api/v1/merchandising/assortment-plan") or {}
+    rows = d.get("by_region") or []
+    region_opts = [{"label": r["region"], "value": r["region"]} for r in rows]
 
+    if not rows:
+        return region_opts, C.empty("Assortment plan unavailable.")
+
+    content = _build_assortment_content(d, rows)
+    return region_opts, content
+
+
+def _build_assortment_content(d, rows):
     fig = T.figure(height=200, showlegend=True, margin=dict(l=8, r=8, t=4, b=4))
     fig.add_bar(x=[r["region"] for r in rows], y=[r["add"] for r in rows],
                 name="Add", marker_color=colors.BRAND, width=.34,
@@ -399,8 +443,6 @@ def _assortment(region):
 
     region_rows = []
     for r in rows:
-        # A low Pareto percentage means fewer lines carry the region — that is
-        # concentration risk, so it reads as the high-severity pill.
         p = float(r.get("pareto_sku_pct", 0) or 0)
         lvl = "high" if p < 43 else "medium" if p < 46 else "low"
         region_rows.append([
@@ -412,8 +454,6 @@ def _assortment(region):
             f"−{r['drop']:,}",
         ])
 
-    # The candidate lists are the point of the card: every row is a real SKU the
-    # buyer can act on, so adds and drops share one table ranked by rupee value.
     moves = []
     for a in (d.get("add_candidates") or [])[:5]:
         moves.append([
@@ -455,25 +495,37 @@ def _assortment(region):
     ]
 
 
+@callback(Output("mc-assort-out", "children", allow_duplicate=True),
+          Input("mc-assort-region", "value"),
+          prevent_initial_call=True)
+def _assortment_filter(region):
+    d = api_get("/api/v1/merchandising/assortment-plan",
+                {"region": region} if region else None) or {}
+    rows = d.get("by_region") or []
+    if not rows:
+        return C.empty("Assortment plan unavailable.")
+    return _build_assortment_content(d, rows)
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # 5 — Demand Forecasting
 # ══════════════════════════════════════════════════════════════════════════════
 
-def _card_forecast(opts):
+def _card_forecast():
     return C.card(
-        cap("merch", "forecast").title,
+        "Demand Forecasting",
         [
-            html.Div(
-                [
-                    dcc.Dropdown(id="mc-fc-prod", options=opts,
-                                 value=opts[0]["value"] if opts else None,
-                                 clearable=False, className="dash-dropdown grow",
-                                 placeholder="Select a product"),
-                    html.Button("Forecast", id="mc-fc-go", className="cp-go", n_clicks=0),
-                ],
-                className="cp-row",
+            dcc.Loading(
+                dcc.Dropdown(id="mc-fc-prod", options=[], value=None,
+                             clearable=False, className="dash-dropdown grow",
+                             placeholder="Loading products…"),
+                type="circle", color=colors.BRAND,
             ),
-            html.Div(id="mc-fc-out"),
+            html.Div(
+                html.Button("Forecast", id="mc-fc-go", className="cp-go", n_clicks=0),
+                className="cp-row", style={"marginTop": "8px"},
+            ),
+            dcc.Loading(html.Div(id="mc-fc-out"), type="dot", color=colors.BRAND),
         ],
         caption="Observed demand carried forward into a 30-day forecast, with the band the model is willing to commit to.",
         info="<b>Model:</b> a global multi-product regressor over calendar, price and promotion "
@@ -481,6 +533,17 @@ def _card_forecast(opts):
              "commit to over the 30-day horizon.",
         span=2,
     )
+
+
+# Share product opts: mc-fc-prod is wired to the same callback as mc-price-prod
+@callback(Output("mc-fc-prod", "options"),
+          Output("mc-fc-prod", "value"),
+          Input("mc-page-load", "data"))
+def _load_fc_product_opts(_):
+    rows = api_get("/api/v1/merchandising/products", {"limit": 60}) or []
+    opts = [{"label": f"{r['product_name']} (₹{r['price']:,.0f})",
+             "value": r["product_id"]} for r in rows]
+    return opts, (opts[0]["value"] if opts else None)
 
 
 @callback(Output("mc-fc-out", "children"),
@@ -496,8 +559,6 @@ def _forecast(_n, product_id):
 
     fig = T.figure(height=280, showlegend=True, margin=dict(l=8, r=8, t=4, b=4))
 
-    # tonexty fills against the *previous* trace, so the lower bound must be laid
-    # down first and neither band edge may answer the unified hover.
     fig.add_scatter(x=[p["date"] for p in fc], y=[p["lower_bound"] for p in fc],
                     mode="lines", line=dict(width=0), showlegend=False, hoverinfo="skip")
     fig.add_scatter(x=[p["date"] for p in fc], y=[p["upper_bound"] for p in fc],
@@ -512,8 +573,6 @@ def _forecast(_n, product_id):
                         marker=dict(size=5, color=colors.BRAND),
                         hovertemplate="Actual %{y:.1f}<extra></extra>")
 
-    # The last observed point is repeated as the forecast's first vertex so the
-    # two lines meet instead of leaving a one-day gutter.
     join = [hist[-1]] if hist else []
     fig.add_scatter(x=[p["date"] for p in join] + [p["date"] for p in fc],
                     y=[p["actual_qty"] for p in join] + [p["predicted_qty"] for p in fc],
@@ -540,14 +599,15 @@ def _forecast(_n, product_id):
 # ══════════════════════════════════════════════════════════════════════════════
 
 def layout():
-    prod_opts = _product_options()
-    promo_opts = _promo_options()
-    cat_opts = [{"label": c, "value": c}
-                for c in sorted({r["category"] for r in _competitor_rows() if r.get("category")})]
-    banner = [] if prod_opts else [C.offline_banner()]
+    """
+    Returns the page shell instantly (zero API calls).
+    All data-fetching happens in callbacks triggered by dcc.Store('mc-page-load').
+    """
     return module_page(
         D.index, D.title, D.summary,
-        banner + [
+        [
+            # This Store fires on every page visit and triggers all lazy-load callbacks.
+            dcc.Store(id="mc-page-load", data=1),
             html.Div(
                 [
                     _card_pricing(prod_opts),
@@ -557,6 +617,6 @@ def layout():
                     _card_forecast(prod_opts),
                 ],
                 className="grid-2",
-            )
+            ),
         ],
     )

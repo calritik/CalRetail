@@ -99,6 +99,9 @@ def list_categories():
 
 @app.on_event("startup")
 async def startup_event():
+    import asyncio
+    import threading
+
     logger.info("=" * 55)
     logger.info(f"  {settings.APP_NAME} v{settings.APP_VERSION}")
     logger.info("  Warming up data caches...")
@@ -112,6 +115,26 @@ async def startup_event():
         logger.info(f"  ✓ Customers: {len(c):,}  Products: {len(p):,}  Transactions: {len(t):,}")
     except Exception as e:
         logger.warning(f"  Data warmup failed: {e} — run notebooks first!")
+
+    # Pre-load Module 2 notebooks in the background so the first page visit
+    # doesn't block on notebook execution (which can take 10-30 s each).
+    def _warm_merch_notebooks():
+        from backend.utils.notebook_loader import get_notebook_module
+        notebooks = [
+            "05_demand_forecasting.ipynb",
+            "06_dynamic_pricing.ipynb",
+            "07_promotion_optimization.ipynb",
+            "08_competitor_price_monitoring.ipynb",
+        ]
+        for nb in notebooks:
+            try:
+                get_notebook_module(nb)
+                logger.info(f"  ✓ Notebook warm: {nb}")
+            except Exception as exc:
+                logger.warning(f"  ✗ Notebook warm failed ({nb}): {exc}")
+
+    threading.Thread(target=_warm_merch_notebooks, daemon=True, name="merch-warmup").start()
+    logger.info("  Notebook pre-loader started in background thread.")
     logger.info("  API ready at http://localhost:8000")
     logger.info("  Docs at      http://localhost:8000/docs")
     logger.info("=" * 55)
