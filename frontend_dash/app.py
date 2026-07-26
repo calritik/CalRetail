@@ -76,7 +76,12 @@ if __name__ == "__main__":
     debug = os.getenv("DASH_DEBUG") == "1"
     # Local dev keeps the old 127.0.0.1:8050 defaults untouched; the container
     # start script sets DASH_HOST=0.0.0.0 and DASH_PORT to whatever the host
-    # platform (e.g. Hugging Face's $PORT) actually routes traffic to.
+    # platform actually routes traffic to.
+    #
+    # PORT is honoured as a fallback because most container hosts (Render, Fly,
+    # Cloud Run, Heroku) inject the routed port under that name and route to
+    # nothing else. Binding 8050 there means the platform's health check never
+    # connects and the deploy is marked failed with the app running fine.
     host = os.getenv("DASH_HOST", "127.0.0.1")
-    port = int(os.getenv("DASH_PORT", "8050"))
+    port = int(os.getenv("DASH_PORT") or os.getenv("PORT") or "8050")
     app.run(debug=debug, use_reloader=debug, threaded=True, port=port, host=host)

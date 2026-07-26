@@ -29,10 +29,13 @@ RUN mkdir -p data/models
 COPY start.sh .
 RUN chmod +x start.sh
 
+# DASH_PORT is deliberately NOT pinned here. Hugging Face routes to the port
+# declared in the README (7860) while Render, Fly and Cloud Run inject their own
+# under $PORT; a hard-coded ENV would win over the injected value and the health
+# check would connect to nothing while the app ran fine. start.sh resolves it.
 ENV PYTHONUTF8=1 \
     PYTHONUNBUFFERED=1 \
-    DASH_HOST=0.0.0.0 \
-    DASH_PORT=7860
+    DASH_HOST=0.0.0.0
 
 EXPOSE 7860
 
