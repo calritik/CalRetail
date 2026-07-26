@@ -1,6 +1,7 @@
 """
 CalRetail — FastAPI Main Application
 """
+import os
 import sys
 import time
 from pathlib import Path
@@ -132,23 +133,32 @@ async def startup_event():
 
     # Pre-load Module 2 notebooks in the background so the first page visit
     # doesn't block on notebook execution (which can take 10-30 s each).
-    def _warm_merch_notebooks():
-        from backend.utils.notebook_loader import get_notebook_module
-        notebooks = [
-            "05_demand_forecasting.ipynb",
-            "06_dynamic_pricing.ipynb",
-            "07_promotion_optimization.ipynb",
-            "08_competitor_price_monitoring.ipynb",
-        ]
-        for nb in notebooks:
-            try:
-                get_notebook_module(nb)
-                logger.info(f"  ✓ Notebook warm: {nb}")
-            except Exception as exc:
-                logger.warning(f"  ✗ Notebook warm failed ({nb}): {exc}")
+    #
+    # Skipped on a small host: four warm notebooks cost ~110 MB, which is a
+    # fifth of a 512 MiB budget spent before a visitor has asked for anything.
+    # They load on first use instead. Set CALRETAIL_PREWARM=1 to restore it
+    # where memory is not the constraint.
+    if os.environ.get("CALRETAIL_PREWARM", "0") == "1":
+        def _warm_merch_notebooks():
+            from backend.utils.notebook_loader import get_notebook_module
+            notebooks = [
+                "05_demand_forecasting.ipynb",
+                "06_dynamic_pricing.ipynb",
+                "07_promotion_optimization.ipynb",
+                "08_competitor_price_monitoring.ipynb",
+            ]
+            for nb in notebooks:
+                try:
+                    get_notebook_module(nb)
+                    logger.info(f"  ✓ Notebook warm: {nb}")
+                except Exception as exc:
+                    logger.warning(f"  ✗ Notebook warm failed ({nb}): {exc}")
 
-    threading.Thread(target=_warm_merch_notebooks, daemon=True, name="merch-warmup").start()
-    logger.info("  Notebook pre-loader started in background thread.")
+        threading.Thread(target=_warm_merch_notebooks, daemon=True,
+                         name="merch-warmup").start()
+        logger.info("  Notebook pre-loader started in background thread.")
+    else:
+        logger.info("  Notebooks load on first use (set CALRETAIL_PREWARM=1 to pre-warm).")
     logger.info("  API ready at http://localhost:8000")
     logger.info("  Docs at      http://localhost:8000/docs")
     logger.info("=" * 55)

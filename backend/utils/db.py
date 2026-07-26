@@ -18,6 +18,7 @@ threads) and opened read-only, so a request can never mutate the demo data.
 """
 from __future__ import annotations
 
+import os
 import sqlite3
 import threading
 from functools import lru_cache
@@ -126,19 +127,30 @@ def read_table(
     return query(sql, params, parse_dates=parse_dates)
 
 
-@lru_cache(maxsize=None)
+# How many whole tables stay memoised. Unbounded, this is a slow leak: each
+# capability pulls a different set, nothing is ever released, and the process
+# grows by roughly 200 MB as a visitor works through the console — enough to
+# get OOM-killed on a 512 MiB host.
+#
+# Bounding it only releases tables no warm notebook still references, which is
+# exactly the intent: a table is re-read from SQLite in milliseconds, so the
+# cache is a latency optimisation, not a correctness one.
+_TABLE_CACHE = max(4, int(os.environ.get("CALRETAIL_TABLE_CACHE", "8")))
+
+
+@lru_cache(maxsize=_TABLE_CACHE)
 def load_df(name: str) -> pd.DataFrame:
     """
-    Load a full table and memoise it for the life of the process.
+    Load a full table and memoise it.
 
-    Mirrors the old CSV loader's contract exactly, including returning the
-    *same* object to every caller — services were written against that and
-    some of them assign derived columns onto it.
+    Mirrors the old CSV loader's contract, including returning the *same*
+    object to every caller while it stays cached — services were written
+    against that and some of them assign derived columns onto it.
     """
     return read_table(name)
 
 
-@lru_cache(maxsize=None)
+@lru_cache(maxsize=_TABLE_CACHE)
 def load_table(name: str) -> pd.DataFrame:
     """
     Full table with date columns left as ISO-8601 strings.

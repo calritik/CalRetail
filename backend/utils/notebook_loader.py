@@ -1,7 +1,10 @@
+import gc
 import json
 import logging
+import os
 import sys
 import types as _types
+from collections import OrderedDict
 from importlib.machinery import ModuleSpec
 from pathlib import Path
 from types import ModuleType
@@ -9,8 +12,38 @@ from unittest.mock import MagicMock
 
 logger = logging.getLogger(__name__)
 
-# Cache loaded notebook modules to prevent multiple executions
-_loaded_notebooks = {}
+# Cache loaded notebook modules to prevent multiple executions.
+#
+# Bounded, not unbounded. Each executed notebook keeps its own merged frames
+# alive in its module namespace — roughly 25-45 MB apiece — so holding all
+# sixteen resident grew the process past 1.8 GB and got it OOM-killed on a
+# 512 MiB host. An LRU keeps the working set flat: the notebooks a visitor is
+# actually clicking through stay warm and the rest are dropped.
+#
+# The cost of a miss is real (re-executing a notebook takes seconds), so this
+# is sized as large as the memory budget allows rather than as small as
+# possible. Override with CALRETAIL_NOTEBOOK_CACHE.
+_CACHE_SIZE = max(1, int(os.environ.get("CALRETAIL_NOTEBOOK_CACHE", "3")))
+
+_loaded_notebooks: "OrderedDict[str, ModuleType]" = OrderedDict()
+
+
+def cache_info() -> dict:
+    return {"warm": list(_loaded_notebooks), "limit": _CACHE_SIZE}
+
+
+def _remember(name: str, mod: ModuleType) -> None:
+    _loaded_notebooks[name] = mod
+    while len(_loaded_notebooks) > _CACHE_SIZE:
+        evicted, victim = _loaded_notebooks.popitem(last=False)
+        # Drop the module's namespace explicitly. Without this the frames it
+        # built stay reachable from any closure the notebook left behind and
+        # the eviction frees nothing.
+        victim.__dict__.clear()
+        sys.modules.pop(evicted.split(".")[0], None)
+        gc.collect()
+        logger.info(f"Evicted notebook from cache: {evicted}")
+
 
 def get_notebook_module(notebook_name: str) -> ModuleType:
     """
@@ -18,6 +51,7 @@ def get_notebook_module(notebook_name: str) -> ModuleType:
     returning a Python module namespace. Saves state variables and functions.
     """
     if notebook_name in _loaded_notebooks:
+        _loaded_notebooks.move_to_end(notebook_name)   # most recently used
         return _loaded_notebooks[notebook_name]
 
     base_dir = Path(__file__).resolve().parent.parent.parent
@@ -77,5 +111,5 @@ def get_notebook_module(notebook_name: str) -> ModuleType:
                 logger.error(f"Error executing cell #{idx} in {notebook_name}: {e}")
                 continue
 
-    _loaded_notebooks[notebook_name] = mod
+    _remember(notebook_name, mod)
     return mod

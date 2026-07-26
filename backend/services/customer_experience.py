@@ -31,8 +31,11 @@ def get_recommendations_debug(customer_id: str, top_n: int = 10) -> dict:
     cust_df   = mod.cust
     tx_df     = mod.tx
     prod_df   = mod.prod
-    matrix    = mod.matrix
-    cust_sim_df   = mod.cust_sim_df
+    # The notebook's implicit-feedback matrix is a sparse CSR with its labels
+    # held alongside it, so this reads positions rather than pandas labels.
+    matrix     = mod.matrix
+    cust_index = mod.cust_index
+    prod_index = mod.prod_index
     category_boost = mod.category_boost
 
     # ── Product enrichment maps ───────────────────────────────────────────────
@@ -151,11 +154,17 @@ def get_recommendations_debug(customer_id: str, top_n: int = 10) -> dict:
     # ── Main CF path ──────────────────────────────────────────────────────────
     similar_customers: list[dict] = []
 
-    if customer_id not in matrix.index:
+    if customer_id not in cust_index:
         algorithm = "Bestseller Fallback — Cold Start (no purchase history)"
         recs = _fallback_rows(algorithm)
     else:
-        sims = cust_sim_df[customer_id].drop(customer_id).nlargest(20)
+        from sklearn.metrics.pairwise import cosine_similarity
+
+        # One row against the rest, rather than a stored 10k x 10k matrix.
+        row_pos = cust_index.get_loc(customer_id)
+        sims = pd.Series(
+            cosine_similarity(matrix[row_pos], matrix)[0], index=cust_index
+        ).drop(customer_id).nlargest(20)
         sims = sims[sims > 0]
 
         if len(sims) == 0:
@@ -174,11 +183,14 @@ def get_recommendations_debug(customer_id: str, top_n: int = 10) -> dict:
                 for cid, s in sims.head(10).items()
             ]
 
-            already_owned = matrix.columns[matrix.loc[customer_id] > 0]
+            # Non-zero columns of the customer's own row are what they have.
+            already_owned = prod_index[matrix[row_pos].indices]
 
-            # Weighted collaborative filtering scores
-            weighted = (
-                matrix.loc[sims.index].mul(sims.values, axis=0).sum(axis=0) / sims.sum()
+            # Weighted collaborative filtering scores: (20 x P)^T . (20,)
+            weighted = pd.Series(
+                matrix[cust_index.get_indexer(sims.index)]
+                .T.dot(sims.to_numpy(dtype="float32")) / sims.sum(),
+                index=prod_index,
             )
             candidates = weighted.drop(index=already_owned, errors="ignore")
 
