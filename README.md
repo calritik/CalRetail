@@ -279,20 +279,36 @@ through `CALRETAIL_API_BASE`.
 
 ### Staying inside 512 MiB
 
-The free tier is a hard 512 MiB and the process is killed the moment it crosses.
-Three settings hold the line, all tunable:
+The free tier is a hard 512 MiB and the process is killed the moment its live
+set crosses. Four settings hold the line, all tunable, all measured against the
+deployed service rather than guessed:
 
 | Variable | Default | What it bounds |
 |---|---|---|
+| `CALRETAIL_MAX_CONCURRENCY` | 4 | endpoints computing at the same time |
 | `CALRETAIL_WARM_CAPABILITIES` | 3 | capabilities holding frames at once |
 | `CALRETAIL_TABLE_CACHE` | 8 | whole tables memoised by `db.load_df` |
 | `CALRETAIL_RESULT_TTL` | 1800 | seconds an endpoint result is reused |
 
+Deployed values are 3 / 4 / 8 / 7200.
+
+**Concurrency matters more than any of the others.** FastAPI runs `def`
+endpoints in a worker thread and allows forty concurrently, which is sized for
+handlers that wait on a socket. These hold pandas frames, so a domain page
+opening five cards at once puts far more in memory than the resident
+capabilities ever do. Peak memory was being set by requests in flight, not by
+what was cached — raising the warm limit to 16 looked safe on the steady-state
+numbers and still OOM-killed the service three times under a burst.
+
+`CALRETAIL_COMPACT_DTYPES=1` (the default) loads text columns as Arrow-backed
+strings instead of Python objects. Measured across the seven largest tables:
+119.7 MB as objects, 47.3 MB as Arrow. Floats stay float64 — narrowing them
+moved the route optimiser's answer.
+
 The result cache is what makes a small warm set affordable: an answer outlives
 the capability that produced it, so evicting one costs memory back without
-costing speed. `CALRETAIL_WARM_CACHE=1` (the default) computes the expensive
-reads once at boot in a background thread, so the first visitor does not pay
-for them either.
+costing speed. `CALRETAIL_WARM_CACHE=1` computes the expensive reads once at
+boot in a background thread, so the first visitor does not pay for them either.
 
 ### Sleep
 
