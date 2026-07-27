@@ -1,9 +1,14 @@
 """
-Module 1 — Customer Experience AI Services Wrapper
-Logic is loaded dynamically from Jupyter capability notebooks.
+Module 1 — Customer Experience service layer.
+
+Thin wrappers over backend.capabilities.*, memoised because the underlying
+database is read-only and the console re-requests the same slices.
 """
 
+from backend.utils.cache import ttl_cache
 
+
+@ttl_cache()
 def get_recommendations(customer_id: str, top_n: int = 10) -> list[dict]:
     from backend.capabilities import personalised_recommendations as mod
     res = mod.get_recommendations(customer_id, top_n=top_n)
@@ -17,6 +22,7 @@ def get_recommendations(customer_id: str, top_n: int = 10) -> list[dict]:
     return recs
 
 
+@ttl_cache()
 def get_recommendations_debug(customer_id: str, top_n: int = 10) -> dict:
     """
     Admin view: why each product was recommended, based on reviews,
@@ -254,6 +260,7 @@ def buying_assistant_query(customer_id: str, message: str) -> dict:
     }
 
 
+@ttl_cache()
 def get_next_best_offer(customer_id: str) -> dict:
     from backend.capabilities import next_best_offer as mod
     res = mod.resolve_nbo(customer_id)
@@ -278,6 +285,7 @@ def get_next_best_offer(customer_id: str) -> dict:
     }
 
 
+@ttl_cache()
 def get_communication_timing(customer_id: str) -> dict:
     from backend.capabilities import communication_timing as mod
     res = mod.recommend_communication(customer_id)

@@ -120,47 +120,50 @@ def compute_inventory_health():
     # Calculate days cover
     health_df['days_cover'] = health_df['stock_qty'] / health_df['daily_velocity']
     
-    # sigmoid risk: high risk when days_cover < reorder_point
-    results = []
-    for idx, row in health_df.iterrows():
-        rop = row['reorder_point']
-        cover = row['days_cover']
-        
-        # stockout risk function (sigmoid of difference)
-        stockout_risk = 1.0 / (1.0 + np.exp((cover - rop) * 0.2))
-        
-        # Calculate overstock
-        max_stk = row['max_stock'] if not pd.isna(row['max_stock']) else 9999.0
-        overstock_flag = 1 if row['stock_qty'] > max_stk else 0
+    # Vectorised, not row-by-row. This runs over every stock position in the
+    # estate — 25,000 rows — and an iterrows() loop building a dict per row took
+    # ~27s on a small host, which is most of a page load spent on arithmetic
+    # pandas does in one pass.
+    cover = health_df['days_cover']
+    rop = health_df['reorder_point']
 
-        # Real supplier reliability for this SKU's actual supplier
-        supplier_id = product_supplier_map.get(row['product_id'])
-        reliability = supplier_reliability_map.get(supplier_id, DEFAULT_RELIABILITY)
+    # stockout risk function (sigmoid of difference)
+    stockout_risk = 1.0 / (1.0 + np.exp((cover - rop) * 0.2))
 
-        # Genuine composite score: PCA-derived weights blending stockout risk,
-        # overstock, and real supplier reliability (not stockout risk alone).
-        health_score = float(np.clip(
-            W_STOCKOUT * (1.0 - stockout_risk) +
-            W_OVERSTOCK * (1.0 - overstock_flag) +
-            W_RELIABILITY * reliability,
-            0.0, 1.0
-        ))
-        
-        label = "Healthy"
-        if health_score < 0.4: label = "Critical"
-        elif health_score < 0.7: label = "At Risk"
-        
-        results.append({
-            "product_id": row['product_id'],
-            "store_id": str(row['store_id']) if not pd.isna(row['store_id']) else "",
-            "warehouse_id": str(row['warehouse_id']) if not pd.isna(row['warehouse_id']) else "",
-            "location_type": str(row['location_type']) if not pd.isna(row['location_type']) else "",
-            "stock_level": int(row['stock_qty']),
-            "days_cover": round(float(cover), 1),
-            "stockout_risk": round(float(stockout_risk), 3),
-            "supplier_reliability": round(float(reliability), 3),
-            "health_score": round(float(health_score), 2),
-            "risk_label": label,
-            "overstock_flag": overstock_flag
-        })
+    # Calculate overstock
+    max_stk = health_df['max_stock'].fillna(9999.0)
+    overstock_flag = (health_df['stock_qty'] > max_stk).astype(int)
+
+    # Real supplier reliability for this SKU's actual supplier
+    reliability = (health_df['product_id']
+                   .map(product_supplier_map)
+                   .map(supplier_reliability_map)
+                   .fillna(DEFAULT_RELIABILITY))
+
+    # Genuine composite score: PCA-derived weights blending stockout risk,
+    # overstock, and real supplier reliability (not stockout risk alone).
+    health_score = np.clip(
+        W_STOCKOUT * (1.0 - stockout_risk) +
+        W_OVERSTOCK * (1.0 - overstock_flag) +
+        W_RELIABILITY * reliability,
+        0.0, 1.0
+    )
+
+    label = np.where(health_score < 0.4, "Critical",
+                     np.where(health_score < 0.7, "At Risk", "Healthy"))
+
+    out = pd.DataFrame({
+        "product_id": health_df['product_id'],
+        "store_id": health_df['store_id'].fillna("").astype(str),
+        "warehouse_id": health_df['warehouse_id'].fillna("").astype(str),
+        "location_type": health_df['location_type'].fillna("").astype(str),
+        "stock_level": health_df['stock_qty'].astype(int),
+        "days_cover": cover.astype(float).round(1),
+        "stockout_risk": stockout_risk.astype(float).round(3),
+        "supplier_reliability": reliability.astype(float).round(3),
+        "health_score": health_score.astype(float).round(2),
+        "risk_label": label,
+        "overstock_flag": overstock_flag.astype(int),
+    })
+    results = out.to_dict(orient='records')
     return results

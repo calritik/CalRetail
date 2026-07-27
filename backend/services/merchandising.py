@@ -1,8 +1,13 @@
 """
-Module 2 — Merchandising Intelligence AI Services Wrapper
-Logic is loaded dynamically from Jupyter capability notebooks.
+Module 2 — Merchandising Intelligence service layer.
+
+Thin wrappers over backend.capabilities.*, memoised because the underlying
+database is read-only and the console re-requests the same slices.
 """
 
+from backend.utils.cache import ttl_cache
+
+@ttl_cache()
 def forecast_demand(product_id: str, days: int = 7) -> dict:
     from backend.capabilities import demand_forecasting as mod
     res = mod.get_demand_forecast(product_id, forecast_days=days)
@@ -65,6 +70,7 @@ def forecast_demand(product_id: str, days: int = 7) -> dict:
         "historical": historical_list
     }
 
+@ttl_cache()
 def get_dynamic_price(product_id: str, store_id: str = None) -> dict:
     from backend.capabilities import dynamic_pricing as mod
     res = mod.recommend_dynamic_price(product_id)
@@ -112,6 +118,7 @@ def get_dynamic_price(product_id: str, store_id: str = None) -> dict:
         "stock_level": int(res.get("stock_level", 0))
     }
 
+@ttl_cache()
 def optimise_promotion(promo_id: str) -> dict:
     from backend.capabilities import promotion_optimization as mod
     res = mod.analyze_promo_performance(promo_id)
@@ -166,6 +173,7 @@ def optimise_promotion(promo_id: str) -> dict:
         "confidence": round(confidence, 2)
     }
 
+@ttl_cache()
 def monitor_competitor_prices(product_id: str = None, category: str = None) -> list[dict]:
     from backend.capabilities import competitor_price_monitoring as mod
     res = mod.detect_pricing_outliers()
@@ -222,6 +230,7 @@ def monitor_competitor_prices(product_id: str = None, category: str = None) -> l
     return processed_results
 
 
+@ttl_cache()
 def assortment_plan(region: str = None) -> dict:
     """
     Data-driven assortment analysis:

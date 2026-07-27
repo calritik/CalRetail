@@ -1,7 +1,12 @@
 """
-Module 4 — Customer Support Intelligence AI Services Wrapper
-Logic is loaded dynamically from Jupyter capability notebooks.
+Module 4 — Customer Support Intelligence service layer.
+
+Only voice-of-customer is memoised. The chatbot, triage and agent-assist
+endpoints are conversational and may route through an LLM, so a cached reply
+would be wrong rather than merely stale.
 """
+
+from backend.utils.cache import ttl_cache
 from typing import Optional
 
 from backend.utils import naming
@@ -31,6 +36,7 @@ def agent_assist(query_text: str, customer_id: str) -> dict:
     res["customer_name"] = naming.customer(customer_id)
     return naming.annotate(res)
 
+@ttl_cache()
 def voice_of_customer(product_id: Optional[str] = None,
                        date_from: Optional[str] = None,
                        date_to: Optional[str] = None) -> dict:

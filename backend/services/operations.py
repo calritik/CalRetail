@@ -1,9 +1,15 @@
 """
-Module 3 — Operations Intelligence AI Services Wrapper
-Logic is loaded dynamically from Jupyter capability notebooks.
+Module 3 — Operations Intelligence service layer.
+
+Thin wrappers over backend.capabilities.*, adding the naming and shaping the
+console expects. The deterministic reads are memoised: a capability rebuild is
+seconds of work and the console asks for the same slice on every page visit.
 """
+
+from backend.utils.cache import ttl_cache
 from typing import Optional
 
+@ttl_cache()
 def get_inventory_health(store_id: Optional[str] = None,
                           category: Optional[str] = None,
                           top_n: int = 50) -> list[dict]:
@@ -47,6 +53,7 @@ def get_inventory_health(store_id: Optional[str] = None,
         r["location_name"] = naming.location_label(r)
     return rows
 
+@ttl_cache()
 def get_replenishment_order(product_id: str,
                              store_id: Optional[str] = None) -> dict:
     from backend.capabilities import automated_replenishment as mod
@@ -124,6 +131,7 @@ def get_replenishment_order(product_id: str,
         "reorder_point": rop
     }
 
+@ttl_cache()
 def optimise_warehouse(warehouse_id: str) -> dict:
     from backend.capabilities import warehouse_slotting as mod
     records = mod.compute_abc_slotting_plan(warehouse_id)
@@ -171,6 +179,7 @@ def optimise_warehouse(warehouse_id: str) -> dict:
         "estimated_pick_time_reduction_pct": est_saving
     }
 
+@ttl_cache()
 def optimise_routes(warehouse_id: str, order_ids: list = None) -> dict:
     from backend.capabilities import route_optimisation as mod
     res = mod.solve_delivery_route(warehouse_id)
@@ -229,6 +238,7 @@ def _suggested_markdown(days_cover: float) -> int:
     return 10
 
 
+@ttl_cache()
 def get_markdown_candidates(top_n: int = 8) -> dict:
     """
     SKUs holding far more cover than the replenishment cycle needs.
@@ -302,6 +312,7 @@ def get_markdown_candidates(top_n: int = 8) -> dict:
 # Daily demand for one SKU.
 # ─────────────────────────────────────────────────────────────────────────────
 
+@ttl_cache()
 def get_inventory_timeseries(product_id: str, days: int = 120) -> dict:
     """
     Daily units sold for one product over the trailing window, plus the cover
