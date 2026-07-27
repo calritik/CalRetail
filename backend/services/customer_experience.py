@@ -2,11 +2,10 @@
 Module 1 — Customer Experience AI Services Wrapper
 Logic is loaded dynamically from Jupyter capability notebooks.
 """
-from backend.utils.notebook_loader import get_notebook_module
 
 
 def get_recommendations(customer_id: str, top_n: int = 10) -> list[dict]:
-    mod = get_notebook_module("01_personalised_recommendations.ipynb")
+    from backend.capabilities import personalised_recommendations as mod
     res = mod.get_recommendations(customer_id, top_n=top_n)
     recs = res.get("recommendations", [])
 
@@ -27,7 +26,7 @@ def get_recommendations_debug(customer_id: str, top_n: int = 10) -> dict:
     import pandas as pd
     from backend.utils.data_loader import get_products, get_reviews, get_customers
 
-    mod = get_notebook_module("01_personalised_recommendations.ipynb")
+    from backend.capabilities import personalised_recommendations as mod
     cust_df   = mod.cust
     tx_df     = mod.tx
     prod_df   = mod.prod
@@ -244,7 +243,7 @@ def get_recommendations_debug(customer_id: str, top_n: int = 10) -> dict:
 
 
 def buying_assistant_query(customer_id: str, message: str) -> dict:
-    mod = get_notebook_module("02_conversational_buying_assistant.ipynb")
+    from backend.capabilities import conversational_buying_assistant as mod
     res = mod.process_chat_message(customer_id, message)
     return {
         "intent":             res.get("intent", "browse"),
@@ -256,7 +255,7 @@ def buying_assistant_query(customer_id: str, message: str) -> dict:
 
 
 def get_next_best_offer(customer_id: str) -> dict:
-    mod = get_notebook_module("03_next_best_offer.ipynb")
+    from backend.capabilities import next_best_offer as mod
     res = mod.resolve_nbo(customer_id)
 
     opt = res.get("recommended_offer", {})
@@ -280,7 +279,7 @@ def get_next_best_offer(customer_id: str) -> dict:
 
 
 def get_communication_timing(customer_id: str) -> dict:
-    mod = get_notebook_module("04_communication_timing.ipynb")
+    from backend.capabilities import communication_timing as mod
     res = mod.recommend_communication(customer_id)
 
     import pandas as pd

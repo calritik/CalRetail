@@ -3,12 +3,11 @@ Module 3 — Operations Intelligence AI Services Wrapper
 Logic is loaded dynamically from Jupyter capability notebooks.
 """
 from typing import Optional
-from backend.utils.notebook_loader import get_notebook_module
 
 def get_inventory_health(store_id: Optional[str] = None,
                           category: Optional[str] = None,
                           top_n: int = 50) -> list[dict]:
-    mod = get_notebook_module("09_inventory_health_monitoring.ipynb")
+    from backend.capabilities import inventory_health_monitoring as mod
     res = mod.compute_inventory_health()
     
     if isinstance(res, dict) and "inventory_health" in res:
@@ -50,7 +49,7 @@ def get_inventory_health(store_id: Optional[str] = None,
 
 def get_replenishment_order(product_id: str,
                              store_id: Optional[str] = None) -> dict:
-    mod = get_notebook_module("10_automated_replenishment.ipynb")
+    from backend.capabilities import automated_replenishment as mod
     res = mod.get_replenishment_parameters(product_id)
     if "error" in res:
         return res
@@ -126,7 +125,7 @@ def get_replenishment_order(product_id: str,
     }
 
 def optimise_warehouse(warehouse_id: str) -> dict:
-    mod = get_notebook_module("11_warehouse_slotting.ipynb")
+    from backend.capabilities import warehouse_slotting as mod
     records = mod.compute_abc_slotting_plan(warehouse_id)
     
     import pandas as pd
@@ -173,7 +172,7 @@ def optimise_warehouse(warehouse_id: str) -> dict:
     }
 
 def optimise_routes(warehouse_id: str, order_ids: list = None) -> dict:
-    mod = get_notebook_module("12_route_optimisation.ipynb")
+    from backend.capabilities import route_optimisation as mod
     res = mod.solve_delivery_route(warehouse_id)
     
     dist = res.get("distance_km", 0.0)

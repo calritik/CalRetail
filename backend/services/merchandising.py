@@ -2,10 +2,9 @@
 Module 2 — Merchandising Intelligence AI Services Wrapper
 Logic is loaded dynamically from Jupyter capability notebooks.
 """
-from backend.utils.notebook_loader import get_notebook_module
 
 def forecast_demand(product_id: str, days: int = 7) -> dict:
-    mod = get_notebook_module("05_demand_forecasting.ipynb")
+    from backend.capabilities import demand_forecasting as mod
     res = mod.get_demand_forecast(product_id, forecast_days=days)
 
     if not isinstance(res, dict):
@@ -67,7 +66,7 @@ def forecast_demand(product_id: str, days: int = 7) -> dict:
     }
 
 def get_dynamic_price(product_id: str, store_id: str = None) -> dict:
-    mod = get_notebook_module("06_dynamic_pricing.ipynb")
+    from backend.capabilities import dynamic_pricing as mod
     res = mod.recommend_dynamic_price(product_id)
     
     if not isinstance(res, dict):
@@ -114,7 +113,7 @@ def get_dynamic_price(product_id: str, store_id: str = None) -> dict:
     }
 
 def optimise_promotion(promo_id: str) -> dict:
-    mod = get_notebook_module("07_promotion_optimization.ipynb")
+    from backend.capabilities import promotion_optimization as mod
     res = mod.analyze_promo_performance(promo_id)
     
     if not isinstance(res, dict):
@@ -168,7 +167,7 @@ def optimise_promotion(promo_id: str) -> dict:
     }
 
 def monitor_competitor_prices(product_id: str = None, category: str = None) -> list[dict]:
-    mod = get_notebook_module("08_competitor_price_monitoring.ipynb")
+    from backend.capabilities import competitor_price_monitoring as mod
     res = mod.detect_pricing_outliers()
     
     if not isinstance(res, list):

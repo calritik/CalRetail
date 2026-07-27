@@ -5,10 +5,9 @@ Logic is loaded dynamically from Jupyter capability notebooks.
 from typing import Optional
 
 from backend.utils import naming
-from backend.utils.notebook_loader import get_notebook_module
 
 def chatbot_respond(customer_id: str, message: str, session_id: str) -> dict:
-    mod = get_notebook_module("13_ai_chatbot.ipynb")
+    from backend.capabilities import ai_chatbot as mod
     res = mod.chatbot_response(customer_id, message, session_id)
     res["session_id"] = session_id
     # Every card that shows a conversation also shows who it is with; without
@@ -19,14 +18,14 @@ def chatbot_respond(customer_id: str, message: str, session_id: str) -> dict:
     return naming.annotate(res)
 
 def triage_ticket(description: str, customer_id: str) -> dict:
-    mod = get_notebook_module("14_ticket_triage.ipynb")
+    from backend.capabilities import ticket_triage as mod
     res = mod.triage_ticket(description)
     res["customer_id"] = customer_id
     res["customer_name"] = naming.customer(customer_id)
     return naming.annotate(res)
 
 def agent_assist(query_text: str, customer_id: str) -> dict:
-    mod = get_notebook_module("15_agent_assist.ipynb")
+    from backend.capabilities import agent_assist as mod
     res = mod.get_agent_assist(query_text)
     res["customer_id"] = customer_id
     res["customer_name"] = naming.customer(customer_id)
@@ -35,7 +34,7 @@ def agent_assist(query_text: str, customer_id: str) -> dict:
 def voice_of_customer(product_id: Optional[str] = None,
                        date_from: Optional[str] = None,
                        date_to: Optional[str] = None) -> dict:
-    mod = get_notebook_module("16_voice_of_customer.ipynb")
+    from backend.capabilities import voice_of_customer as mod
     res = mod.mine_customer_reviews(product_id, date_from, date_to)
     
     if not isinstance(res, list):

@@ -200,7 +200,6 @@ class MockCalRetailChatModel(BaseChatModel):
         # 2. Support Chatbot logic
         elif "customer_context" in sys_low or "escalate" in sys_low:
             import re
-            from backend.utils.notebook_loader import get_notebook_module
             # Extract the real customer ID from the ORIGINAL (non-lowercased)
             # system prompt so case is preserved (dataset IDs are like "C00001").
             cid = "C00001"
@@ -208,7 +207,7 @@ class MockCalRetailChatModel(BaseChatModel):
             if cf:
                 cid = cf.group(1).strip()
 
-            mod = get_notebook_module("13_ai_chatbot.ipynb")
+            from backend.capabilities import ai_chatbot as mod
             resp_dict = mod._rule_based_response(cid, user_msg)
             resp_dict["confidence"] = 0.85
             content = json.dumps(resp_dict)
@@ -247,9 +246,8 @@ class MockCalRetailChatModel(BaseChatModel):
 
         # 4. Buying Assistant Agent logic
         elif "exact category" in sys_low:
-            from backend.utils.notebook_loader import get_notebook_module
             from backend.utils.data_loader import get_products
-            mod = get_notebook_module("02_conversational_buying_assistant.ipynb")
+            from backend.capabilities import conversational_buying_assistant as mod
             extracted = mod._extract_intent_rules(user_msg, get_products())
             content = json.dumps(extracted)
 

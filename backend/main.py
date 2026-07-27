@@ -131,34 +131,32 @@ async def startup_event():
         except Exception as e:
             logger.warning(f"  Data warmup failed: {e}")
 
-    # Pre-load Module 2 notebooks in the background so the first page visit
-    # doesn't block on notebook execution (which can take 10-30 s each).
+    # Merchandising capabilities can be built ahead of the first page visit so
+    # nobody waits on the first click.
     #
-    # Skipped on a small host: four warm notebooks cost ~110 MB, which is a
-    # fifth of a 512 MiB budget spent before a visitor has asked for anything.
-    # They load on first use instead. Set CALRETAIL_PREWARM=1 to restore it
-    # where memory is not the constraint.
+    # Off by default on a small host: warming these costs memory before a
+    # visitor has asked for anything, and building on demand is now fast enough
+    # that it is barely noticeable. Set CALRETAIL_PREWARM=1 where memory is not
+    # the constraint.
     if os.environ.get("CALRETAIL_PREWARM", "0") == "1":
-        def _warm_merch_notebooks():
-            from backend.utils.notebook_loader import get_notebook_module
-            notebooks = [
-                "05_demand_forecasting.ipynb",
-                "06_dynamic_pricing.ipynb",
-                "07_promotion_optimization.ipynb",
-                "08_competitor_price_monitoring.ipynb",
-            ]
-            for nb in notebooks:
+        def _warm_merchandising():
+            from backend.capabilities import (
+                competitor_price_monitoring, demand_forecasting,
+                dynamic_pricing, promotion_optimization,
+            )
+            for mod in (demand_forecasting, dynamic_pricing,
+                        promotion_optimization, competitor_price_monitoring):
                 try:
-                    get_notebook_module(nb)
-                    logger.info(f"  ✓ Notebook warm: {nb}")
+                    mod._init()
+                    logger.info(f"  ✓ Capability warm: {mod.__name__.rsplit('.', 1)[-1]}")
                 except Exception as exc:
-                    logger.warning(f"  ✗ Notebook warm failed ({nb}): {exc}")
+                    logger.warning(f"  ✗ Warm failed ({mod.__name__}): {exc}")
 
-        threading.Thread(target=_warm_merch_notebooks, daemon=True,
+        threading.Thread(target=_warm_merchandising, daemon=True,
                          name="merch-warmup").start()
-        logger.info("  Notebook pre-loader started in background thread.")
+        logger.info("  Capability pre-loader started in background thread.")
     else:
-        logger.info("  Notebooks load on first use (set CALRETAIL_PREWARM=1 to pre-warm).")
+        logger.info("  Capabilities build on first use (CALRETAIL_PREWARM=1 to pre-warm).")
     logger.info("  API ready at http://localhost:8000")
     logger.info("  Docs at      http://localhost:8000/docs")
     logger.info("=" * 55)

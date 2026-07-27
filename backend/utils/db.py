@@ -7,8 +7,8 @@ every dataset. It is produced by ``python -m notebooks.build_db``.
 Two access styles are offered, and the distinction matters for memory:
 
 * :func:`load_df` returns a whole table as a DataFrame and memoises it, which
-  is what the notebook capabilities want — they do wide pandas work over the
-  full frame and are executed once per process by ``notebook_loader``.
+  is what the capability modules want — they do wide pandas work over the full
+  frame and build their state once per process.
 * :func:`query` and :func:`read_table` push filtering down into SQLite so a
   route that needs one customer's rows does not materialise a whole table.
   The indexes created by the build script exist to serve exactly these.

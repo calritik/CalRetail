@@ -1,9 +1,9 @@
 # 🛍️ CalRetail — Enterprise Retail AI Intelligence Platform
 
-> **30 AI Capabilities · 5 Domains · 33 REST APIs · Dash Console**
-> A retail AI platform for fashion retail, built on Python, FastAPI, Dash and 20
-> Jupyter-based AI capability notebooks. The console implements slides 4-8 of the
-> Calsoft *Retail AI Solutions* deck.
+> **16 AI Capabilities · 4 Domains · 35 REST APIs · Dash Console**
+> A retail AI platform for fashion retail, built on Python, FastAPI, Dash and
+> sixteen pure-Python capability modules over one SQLite database. The console
+> implements the Calsoft *Retail AI Solutions* deck.
 
 ---
 
@@ -25,9 +25,9 @@
                                   ▲
                                   │ backend/utils/db.py
                                   ▼
-                    Jupyter Capability Notebooks (16 modules)
+                  backend/capabilities/  (16 Python modules)
                                   ▲
-                                  │ dynamic import via notebook_loader.py
+                                  │ ordinary imports, built on first call
                                   ▼
                        FastAPI backend  (port 8000)
                                   ▲
@@ -36,10 +36,30 @@
                        Dash console     (port 8050)
 ```
 
-CalRetail uses a **notebook-delegated architecture**: rather than duplicating
-logic, the FastAPI backend imports and executes `.ipynb` code cells as live
-Python modules, cached in memory after first load. The notebooks stay the single
-source of truth for capability logic.
+Each capability is a **plain Python module** in `backend/capabilities/`. A
+module's shared frames are built lazily by `_init()` on the first call, so
+importing all sixteen costs ~100 MB and **0.8 s** and computes nothing for a
+capability nobody asks for. `_registry` keeps only the most recently used few
+warm (`CALRETAIL_WARM_CAPABILITIES`, default 3) and calls `reset()` on the rest,
+which is what keeps the process inside a small memory budget.
+
+These modules were ported from the notebooks in `notebooks/capabilities/`, which
+remain as the readable narrative of each method. **They are no longer executed
+by the application.** Running them at request time meant re-`exec`-ing every
+cell — including demo cells that printed telemetry and drew matplotlib charts —
+which cost seconds per capability, silently swallowed failing cells (a broken
+cell surfaced much later as a missing attribute), and defeated bytecode caching.
+Dropping that path made every capability faster, some dramatically:
+
+| Capability | Notebook | Module |
+|---|---|---|
+| Conversational buying assistant | 7.4 s | 0.03 s |
+| Personalised recommendations | 4.0 s | 0.2 s |
+| 24×7 AI chatbot | 3.5 s | 0.03 s |
+| Inventory health | 5.4 s | 2.7 s |
+
+All sixteen were verified to return **byte-identical** results before and after
+the port.
 
 All data lives in one **SQLite database**, `data/calretail.db` — 31 tables, 38
 indexes, ~68 MB. It is committed, so a clone runs immediately and the Hugging
@@ -54,10 +74,9 @@ Face Space deploys with no build step. Nothing reads CSVs any more.
 | Database | SQLite | `data/calretail.db` — committed, read-only at runtime |
 | Backend API | FastAPI + Uvicorn | Async, Pydantic-validated |
 | Console | Dash (Plotly) | `frontend_dash/` — the current UI |
-| Legacy UI | Streamlit | `frontend/` — superseded, kept for reference |
 | ML & Analytics | pandas, NumPy, scikit-learn, XGBoost | cosine similarity, K-Means, ABC slotting, routing, forecasting |
 | LLM | LangChain (Gemini / Groq / OpenAI) | falls back to a rule-based engine with no key |
-| Tests | pytest | regression over all 20 notebooks |
+| Tests | pytest | 32 checks over all 16 capability modules |
 
 ---
 
@@ -68,13 +87,13 @@ CalRetail/
 ├── data/
 │   └── calretail.db                # ← the database (committed, ~68 MB)
 ├── backend/
-│   ├── main.py                     # FastAPI entry point, warms the notebook cache
+│   ├── main.py                     # FastAPI entry point
 │   ├── utils/
 │   │   ├── db.py                   # SQLite engine: connections, pushdown, caching
-│   │   ├── notebook_loader.py      # executes .ipynb cells into a live module
 │   │   ├── llm_service.py          # provider detection + LangChain wrappers
 │   │   └── data_loader.py          # table accessors + indexed lookups
-│   ├── services/                   # thin proxies onto the notebooks
+│   ├── capabilities/               # the 16 capability modules (lazy _init)
+│   ├── services/                   # thin proxies onto the capabilities
 │   └── routers/                    # 33 REST routes
 ├── frontend_dash/                  # ← the console
 │   ├── app.py                      # shell, routing, pre-paint theme bootstrap
@@ -87,18 +106,17 @@ CalRetail/
 │   │   └── layout.py               # right-hand nav rail + page header
 │   ├── services/
 │   │   ├── api.py                  # cached FastAPI client (never raises)
-│   │   ├── capabilities.py         # the 30 deck capabilities + their qualifiers
-│   │   └── demo.py                 # seeded data for capabilities without endpoints
+│   │   └── capabilities.py         # the 16 deck capabilities + their qualifiers
 │   ├── theme/                      # colors.py + Plotly chart theme
-│   └── pages/                      # home, 5 domains, AI assistant
+│   └── pages/                      # home, 4 domains, AI assistant
 ├── notebooks/
-│   ├── capabilities/               # the 16 capability notebooks
+│   ├── capabilities/               # the 16 notebooks (reference, not executed)
 │   ├── generate_data.py            # seeded synthetic generator (stage 1)
 │   ├── clean_data.py               # cleaning rules (stage 2)
 │   ├── feature_engineering.py      # feature_* tables (stage 3)
 │   ├── pipeline_io.py              # build-time SQLite reads/writes
 │   └── build_db.py                 # runs all three, indexes, VACUUMs
-└── tests/test_notebooks.py
+└── tests/test_capabilities.py
 ```
 
 ---
@@ -135,7 +153,7 @@ naming.annotate(rows)         # adds *_name beside every known *_id
 naming.location_label(row)    # store or warehouse, whichever the row has
 ```
 
-`annotate` never overwrites a name a notebook already supplied — the notebook's
+`annotate` never overwrites a name a capability already supplied — that one's
 is the more specific one. Maps are built once per process from the database and
 memoised, so resolution is a dict hit, not a query per row.
 
@@ -144,9 +162,8 @@ memoised, so resolution is a dict hit, not a query per row.
 ## Quick Start
 
 > **`PYTHONUTF8=1` is required.** Python 3.14 still defaults to cp1252 on Windows,
-> and a notebook cell prints `≈`. Without UTF-8 mode that cell raises
-> `'charmap' codec can't encode character`, and `notebook_loader` silently skips
-> it — so the capability degrades with no visible error.
+> and several capabilities print `≈` and `₹`. Without UTF-8 mode those writes
+> raise `'charmap' codec can't encode character`.
 
 The database is committed, so there is no data step. Install and run:
 
@@ -238,8 +255,8 @@ db.query("SELECT category, COUNT(*) FROM products GROUP BY category")
 ```
 
 `load_df` parses date columns to datetimes; `load_table` (used by the capability
-notebooks) leaves them as ISO-8601 strings, which is the contract those
-notebooks were written against when they read CSVs.
+capability modules) leaves them as ISO-8601 strings, which is the contract they
+were written against when they read CSVs.
 
 ---
 
@@ -256,15 +273,12 @@ PYTHONUTF8=1 python -m pytest tests/ -q
 - **Dependencies.** `requirements.txt` pins with `>=`, so a fresh install
   resolves to current majors (pandas 3.x, langchain-core 1.x). Two things that
   follow from that are already handled in code, but worth knowing if you re-pin.
-- **`jupyter` metapackage.** Not installed — JupyterLab's asset filenames exceed
-  the Windows 260-character path limit under this directory depth. Nothing needs
-  it: `notebook_loader.py` parses `.ipynb` with plain `json`. `ipykernel` +
-  `nbformat` are installed, so VS Code notebooks work.
-- **Notebook cell errors are silent.** `notebook_loader` catches per-cell
-  exceptions, so a broken cell shows up much later as a missing attribute
-  (`module '12_route_optimisation' has no attribute 'solve_delivery_route'`)
-  rather than at load. When a capability 500s with an `AttributeError`, execute
-  the notebook's cells directly — the real error is in one of them.
+- **`jupyter` metapackage.** Not installed, and not needed — the application no
+  longer executes notebooks. Install it only to read them in JupyterLab, along
+  with `matplotlib`, which the demo cells use and the app does not.
+- **Capability state is bounded.** Only `CALRETAIL_WARM_CAPABILITIES` (default
+  3) keep their frames in memory; the coldest is `reset()` when a fourth builds.
+  A rebuild is a few seconds, so raise the limit wherever memory is not tight.
 - **Rebuilding while the app runs** fails on Windows with `PermissionError`
   (`WinError 32`): uvicorn holds the database open. `build_db` detects this and
   tells you to stop the processes.
