@@ -138,25 +138,47 @@ async def startup_event():
     # visitor has asked for anything, and building on demand is now fast enough
     # that it is barely noticeable. Set CALRETAIL_PREWARM=1 where memory is not
     # the constraint.
-    if os.environ.get("CALRETAIL_PREWARM", "0") == "1":
-        def _warm_merchandising():
-            from backend.capabilities import (
-                competitor_price_monitoring, demand_forecasting,
-                dynamic_pricing, promotion_optimization,
+    # Warm the *result* cache, not the capabilities.
+    #
+    # This is the difference between a first visitor waiting ~12s for the
+    # inventory card and getting it immediately. Calling each expensive read
+    # once populates backend.utils.cache, and the capability that produced it is
+    # then free to be evicted — the answer survives the eviction, so the memory
+    # goes back while the speed stays. Everything here is deterministic over a
+    # read-only database, so a result computed at boot is as good as one
+    # computed on demand.
+    #
+    # In a background thread: the server accepts requests immediately, and
+    # anything asked for before its turn simply computes on the spot.
+    if os.environ.get("CALRETAIL_WARM_CACHE", "1") == "1":
+        def _warm_result_cache():
+            from backend.services import (
+                customer_experience as cx, merchandising as mc, operations as ops,
             )
-            for mod in (demand_forecasting, dynamic_pricing,
-                        promotion_optimization, competitor_price_monitoring):
+            jobs = [
+                ("inventory health", ops.get_inventory_health, ()),
+                ("markdown candidates", ops.get_markdown_candidates, (8,)),
+                ("warehouse slotting", ops.optimise_warehouse, ("W002",)),
+                ("route optimisation", ops.optimise_routes, ("W002",)),
+                ("demand forecast", mc.forecast_demand, ("P00001", 30)),
+                ("competitor pricing", mc.monitor_competitor_prices, ()),
+                ("recommendations", cx.get_recommendations_debug, ("C00001", 5)),
+            ]
+            started = time.perf_counter()
+            for label, fn, args in jobs:
                 try:
-                    mod._init()
-                    logger.info(f"  ✓ Capability warm: {mod.__name__.rsplit('.', 1)[-1]}")
+                    t0 = time.perf_counter()
+                    fn(*args)
+                    logger.info(f"  ✓ Cached: {label} ({time.perf_counter() - t0:.1f}s)")
                 except Exception as exc:
-                    logger.warning(f"  ✗ Warm failed ({mod.__name__}): {exc}")
+                    logger.warning(f"  ✗ Cache warm failed ({label}): {exc}")
+            logger.info(f"  Result cache warm in {time.perf_counter() - started:.0f}s.")
 
-        threading.Thread(target=_warm_merchandising, daemon=True,
-                         name="merch-warmup").start()
-        logger.info("  Capability pre-loader started in background thread.")
+        threading.Thread(target=_warm_result_cache, daemon=True,
+                         name="cache-warmup").start()
+        logger.info("  Warming the result cache in the background.")
     else:
-        logger.info("  Capabilities build on first use (CALRETAIL_PREWARM=1 to pre-warm).")
+        logger.info("  Results compute on first request (CALRETAIL_WARM_CACHE=1 to pre-warm).")
     logger.info("  API ready at http://localhost:8000")
     logger.info("  Docs at      http://localhost:8000/docs")
     logger.info("=" * 55)
