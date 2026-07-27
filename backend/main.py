@@ -107,6 +107,26 @@ async def startup_event():
 
     logger.info("=" * 55)
     logger.info(f"  {settings.APP_NAME} v{settings.APP_VERSION}")
+
+    # Bound how many endpoints compute at the same time.
+    #
+    # FastAPI runs `def` endpoints in a worker thread and lets forty of them run
+    # concurrently by default. Forty is fine for handlers that wait on a socket;
+    # here each one is holding pandas frames, so a burst — a domain page opening
+    # five cards, or a visitor clicking around quickly — can put dozens of
+    # copies in memory at once and take the process past 512 MiB. That is what
+    # was killing it: not the resident capabilities, but the requests in flight.
+    #
+    # Excess requests queue rather than fail, which is invisible to a visitor
+    # beyond a slightly later answer.
+    import anyio.to_thread
+    limit = int(os.environ.get("CALRETAIL_MAX_CONCURRENCY", "4"))
+    try:
+        anyio.to_thread.current_default_thread_limiter().total_tokens = limit
+        logger.info(f"  Concurrency: {limit} endpoints computing at once")
+    except Exception as exc:      # pragma: no cover - depends on anyio version
+        logger.warning(f"  Could not set concurrency limit: {exc}")
+
     logger.info("  Warming up data caches...")
     from backend.utils import db
 
