@@ -260,6 +260,51 @@ were written against when they read CSVs.
 
 ---
 
+## Deployment
+
+The console and the API are hosted separately, because they have very different
+appetites. The Dash console imports only `dash`, `plotly` and `requests` —
+100 MB, comfortably inside Vercel's 250 MB function limit. The backend's
+scientific stack is ~427 MB installed, roughly twice that limit, so it runs as a
+container on Render.
+
+| Piece | Host | Notes |
+|---|---|---|
+| Dash console | Vercel | `api/index.py` + `vercel.json`, `requirements-vercel.txt` |
+| FastAPI backend | Render | same `Dockerfile`, `CALRETAIL_MODE=api` |
+
+`start.sh` serves only the API when `CALRETAIL_MODE=api`, which keeps Dash's
+~140 MB out of a process capped at 512 MiB. The console finds the backend
+through `CALRETAIL_API_BASE`.
+
+### Staying inside 512 MiB
+
+The free tier is a hard 512 MiB and the process is killed the moment it crosses.
+Three settings hold the line, all tunable:
+
+| Variable | Default | What it bounds |
+|---|---|---|
+| `CALRETAIL_WARM_CAPABILITIES` | 3 | capabilities holding frames at once |
+| `CALRETAIL_TABLE_CACHE` | 8 | whole tables memoised by `db.load_df` |
+| `CALRETAIL_RESULT_TTL` | 1800 | seconds an endpoint result is reused |
+
+The result cache is what makes a small warm set affordable: an answer outlives
+the capability that produced it, so evicting one costs memory back without
+costing speed. `CALRETAIL_WARM_CACHE=1` (the default) computes the expensive
+reads once at boot in a background thread, so the first visitor does not pay
+for them either.
+
+### Sleep
+
+Render's free tier stops a service after ~15 minutes without traffic, and waking
+it costs a container cold start plus rebuilding the in-process cache.
+`.github/workflows/keep-api-awake.yml` pings `/health` every 10 minutes to
+prevent that — free on a public repository, and `schedule` runs on the default
+branch. GitHub disables scheduled workflows after 60 days of repository
+inactivity; re-enable from the Actions tab if the API starts sleeping again.
+
+---
+
 ## Running Tests
 
 ```bash
