@@ -184,6 +184,12 @@ async def startup_event():
         logger.info("  Warming the result cache in the background.")
     else:
         logger.info("  Results compute on first request (CALRETAIL_WARM_CACHE=1 to pre-warm).")
+
+    # Keep the host from stopping the service for being idle. Inert unless a
+    # public URL is published, so this does nothing locally.
+    from backend.utils import heartbeat
+    if not heartbeat.start():
+        logger.info("  Heartbeat idle (no public URL published).")
     logger.info("  API ready at http://localhost:8000")
     logger.info("  Docs at      http://localhost:8000/docs")
     logger.info("=" * 55)
