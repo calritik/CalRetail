@@ -9,16 +9,19 @@ name: Keep the API awake
 # only fires on the repository's default branch, which is where this lives.
 #
 # Two caveats worth knowing rather than discovering:
-#   * GitHub's scheduler is best-effort. Runs are regularly late by 5-15
-#     minutes under load, so the interval is 10 rather than 14 to leave room
-#     for a slip before Render's 15-minute idle timer expires.
+#   * GitHub's scheduler is best-effort and genuinely unreliable: the first run
+#     of a new workflow can take 15-30 minutes to appear, and later runs are
+#     regularly late by 5-15 minutes under load. Five minutes is the shortest
+#     interval GitHub accepts, and asking for it means even three consecutive
+#     missed slots still land inside Render's 15-minute idle timer. The job is
+#     seconds of work, so over-asking costs nothing.
 #   * GitHub disables scheduled workflows on a repository with no commits for
 #     60 days. If the API starts sleeping again months from now, re-enable it
 #     from the Actions tab.
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch:        # so it can be triggered by hand to verify
 
 concurrency:
