@@ -15,6 +15,13 @@ import requests
 API_BASE = os.getenv("CALRETAIL_API_BASE", "http://127.0.0.1:8000").rstrip("/")
 DEFAULT_TTL = 300  # seconds
 
+# Long enough to outlast a cold capability build on a small host. The backend
+# computes a capability's frames on its first call — the promotion analysis
+# measured ~30s cold — and at the old 30s the console abandoned the request and
+# drew its empty state for a card the API was about to answer. The backend warms
+# these at boot, so this ceiling is the safety net rather than the normal path.
+REQUEST_TIMEOUT = int(os.getenv("CALRETAIL_HTTP_TIMEOUT", "90"))
+
 _cache: dict = {}  # key -> (expires_at, value)
 
 # path -> why the last call to it failed. Both helpers swallow every exception
@@ -44,7 +51,7 @@ def api_get(path: str, params: dict | None = None, ttl: int = DEFAULT_TTL):
     if hit and hit[0] > time.time():
         return hit[1]
     try:
-        r = requests.get(f"{API_BASE}{path}", params=params, timeout=30,
+        r = requests.get(f"{API_BASE}{path}", params=params, timeout=REQUEST_TIMEOUT,
                           proxies={"http": None, "https": None})
         r.raise_for_status()
         data = r.json()
@@ -60,7 +67,7 @@ def api_get(path: str, params: dict | None = None, ttl: int = DEFAULT_TTL):
 def api_post(path: str, payload: dict | None = None):
     """POST to the FastAPI backend. Not cached (mutating/compute call)."""
     try:
-        r = requests.post(f"{API_BASE}{path}", json=payload, timeout=30,
+        r = requests.post(f"{API_BASE}{path}", json=payload, timeout=REQUEST_TIMEOUT,
                           proxies={"http": None, "https": None})
         r.raise_for_status()
         _failures.pop(path, None)

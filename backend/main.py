@@ -162,6 +162,11 @@ async def startup_event():
                 ("route optimisation", ops.optimise_routes, ("W002",)),
                 ("demand forecast", mc.forecast_demand, ("P00001", 30)),
                 ("competitor pricing", mc.monitor_competitor_prices, ()),
+                # The slowest of the lot. Left out of this list it was the one
+                # card that still timed out: a cold build ran past the console's
+                # request timeout, so the panel reported no result for a
+                # promotion the API answers fine once warm.
+                ("promotion optimisation", mc.optimise_promotion, ("PR000002",)),
                 ("recommendations", cx.get_recommendations_debug, ("C00001", 5)),
             ]
             started = time.perf_counter()
