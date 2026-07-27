@@ -103,18 +103,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, promo, tx, prod, _promo_sample, _measured, _valid_uplift, _uplift_fit, _valid_cannib, GLOBAL_CANNIBALIZATION_RATE
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    promo = None
-    tx = None
-    prod = None
-    _promo_sample = None
-    _measured = None
-    _valid_uplift = None
-    _uplift_fit = None
-    _valid_cannib = None
-    GLOBAL_CANNIBALIZATION_RATE = None
+    for _name in ('promo', 'tx', 'prod', '_promo_sample', '_measured', '_valid_uplift', '_uplift_fit', '_valid_cannib', 'GLOBAL_CANNIBALIZATION_RATE'):
+        globals().pop(_name, None)
 
 
 def _measure_promo_sample(row):

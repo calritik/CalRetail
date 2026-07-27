@@ -88,17 +88,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, get_price_elasticity, cust_pr, prod, inv, inv_health, _inv_by_product, median_inventory_ratio, median_daily_demand
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    get_price_elasticity = None
-    cust_pr = None
-    prod = None
-    inv = None
-    inv_health = None
-    _inv_by_product = None
-    median_inventory_ratio = None
-    median_daily_demand = None
+    for _name in ('get_price_elasticity', 'cust_pr', 'prod', 'inv', 'inv_health', '_inv_by_product', 'median_inventory_ratio', 'median_daily_demand'):
+        globals().pop(_name, None)
 
 
 def recommend_dynamic_price(product_id):

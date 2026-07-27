@@ -100,20 +100,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, get_adaptive_service_level, tx, prod, suppliers, date_span_days, prod_annual, daily_vol, vol_stats, replenish_data, SERVICE_LEVEL_Z, DEFAULT_LEAD_TIME
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    get_adaptive_service_level = None
-    tx = None
-    prod = None
-    suppliers = None
-    date_span_days = None
-    prod_annual = None
-    daily_vol = None
-    vol_stats = None
-    replenish_data = None
-    SERVICE_LEVEL_Z = None
-    DEFAULT_LEAD_TIME = None
+    for _name in ('get_adaptive_service_level', 'tx', 'prod', 'suppliers', 'date_span_days', 'prod_annual', 'daily_vol', 'vol_stats', 'replenish_data', 'SERVICE_LEVEL_Z', 'DEFAULT_LEAD_TIME'):
+        globals().pop(_name, None)
 
 
 def get_replenishment_parameters(product_id):

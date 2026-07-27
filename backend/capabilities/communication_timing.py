@@ -83,15 +83,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, browsing, cust, get_global_fallback_hour, GLOBAL_FALLBACK_HOUR, GLOBAL_OPEN_RATE, _all_event_counts
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    browsing = None
-    cust = None
-    get_global_fallback_hour = None
-    GLOBAL_FALLBACK_HOUR = None
-    GLOBAL_OPEN_RATE = None
-    _all_event_counts = None
+    for _name in ('browsing', 'cust', 'get_global_fallback_hour', 'GLOBAL_FALLBACK_HOUR', 'GLOBAL_OPEN_RATE', '_all_event_counts'):
+        globals().pop(_name, None)
 
 
 def recommend_communication(cust_id):

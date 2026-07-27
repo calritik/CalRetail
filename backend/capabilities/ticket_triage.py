@@ -132,33 +132,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, TfidfVectorizer, LogisticRegression, LabelEncoder, train_test_split, accuracy_score, tickets, le_cat, y_cat, le_prio, y_prio, tfidf, X, X_train, X_test, y_cat_train, y_cat_test, y_prio_train, y_prio_test, clf_cat, cat_test_acc, clf_prio, prio_test_acc, TEAM_MAP, KEYWORD_RULES
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    TfidfVectorizer = None
-    LogisticRegression = None
-    LabelEncoder = None
-    train_test_split = None
-    accuracy_score = None
-    tickets = None
-    le_cat = None
-    y_cat = None
-    le_prio = None
-    y_prio = None
-    tfidf = None
-    X = None
-    X_train = None
-    X_test = None
-    y_cat_train = None
-    y_cat_test = None
-    y_prio_train = None
-    y_prio_test = None
-    clf_cat = None
-    cat_test_acc = None
-    clf_prio = None
-    prio_test_acc = None
-    TEAM_MAP = None
-    KEYWORD_RULES = None
+    for _name in ('TfidfVectorizer', 'LogisticRegression', 'LabelEncoder', 'train_test_split', 'accuracy_score', 'tickets', 'le_cat', 'y_cat', 'le_prio', 'y_prio', 'tfidf', 'X', 'X_train', 'X_test', 'y_cat_train', 'y_cat_test', 'y_prio_train', 'y_prio_test', 'clf_cat', 'cat_test_acc', 'clf_prio', 'prio_test_acc', 'TEAM_MAP', 'KEYWORD_RULES'):
+        globals().pop(_name, None)
 
 
 def triage_ticket(description_text):

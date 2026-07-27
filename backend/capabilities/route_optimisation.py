@@ -107,22 +107,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, math, stores, whs, city_coords, wh_lat, wh_lon, coords, all_locations, dist_matrix, i, loc1, j, loc2
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    math = None
-    stores = None
-    whs = None
-    city_coords = None
-    wh_lat = None
-    wh_lon = None
-    coords = None
-    all_locations = None
-    dist_matrix = None
-    i = None
-    loc1 = None
-    j = None
-    loc2 = None
+    for _name in ('math', 'stores', 'whs', 'city_coords', 'wh_lat', 'wh_lon', 'coords', 'all_locations', 'dist_matrix', 'i', 'loc1', 'j', 'loc2'):
+        globals().pop(_name, None)
 
 
 def get_lat(c): return city_coords.get(c, (22.9734, 78.6569))[0]  # fallback: geographic centre of India

@@ -115,19 +115,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, TfidfVectorizer, cosine_similarity, tickets, resolved, tfidf, matrix, SOP_MAP, DEFAULT_SOP, KNOWLEDGE_MAP, DEFAULT_KNOWLEDGE
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    TfidfVectorizer = None
-    cosine_similarity = None
-    tickets = None
-    resolved = None
-    tfidf = None
-    matrix = None
-    SOP_MAP = None
-    DEFAULT_SOP = None
-    KNOWLEDGE_MAP = None
-    DEFAULT_KNOWLEDGE = None
+    for _name in ('TfidfVectorizer', 'cosine_similarity', 'tickets', 'resolved', 'tfidf', 'matrix', 'SOP_MAP', 'DEFAULT_SOP', 'KNOWLEDGE_MAP', 'DEFAULT_KNOWLEDGE'):
+        globals().pop(_name, None)
 
 
 def get_agent_assist(agent_query):

@@ -80,11 +80,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, revs, aspects
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    revs = None
-    aspects = None
+    for _name in ('revs', 'aspects'):
+        globals().pop(_name, None)
 
 
 def mine_customer_reviews(product_id=None, date_from=None, date_to=None):

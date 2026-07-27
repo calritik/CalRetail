@@ -124,28 +124,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, cosine_similarity, get_category_conversion_rates, tx, prod, cust, cart, wishlist, PURCHASE_WEIGHT, CART_WEIGHT, WISHLIST_WEIGHT, purchase_signal, cart_signal, wishlist_signal, signal, csr_matrix, cust_index, prod_index, matrix, category_boost
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    cosine_similarity = None
-    get_category_conversion_rates = None
-    tx = None
-    prod = None
-    cust = None
-    cart = None
-    wishlist = None
-    PURCHASE_WEIGHT = None
-    CART_WEIGHT = None
-    WISHLIST_WEIGHT = None
-    purchase_signal = None
-    cart_signal = None
-    wishlist_signal = None
-    signal = None
-    csr_matrix = None
-    cust_index = None
-    prod_index = None
-    matrix = None
-    category_boost = None
+    for _name in ('cosine_similarity', 'get_category_conversion_rates', 'tx', 'prod', 'cust', 'cart', 'wishlist', 'PURCHASE_WEIGHT', 'CART_WEIGHT', 'WISHLIST_WEIGHT', 'purchase_signal', 'cart_signal', 'wishlist_signal', 'signal', 'csr_matrix', 'cust_index', 'prod_index', 'matrix', 'category_boost'):
+        globals().pop(_name, None)
 
 
 def _bestseller_fallback(pref_cat, top_n):

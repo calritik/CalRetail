@@ -100,17 +100,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, re, prod, cust, categories, brands, llm_structured, BuyingAssistantExtraction, BUYING_ASSISTANT_SYSTEM_PROMPT
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    re = None
-    prod = None
-    cust = None
-    categories = None
-    brands = None
-    llm_structured = None
-    BuyingAssistantExtraction = None
-    BUYING_ASSISTANT_SYSTEM_PROMPT = None
+    for _name in ('re', 'prod', 'cust', 'categories', 'brands', 'llm_structured', 'BuyingAssistantExtraction', 'BUYING_ASSISTANT_SYSTEM_PROMPT'):
+        globals().pop(_name, None)
 
 
 def _extract_intent_rules(message: str, products_df: pd.DataFrame) -> dict:

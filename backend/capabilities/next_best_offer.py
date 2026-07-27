@@ -99,20 +99,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, get_nbo_weights, cust, promo, tx, prods, DISCOUNT_W, CHANNEL_W, RECENCY_W, _sample, _valid, _uplift_trend
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    get_nbo_weights = None
-    cust = None
-    promo = None
-    tx = None
-    prods = None
-    DISCOUNT_W = None
-    CHANNEL_W = None
-    RECENCY_W = None
-    _sample = None
-    _valid = None
-    _uplift_trend = None
+    for _name in ('get_nbo_weights', 'cust', 'promo', 'tx', 'prods', 'DISCOUNT_W', 'CHANNEL_W', 'RECENCY_W', '_sample', '_valid', '_uplift_trend'):
+        globals().pop(_name, None)
 
 
 # Real discount% -> uplift% trend fitted on a sample of past promotions' actual

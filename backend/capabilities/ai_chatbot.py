@@ -97,16 +97,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, orders, returns, cust, llm_chat_with_memory, parse_structured, ChatbotReply, CHATBOT_SYSTEM_TEMPLATE
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    orders = None
-    returns = None
-    cust = None
-    llm_chat_with_memory = None
-    parse_structured = None
-    ChatbotReply = None
-    CHATBOT_SYSTEM_TEMPLATE = None
+    for _name in ('orders', 'returns', 'cust', 'llm_chat_with_memory', 'parse_structured', 'ChatbotReply', 'CHATBOT_SYSTEM_TEMPLATE'):
+        globals().pop(_name, None)
 
 
 def _pretty_date(value):

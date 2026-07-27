@@ -97,23 +97,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, get_inventory_health_weights, inv, tx, suppliers, prod, max_date, recent_tx, velocity, product_supplier_map, supplier_reliability_map, DEFAULT_RELIABILITY, W_STOCKOUT, W_OVERSTOCK, W_RELIABILITY
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    get_inventory_health_weights = None
-    inv = None
-    tx = None
-    suppliers = None
-    prod = None
-    max_date = None
-    recent_tx = None
-    velocity = None
-    product_supplier_map = None
-    supplier_reliability_map = None
-    DEFAULT_RELIABILITY = None
-    W_STOCKOUT = None
-    W_OVERSTOCK = None
-    W_RELIABILITY = None
+    for _name in ('get_inventory_health_weights', 'inv', 'tx', 'suppliers', 'prod', 'max_date', 'recent_tx', 'velocity', 'product_supplier_map', 'supplier_reliability_map', 'DEFAULT_RELIABILITY', 'W_STOCKOUT', 'W_OVERSTOCK', 'W_RELIABILITY'):
+        globals().pop(_name, None)
 
 
 def compute_inventory_health():

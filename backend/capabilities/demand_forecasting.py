@@ -127,32 +127,18 @@ def __getattr__(name: str):
 
 
 def reset() -> None:
-    """Release the cached frames so the next call rebuilds them."""
-    global _READY, xgb, mean_absolute_error, DOW_MAP, daily, prod_ref, holiday_cal, holiday_lookup, c, product_avg, category_avg, FEATURES, model_df, split_idx, X_train, X_test, y_train, y_test, model, test_preds, GLOBAL_MAE, GLOBAL_MAPE, _product_mape_cache, _test_pid_lookup
+    """
+    Release the cached frames so the next call rebuilds them.
+
+    The names are *deleted*, not set to None. __getattr__ above only fires for
+    names missing from the module, so leaving a None behind would hand a caller
+    that None forever instead of triggering a rebuild — the frames would look
+    released while every read of them silently broke.
+    """
+    global _READY
     _READY = False
-    xgb = None
-    mean_absolute_error = None
-    DOW_MAP = None
-    daily = None
-    prod_ref = None
-    holiday_cal = None
-    holiday_lookup = None
-    c = None
-    product_avg = None
-    category_avg = None
-    FEATURES = None
-    model_df = None
-    split_idx = None
-    X_train = None
-    X_test = None
-    y_train = None
-    y_test = None
-    model = None
-    test_preds = None
-    GLOBAL_MAE = None
-    GLOBAL_MAPE = None
-    _product_mape_cache = None
-    _test_pid_lookup = None
+    for _name in ('xgb', 'mean_absolute_error', 'DOW_MAP', 'daily', 'prod_ref', 'holiday_cal', 'holiday_lookup', 'c', 'product_avg', 'category_avg', 'FEATURES', 'model_df', 'split_idx', 'X_train', 'X_test', 'y_train', 'y_test', 'model', 'test_preds', 'GLOBAL_MAE', 'GLOBAL_MAPE', '_product_mape_cache', '_test_pid_lookup'):
+        globals().pop(_name, None)
 
 
 def _product_test_mape(product_id):
