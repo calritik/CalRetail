@@ -2,8 +2,7 @@
 Executive dashboard — the console's landing page.
 
 Every figure here is aggregated from the transaction log at request time by
-/api/v1/overview/*. Nothing is a constant: the quadrant's split lines are the
-medians of the categories actually present, the trend's peak callout is read off
+/api/v1/overview/*. Nothing is a constant: the trend's peak callout is read off
 the series, and the heatmap's scale is keyed to the range in the data. A build at
 a different scale re-renders with different numbers and stays correct.
 
@@ -44,27 +43,6 @@ SEQ = [[i / (len(colors.SEQUENTIAL_BLUE) - 1), c]
 # 12.2 under protanopia. Amber sits under 3:1 contrast on white, so every chart
 # using it carries a legend and a direct end-label rather than relying on hue.
 S_REVENUE, S_MARGIN = colors.CATEGORICAL[0], colors.CATEGORICAL[1]
-
-
-ALL = "All"
-
-# Filters belong to the momentum chart alone, not to the page. It is the only
-# panel where slicing changes the reading rather than just shrinking it — the
-# other cards state the whole position, which is what makes them a headline.
-#
-# Year is deliberately absent: growth here *is* a year-on-year comparison, so
-# restricting the rows to a single year would leave nothing to compare against.
-QUAD_FILTERS = [
-    ("hm-f-cat", "Category", "categories"),
-    ("hm-f-channel", "Channel", "channels"),
-    ("hm-f-region", "Region", "regions"),
-]
-
-
-def _params(cat, channel, region):
-    """Filter values as query params, dropping the ones left on All."""
-    p = {"category": cat, "channel": channel, "region": region}
-    return {k: v for k, v in p.items() if v and v != ALL}
 
 
 def _inr(v) -> str:
@@ -192,97 +170,7 @@ def _trend(_):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# 3 — Category growth / share quadrant
-# ══════════════════════════════════════════════════════════════════════════════
-
-@callback(Output("hm-quadrant", "children"),
-          Input("hm-f-cat", "value"),
-          Input("hm-f-channel", "value"),
-          Input("hm-f-region", "value"))
-def _quadrant(cat, channel, region):
-    d = api_get("/api/v1/overview/category-performance", _params(cat, channel, region))
-    cats = (d or {}).get("categories") or []
-    if not cats:
-        return C.empty("Nothing to plot for this combination.")
-
-    mid_rev = d.get("median_revenue") or 0
-    mid_growth = d.get("median_growth_pct") or 0
-    units = [c["units"] for c in cats]
-    top_units = max(units) or 1
-
-    # Four encodings, no redundancy: position carries revenue and growth, area
-    # carries volume, and colour carries margin on a single-hue ramp. Identity
-    # is on the label beside each bubble, so no categorical hue is needed and
-    # nine categories never become nine competing colours.
-    fig = T.figure(height=380, margin=dict(l=8, r=8, t=10, b=8))
-    fig.add_scatter(
-        x=[c["revenue"] for c in cats],
-        y=[c["growth_pct"] for c in cats],
-        mode="markers+text",
-        text=[c["category"] for c in cats],
-        textposition="top center",
-        textfont=dict(size=11, color=colors.LIGHT["ink"]),
-        marker=dict(
-            size=units, sizemode="area",
-            sizeref=2.0 * top_units / (58 ** 2), sizemin=10,
-            color=[c["margin_pct"] for c in cats],
-            colorscale=SEQ, cmin=min(c["margin_pct"] for c in cats),
-            cmax=max(c["margin_pct"] for c in cats),
-            line=dict(color=colors.SURFACE, width=2),
-            colorbar=dict(title=dict(text="Margin %", side="right"),
-                          thickness=10, len=.7, outlinewidth=0,
-                          tickfont=dict(size=10)),
-        ),
-        customdata=[[_inr(c["revenue"]), c["units"], c["margin_pct"],
-                     c["growth_pct"], c["skus"], c["revenue_share_pct"]] for c in cats],
-        hovertemplate=("<b>%{text}</b><br>Revenue %{customdata[0]} "
-                       "(%{customdata[5]}% of total)<br>"
-                       "Growth %{customdata[3]:+.1f}%<br>"
-                       "Margin %{customdata[2]:.1f}%<br>"
-                       "%{customdata[1]:,} units · %{customdata[4]} SKUs<extra></extra>"),
-    )
-
-    # Split on the medians of what is actually present, so the four quadrants
-    # always carry categories rather than collapsing into one corner.
-    fig.add_hline(y=mid_growth, line=dict(color=colors.LIGHT["axis"], width=1, dash="dot"))
-    fig.add_vline(x=mid_rev, line=dict(color=colors.LIGHT["axis"], width=1, dash="dot"))
-
-    for xa, ya, xs, ys, label in (
-        (1, 1, "right", "top", "Scale &amp; defend"),
-        (0, 1, "left", "top", "Invest to scale"),
-        (1, 0, "right", "bottom", "Protect the margin"),
-        (0, 0, "left", "bottom", "Review or exit"),
-    ):
-        fig.add_annotation(xref="paper", yref="paper", x=xa, y=ya,
-                           xanchor=xs, yanchor=ys, text=label, showarrow=False,
-                           font=dict(size=10, color=colors.LIGHT["ink_muted"]))
-
-    fig.update_layout(
-        xaxis=dict(title=f"Revenue, {d.get('prior_year')}–{d.get('latest_year')}",
-                   showgrid=True, gridcolor=colors.LIGHT["grid"], tickprefix="₹"),
-        yaxis=dict(title=f"Growth, {d.get('latest_year')} vs {d.get('prior_year')} (%)",
-                   showgrid=True, gridcolor=colors.LIGHT["grid"], ticksuffix="%",
-                   zeroline=True, zerolinecolor=colors.LIGHT["axis"]),
-    )
-
-    best = max(cats, key=lambda c: c["growth_pct"])
-    biggest = max(cats, key=lambda c: c["revenue"])
-    dim = d.get("dimension", "category")
-    scope = (f"Sub-categories within {d['drilled_into']}. "
-             if d.get("drilled_into") else "")
-    return [
-        C.graph(fig, 380),
-        html.Div(
-            f"{scope}{biggest['category']} carries the most revenue at "
-            f"{biggest['revenue_share_pct']}% of this slice; {best['category']} is "
-            f"growing fastest at {best['growth_pct']:+.1f}%. Bubble area is units "
-            f"sold, fill is gross margin. Split lines are the {dim} medians.",
-            className="small muted mt-8"),
-    ]
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# 4 — Trading seasonality
+# 3 — Trading seasonality
 # ══════════════════════════════════════════════════════════════════════════════
 
 @callback(Output("hm-season", "children"), Input("hm-load", "data"))
@@ -334,7 +222,7 @@ def _season(_):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# 5 — Top movers and the data foundation
+# 4 — Top movers and the data foundation
 # ══════════════════════════════════════════════════════════════════════════════
 
 @callback(Output("hm-movers", "children"), Input("hm-load", "data"))
@@ -394,34 +282,6 @@ def _domain_card(d):
     )
 
 
-def _quadrant_filters():
-    """
-    The momentum card's own controls, rendered inside the card.
-
-    Options come from /overview/filters, so a control can only ever offer a
-    value the data actually contains — no combination here can empty the chart.
-    """
-    opts = api_get("/api/v1/overview/filters") or {}
-    controls = []
-    for fid, label, key in QUAD_FILTERS:
-        values = opts.get(key) or []
-        controls.append(
-            html.Div(
-                [
-                    html.Label(label, className="kpi-k", htmlFor=fid),
-                    dcc.Dropdown(
-                        id=fid, value=ALL, clearable=False,
-                        className="dash-dropdown",
-                        options=[{"label": ALL, "value": ALL}]
-                                + [{"label": str(v), "value": str(v)} for v in values],
-                    ),
-                ],
-                className="filter-field",
-            )
-        )
-    return html.Div(controls, className="card-filters")
-
-
 def layout():
     up = backend_is_up()
     banner = [] if up else [C.offline_banner()]
@@ -430,16 +290,15 @@ def layout():
         "Executive Overview",
         "Retail AI Capability Console",
         "The trading position the sixteen AI capabilities operate on — revenue, "
-        "margin, category momentum and seasonality, aggregated live from the "
-        "transaction log.",
+        "margin, and seasonality, aggregated live from the transaction log.",
         banner + [
             # Fires once on mount; the unfiltered panels load from it in
             # parallel so the page paints before any rollup has finished.
             dcc.Store(id="hm-load", data=1),
 
-            # Reading order: what the position is, how it is trending, where to
-            # put money next, then when and what sells. Each row answers the
-            # question the row above it raises.
+            # Reading order: what the position is, how it is trending, then
+            # when and what sells. Each row answers the question the row
+            # above it raises.
             C.card("Trading position",
                    dcc.Loading(html.Div(id="hm-estate"), type="dot", color=colors.BRAND),
                    caption="Aggregated from the transaction log, not a sample.",
@@ -452,22 +311,6 @@ def layout():
                                "them is cost of goods sold.",
                        info="Margin is revenue less <b>quantity × cost price</b> per line, "
                             "joined from the product catalogue.",
-                       span=2),
-                style={"marginTop": "18px"}),
-
-            html.Div(
-                C.card("Category momentum",
-                       [
-                           _quadrant_filters(),
-                           dcc.Loading(html.Div(id="hm-quadrant"), type="dot",
-                                       color=colors.BRAND),
-                       ],
-                       info="Split lines are the <b>medians</b> of what is on screen, not "
-                            "fixed thresholds, so the quadrants stay meaningful at any "
-                            "scale. Choosing a category drills into its sub-categories. "
-                            "There is no year control because growth is itself a "
-                            "year-on-year comparison.",
-                       cls="has-filters",
                        span=2),
                 style={"marginTop": "18px"}),
 
