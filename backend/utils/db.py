@@ -91,11 +91,59 @@ def _parse_dates(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+# Object-dtype strings are the single largest cost in this process. Every
+# "C00001", every product name and city is an individual Python str with ~49
+# bytes of header, so a table costs 3-5x more in pandas than the bytes SQLite
+# stores. Measured across the seven largest tables: 119.7 MB as objects,
+# 47.3 MB with Arrow-backed strings.
+#
+# Arrow rather than categorical, which saves marginally more (68% against 60%)
+# but is not transparent: groupby on a categorical column keeps unused
+# categories by default, so filtering then grouping silently gains empty rows.
+# Arrow strings behave exactly like object strings — same comparisons, same
+# .str accessor, same groupby — which is what makes this safe to apply to all
+# sixteen capabilities without touching any of them.
+#
+# Integer downcasting rides along: most of these columns are small counts
+# stored as int64.
+#
+# Floats are deliberately left at float64. Narrowing them changed the route
+# optimiser's answer — latitude and longitude lose significant digits at
+# float32, the haversine distances shift, and the 2-opt heuristic follows a
+# different path to a different total (3,361 km became 3,637 km). Floats were
+# only a small part of the saving; correctness is not worth trading for it.
+_COMPACT = os.environ.get("CALRETAIL_COMPACT_DTYPES", "1") == "1"
+
+try:
+    import pyarrow  # noqa: F401
+    _HAVE_ARROW = True
+except ImportError:                       # pragma: no cover - depends on install
+    _HAVE_ARROW = False
+
+
+def _compact(df: pd.DataFrame) -> pd.DataFrame:
+    """Shrink a freshly-read frame in place. Values and semantics unchanged."""
+    if not _COMPACT:
+        return df
+
+    for col in df.columns:
+        kind = df[col].dtype.kind
+        if kind == "O" and _HAVE_ARROW:
+            try:
+                df[col] = df[col].astype("string[pyarrow]")
+            except Exception:
+                pass          # mixed-type column; leave it as objects
+        elif kind == "i":
+            df[col] = pd.to_numeric(df[col], downcast="integer")
+    return df
+
+
 def query(sql: str, params: Sequence[Any] | dict[str, Any] = (),
           parse_dates: bool = True) -> pd.DataFrame:
     """Run arbitrary SQL and return a DataFrame, parsing date columns by default."""
     df = pd.read_sql_query(sql, connect(), params=params)
-    return _parse_dates(df) if parse_dates else df
+    df = _parse_dates(df) if parse_dates else df
+    return _compact(df)
 
 
 def read_table(

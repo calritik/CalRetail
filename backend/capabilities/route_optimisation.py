@@ -200,8 +200,16 @@ def solve_delivery_route(warehouse_id=None):
     wh_shipments = merged[merged['warehouse_id'] == wh_actual_id]
     
     # Find stores with the most shipments from this warehouse
-    store_counts = wh_shipments['store_id'].value_counts()
-    top_store_ids = store_counts.head(6).index.tolist()
+    # Ties are broken by store id, not left to chance. Shipment counts bunch
+    # heavily — the sixth-busiest store for a warehouse sits in a group of a
+    # dozen sharing the same count — so head(6) on an unordered tie returns
+    # whichever six pandas happened to hash first. The route, its distance and
+    # its saving all moved when an unrelated change altered that order. Sorting
+    # by count then id makes the answer reproducible.
+    store_counts = (wh_shipments['store_id'].value_counts()
+                    .rename_axis('store_id').reset_index(name='n')
+                    .sort_values(['n', 'store_id'], ascending=[False, True]))
+    top_store_ids = store_counts['store_id'].head(6).tolist()
     
     if not top_store_ids:
         top_store_ids = stores['store_id'].head(6).tolist()
